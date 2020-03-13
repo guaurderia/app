@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/guaurderia/app/issues"
   },
-  "homepage": "https://github.com/guaurderia/app#readme"
+  "homepage": "https://github.com/guaurderia/app#readme",
+  "dependencies": {
+    "react": "^16.13.0",
+    "react-dom": "^16.13.0"
+  }
 }
