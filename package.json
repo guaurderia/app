@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "parcel index.html"
   },
   "repository": {
     "type": "git",
@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/guaurderia/app#readme",
   "dependencies": {
+    "parcel": "^1.12.4",
     "react": "^16.13.0",
     "react-dom": "^16.13.0"
   }
