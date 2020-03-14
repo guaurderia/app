@@ -26,7 +26,6 @@ export const registerUser = async (firstName, lastName, username, password, main
     firstName,
     lastName,
     username,
-    password,
     mainPhone,
     emergencyPhone,
     adress
