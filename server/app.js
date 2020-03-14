@@ -41,3 +41,5 @@ app.use(
   })
 );
 require("./auth")(app);
+
+module.exports = app;
