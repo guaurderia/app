@@ -5,7 +5,7 @@ const morgan = require('morgan');
 const cors = require('cors');
 
 // app references
-const notesRouter = require('./routers/notes-router');
+const ownersRouter = require('./routers/owners-router');
 
 // initialization
 const PORT = process.env.PORT || 8000;
@@ -18,7 +18,7 @@ server.use(bodyParser.urlencoded({ extended: true }));
 server.use(bodyParser.json());
 server.use(cors());
 server.use(morgan('combined'));
-server.use('/api', notesRouter(PORT));
+server.use('/api', ownersRouter(PORT));
 
 
 // start server

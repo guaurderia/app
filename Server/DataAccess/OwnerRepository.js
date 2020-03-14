@@ -8,6 +8,9 @@ const collection = 'owner';
 const connect = () => new DbConnection('mongodb://127.0.0.1:27017/owner');
 
 const filters = {
+    id: (id) => {
+        return { _id: new ObjectID(id) };
+    },
     dni: (dni) => {
         return { 'dni': { $regex: new RegExp(dni, 'i') } };
     },
@@ -54,6 +57,32 @@ class OwnerRepository {
                         .catch(error => {
                             connection.close();
                             reject(error);
+                        });
+                })
+                .catch(error => {
+                    reject(error);
+                    connection.close();
+                });
+        });
+    }
+
+
+    findOwnerById(id) {
+        const connection = connect();
+
+        return new Promise((resolve, reject) => {
+            connection
+                .open()
+                .then(() => {
+                    connection.Db.collection(collection)
+                        .findOne(filters.id(id))
+                        .then(owner => {
+                            resolve(owner);
+                            connection.close();
+                        })
+                        .catch(error => {
+                            reject(error);
+                            connection.close();
                         });
                 })
                 .catch(error => {
@@ -117,8 +146,34 @@ class OwnerRepository {
         });
     }
 
+    findOwnerByLastName(lastName) {
+        const connection = connect();
 
-    findNotesByEmail(email) {
+        return new Promise((resolve, reject) => {
+            connection
+                .open()
+                .then(() => {
+                    connection.Db.collection(collection)
+                        .find(filters.lastName(lastName))
+                        .sort({ updated_date: -1})
+                        .toArray()
+                        .then(owner => {
+                            resolve(owner);
+                            connection.close();
+                        })
+                        .catch(error => {
+                            reject(error);
+                            connection.close();
+                        });
+                })
+                .catch(error => {
+                    reject(error);
+                    connection.close();
+                });
+        });
+    }
+
+    findOwnersByEmail(email) {
         const connection = connect();
 
         return new Promise((resolve, reject) => {
@@ -129,7 +184,7 @@ class OwnerRepository {
                         .find(filters.email(email))
                         .sort({ updated_date: -1})
                         .toArray()
-                        .then(notes => {
+                        .then(owners => {
                             resolve(owner);
                             connection.close();
                         })
@@ -158,7 +213,7 @@ class OwnerRepository {
                         //TODO: Sort alphabetically instead of last modified.
                         .sort({ updated_date: -1})
                         .toArray()
-                        .then(notes => {
+                        .then(owners => {
                             resolve(owner);
                             connection.close();
                         })
@@ -199,13 +254,13 @@ class OwnerRepository {
     }
 
 
-    tagOwner(id, dogId) {
+    tagOwner(dni, dogsId) {
         const connection = connect();
 
         const update = {
             $addToSet: {
                 dogsId: {
-                    $each: dogId
+                    $each: dogsId
                 }
             }
         };
@@ -217,7 +272,7 @@ class OwnerRepository {
                     connection.Db
                         .collection(collection)
                         .findOneAndUpdate(
-                            filters.id(id),
+                            filters.dni(dni),
                             update
                         )
                         .then(() => {
@@ -275,4 +330,4 @@ class OwnerRepository {
     }
 }
 
-module.exports = NoteRepository;
+module.exports = OwnerRepository;
