@@ -13,9 +13,6 @@ export const LoginPage = withRouter(({ history }) => {
   };
   return (
     <div>
-      {/* <LoginSignupForm
-        handleSubmit={handleSubmit}
-      /> */}
       <Login {...{ handleLogin }} />
     </div>
   );

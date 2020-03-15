@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import leo from "../../public/img/leo.jpeg";
 
 export const HomePage = () => {

@@ -5,7 +5,7 @@ const Form = styled.form`
   margin: 30px 200px;
 `;
 
-export const RegisterUser = ({ handleLogin }) => {
+export const Login = ({ handleLogin }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
