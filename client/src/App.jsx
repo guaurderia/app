@@ -18,7 +18,7 @@ export const App = () => {
         <Layout>
           <Switch>
             <Route path="/" exact component={HomePage} />
-            <Route path="/register" component={RegisterPage} />
+            <Route path="/admin" component={RegisterPage} />
           </Switch>
         </Layout>
       </Router>

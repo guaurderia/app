@@ -25,7 +25,6 @@ export const RegisterPage = withRouter(({ history }) => {
   };
   return (
     <div>
-      <h2>Registrar</h2>
       {/* <LoginSignupForm
         handleSubmit={handleSubmit}
       /> */}

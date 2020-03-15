@@ -7,24 +7,24 @@ export const Header = () => {
   const handleLogout = useUser("out");
   return (
     <header>
-      <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <Link class="navbar-brand" to="/">
+      <nav className="navbar navbar-expand-lg navbar-light">
+        <Link className="navbar-brand" to="/">
           Guaurdería
         </Link>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
+        <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span className="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav">
+        <div className="collapse navbar-collapse d-flex flex-row-reverse" id="navbarNav">
+          <ul className="navbar-nav">
             {user && (
               <>
-                <li class="nav-item">
-                  <Link class="nav-link" to="/register">
+                <li className="nav-item">
+                  <Link className="nav-link" to="/register">
                     + Cliente
                   </Link>
                 </li>
-                <li class="nav-item">
-                  <Link class="nav-link" to="/" onClick={handleLogout}>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/" onClick={handleLogout}>
                     Salir
                   </Link>
                 </li>
@@ -32,8 +32,8 @@ export const Header = () => {
             )}
             {!user && (
               <>
-                <li class="nav-item">
-                  <Link class="nav-link" to="/admin">
+                <li className="nav-item">
+                  <Link className="nav-link" to="/admin">
                     Admin
                   </Link>
                 </li>

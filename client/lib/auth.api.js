@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import axios from "axios";
 
 export const UserContext = React.createContext();
+export const AdminContext = React.createContext();
 
 export const useUser = action => {
   const userState = useContext(UserContext);
@@ -12,6 +13,18 @@ export const useUser = action => {
       return userState.setUser;
     case "out":
       return userState.setUser(null);
+  }
+};
+
+export const useAdmin = action => {
+  const adminState = useContext(AdminContext);
+  switch (action) {
+    case "get":
+      return adminState.user;
+    case "set":
+      return adminState.setUser;
+    case "out":
+      return adminState.setUser(null);
   }
 };
 

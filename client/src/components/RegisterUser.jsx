@@ -1,4 +1,9 @@
 import React, { useState } from "react";
+import styled from "styled-components";
+
+const Form = styled.form`
+  margin: 30px 200px;
+`;
 
 export const RegisterUser = ({ handleRegister }) => {
   const [firstName, setFirstName] = useState("");
@@ -8,7 +13,7 @@ export const RegisterUser = ({ handleRegister }) => {
   const [emergencyPhone, setEmergencyPhone] = useState("");
 
   return (
-    <form
+    <Form
       onSubmit={e => {
         e.preventDefault();
         handleRegister("user", { firstName, lastName, username, mainPhone, emergencyPhone });
@@ -51,8 +56,8 @@ export const RegisterUser = ({ handleRegister }) => {
       </div>
 
       <button type="submit" className="btn btn-primary">
-        Registrar
+        Registrar Cliente
       </button>
-    </form>
+    </Form>
   );
 };

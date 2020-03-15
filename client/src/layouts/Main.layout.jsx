@@ -8,8 +8,8 @@ export const Layout = ({ children }) => {
     <>
       {user && <h1>Welcome {user.username}</h1>}
       <Header />
-      <section className="container">{children}</section>
-      <footer className="container" style={{ marginTop: 20 }}>
+      <section>{children}</section>
+      <footer className="container" style={{ marginTop: 20, textAlign: "center" }}>
         &copy; 2020 Guaurdería Madrid
       </footer>
     </>
