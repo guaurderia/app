@@ -30,7 +30,7 @@ export const useAdmin = action => {
 
 const api = axios.create({ baseURL: "http://localhost:3000" });
 
-export const register = async (type, obj) => {
+export const doRegister = async (type, obj) => {
   // Axios post a ruta /auth/signup en servidor
   // para crear un usuario en mongodb
   console.log(`Registrando usuario...`);
@@ -41,7 +41,7 @@ export const register = async (type, obj) => {
   return res.data;
 };
 
-export const login = async (type, obj) => {
+export const doLogin = async (type, obj) => {
   console.log("Do Login");
   const res = await api.post(`/login/${type}`, obj);
   console.log(res.data);

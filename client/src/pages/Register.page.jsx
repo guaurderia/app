@@ -1,13 +1,13 @@
 import React from "react";
 import { withRouter } from "react-router-dom";
-import { useUser, register } from "../../lib/auth.api";
-import { RegisterUser } from "../components/RegisterUser";
+import { useUser, doRegister } from "../../lib/auth.api";
+import { RegisterOwner } from "../components/RegisterOwner";
 
 export const RegisterPage = withRouter(({ history }) => {
   const setUser = useUser("set");
 
   const handleRegister = async (type, obj) => {
-    const user = await register(type, obj);
+    const user = await doRegister(type, obj);
     setUser(user);
     switch (type) {
       case "user":
@@ -28,7 +28,7 @@ export const RegisterPage = withRouter(({ history }) => {
       {/* <LoginSignupForm
         handleSubmit={handleSubmit}
       /> */}
-      <RegisterUser {...{ handleRegister }} />
+      <RegisterOwner {...{ handleRegister }} />
     </div>
   );
 });

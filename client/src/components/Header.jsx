@@ -19,7 +19,7 @@ export const Header = () => {
             {user && (
               <>
                 <li className="nav-item">
-                  <Link className="nav-link" to="/register">
+                  <Link className="nav-link" to="/registrar">
                     + Cliente
                   </Link>
                 </li>
@@ -33,7 +33,7 @@ export const Header = () => {
             {!user && (
               <>
                 <li className="nav-item">
-                  <Link className="nav-link" to="/admin">
+                  <Link className="nav-link" to="/login">
                     Admin
                   </Link>
                 </li>

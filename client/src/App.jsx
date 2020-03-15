@@ -2,13 +2,9 @@ import React, { useState } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { HomePage } from "./pages/Home.page";
 import { RegisterPage } from "./pages/Register.page";
-import styled from "styled-components";
 import { UserContext } from "../lib/auth.api";
 import { Layout } from "./layouts/Main.layout";
-
-const Body = styled.div`
-  margin: 50px 100px;
-`;
+import { LoginPage } from "./pages/Login.page";
 
 export const App = () => {
   const [user, setUser] = useState();
@@ -18,7 +14,8 @@ export const App = () => {
         <Layout>
           <Switch>
             <Route path="/" exact component={HomePage} />
-            <Route path="/admin" component={RegisterPage} />
+            <Route path="/registrar" component={RegisterPage} />
+            <Route path="/login" component={LoginPage} />
           </Switch>
         </Layout>
       </Router>
