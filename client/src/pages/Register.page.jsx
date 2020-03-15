@@ -1,10 +1,10 @@
 import React from "react";
 import { withRouter } from "react-router-dom";
-import { user, register } from "../../lib/auth.api";
+import { useUser, register } from "../../lib/auth.api";
 import { RegisterUser } from "../components/RegisterUser";
 
 export const RegisterPage = withRouter(({ history }) => {
-  const setUser = user("set");
+  const setUser = useUser("set");
 
   const handleRegister = async (type, obj) => {
     const user = await register(type, obj);

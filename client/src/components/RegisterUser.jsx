@@ -11,7 +11,7 @@ export const RegisterUser = ({ handleRegister }) => {
     <form
       onSubmit={e => {
         e.preventDefault();
-        handleRegister({ firstName, lastName, username, mainPhone, emergencyPhone });
+        handleRegister("user", { firstName, lastName, username, mainPhone, emergencyPhone });
       }}
     >
       <div className="form-group">
@@ -43,7 +43,7 @@ export const RegisterUser = ({ handleRegister }) => {
         </small>
       </div>
       <div className="form-group">
-        <label htmlFor="emergencyPhone">Teléfono de emergencias {mainPhone}</label>
+        <label htmlFor="emergencyPhone">Teléfono de emergencias {emergencyPhone}</label>
         <input type="tel" className="form-control" id="emergencyPhone" value={emergencyPhone} onChange={e => setEmergencyPhone(e.target.value)} />
         <small id="username" className="form-text text-muted">
           Teléfono de contacto en caso de emergencias. Differente al principal.

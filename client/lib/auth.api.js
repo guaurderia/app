@@ -1,16 +1,16 @@
 import React, { useContext } from "react";
 import axios from "axios";
 
-export const UseContext = React.createContext();
+export const UserContext = React.createContext();
 
-export const user = action => {
-  const userState = useContext(UseContext);
+export const useUser = action => {
+  const userState = useContext(UserContext);
   switch (action) {
-    case "use":
+    case "get":
       return userState.user;
     case "set":
       return userState.setUser;
-    case "logout":
+    case "out":
       return userState.setUser(null);
   }
 };
