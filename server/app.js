@@ -41,5 +41,9 @@ app.use(
   })
 );
 require("./auth")(app);
+app.use(express.static(path.join(__dirname, "public")));
+
+const index = require("./routes/index.route");
+app.use("/", index);
 
 module.exports = app;
