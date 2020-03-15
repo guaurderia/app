@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/guaurderia/app.svg?branch=master)](https://travis-ci.org/guaurderia/app)
+
 # Guaurdería README
 
 Guaurdería application that uses a [ReactJS] frontend to capture and manage assistance, an api written in [ReactJS], and [MongoDB] to store data.
@@ -191,7 +193,7 @@ and launch it:
   Start React app
 
   ```javascript
-  cd Client
+  cd client
   npm start
   ```
 
