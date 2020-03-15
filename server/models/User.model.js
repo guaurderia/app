@@ -7,10 +7,7 @@ const userSchema = new Schema(
     lastName: { type: String, required: true },
     username: { type: String, required: true },
     password: { type: String },
-    mainPhone: { type: Number, required: true },
-    emergencyPhone: { type: Number },
-    adress: { type: Object },
-    dogs: { type: Schema.Types.ObjectId, ref: "Dog" }
+    roll: { type: String }
   },
   {
     timestamps: true
