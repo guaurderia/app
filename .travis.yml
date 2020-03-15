@@ -4,16 +4,17 @@ node_js:
 stages:
   - Build
   - Server
-  - Client 
-env:
-  - PORT=3000
-  - DBURL=mongodb://localhost/guaurderia
+  - Client
+  - Test
 
 jobs:
   include:
     - stage: Build
       script: npm install
     - stage: Server
-      script: npm install && npm start
+      script: cd server && npm install && npm run travis:start
     - stage: Client
-      script: npm install && npm start
+      script: cd client && npm install && npm run travis:start
+    - stage: Test
+      script:
+        - echo "skipping tests"  

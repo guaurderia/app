@@ -1,5 +1,5 @@
 require("dotenv").config();
-const dbUrl = process.env.DBURL;
+const dbUrl = process.env.DBURL ? process.env.DBURL : 'mongodb://localhost/test';
 const mongoose = require("mongoose");
 
 mongoose
