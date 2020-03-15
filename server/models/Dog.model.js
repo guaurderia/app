@@ -5,9 +5,13 @@ const dogSchema = new Schema(
   {
     name: { type: String, required: true },
     bread: { type: String, required: true },
-    age: { type: Number, required: true },
-    user: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    humans: { type: Schema.Types.ObjectId, ref: "Human" }
+    sex: { type: Number, required: true },
+    vaccinated: { type: Boolean, required: true },
+    fixed: { type: Boolean, required: true },
+    last_heat: { type: Date },
+    chip: { type: String },
+    character: { type: String },
+    user: { type: Schema.Types.ObjectId, ref: "User", required: true }
   },
   {
     timestamps: true

@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const attendanceSchema = new Schema(
   {
-    dogs: { type: Schema.Types.ObjectId, ref: "Dog" },
+    dog: { type: Schema.Types.ObjectId, ref: "Dog" },
     startTime: { type: Date },
     endTime: { type: Date }
   },
@@ -12,5 +12,5 @@ const attendanceSchema = new Schema(
   }
 );
 
-const Attendance = mongoose.model("Owner", attendanceSchema);
+const Attendance = mongoose.model("Attendance", attendanceSchema);
 module.exports = Attendance;
