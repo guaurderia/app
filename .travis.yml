@@ -1,16 +1,19 @@
 language: node_js
 node_js:
   - "8"
+stages:
+  - Build
+  - Server
+  - Client 
 env:
   - PORT=3000
   - DBURL=mongodb://localhost/guaurderia
-sudo: false
 
-- stage: Build
+jobs:
+  include:
+    - stage: Build
       script: npm install
-
-- stage: Server
+    - stage: Server
       script: npm install && npm start
-
-- stage: Client
+    - stage: Client
       script: npm install && npm start
