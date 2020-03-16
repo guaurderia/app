@@ -1,17 +1,17 @@
 const express = require("express");
 const router = express.Router();
-const User = require("../models/User.model");
+const Owner = require("../models/Owner.model");
 const passport = require("passport");
 const _ = require("lodash");
 
 router.post("/user", async (req, res) => {
-  const { firstName, lastName, username, mainPhone, emergencyPhone } = req.body;
-  const newUser = await User.create({
+  const { firstName, lastName, username, mainPhone, dni } = req.body;
+  const newUser = await Owner.create({
     firstName,
     lastName,
     username,
     mainPhone,
-    emergencyPhone
+    dni
   });
 
   req.logIn(newUser, err => {

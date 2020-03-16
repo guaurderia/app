@@ -10,13 +10,13 @@ export const Register = ({ handleRegister }) => {
   const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
   const [mainPhone, setMainPhone] = useState("");
-  const [emergencyPhone, setEmergencyPhone] = useState("");
+  const [dni, setDni] = useState("");
 
   return (
     <Form
       onSubmit={e => {
         e.preventDefault();
-        handleRegister("user", { firstName, lastName, username, mainPhone, emergencyPhone });
+        handleRegister("user", { firstName, lastName, username, mainPhone, dni });
       }}
     >
       <div className="form-group">
@@ -43,16 +43,10 @@ export const Register = ({ handleRegister }) => {
       <div className="form-group">
         <label htmlFor="mainPhone">Teléfono de contacto {mainPhone}</label>
         <input type="tel" className="form-control" id="mainPhone" value={mainPhone} onChange={e => setMainPhone(e.target.value)} />
-        <small id="mainPhone" className="form-text text-muted">
-          Telefono principal de contacto.
-        </small>
       </div>
       <div className="form-group">
-        <label htmlFor="emergencyPhone">Teléfono de emergencias {emergencyPhone}</label>
-        <input type="tel" className="form-control" id="emergencyPhone" value={emergencyPhone} onChange={e => setEmergencyPhone(e.target.value)} />
-        <small id="username" className="form-text text-muted">
-          Teléfono de contacto en caso de emergencias. Differente al principal.
-        </small>
+        <label htmlFor="dni">DNI {dni}</label>
+        <input type="text" className="form-control" id="dni" value={emergencyPhone} onChange={e => setDni(e.target.value)} />
       </div>
 
       <button type="submit" className="btn btn-primary">
