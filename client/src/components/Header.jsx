@@ -16,29 +16,25 @@ export const Header = () => {
         </button>
         <div className="collapse navbar-collapse d-flex flex-row-reverse" id="navbarNav">
           <ul className="navbar-nav">
-            {user && (
-              <>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/registrar">
-                    + Cliente
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/" onClick={handleLogout}>
-                    Salir
-                  </Link>
-                </li>
-              </>
-            )}
-            {!user && (
-              <>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/login">
-                    Admin
-                  </Link>
-                </li>
-              </>
-            )}
+            <>
+              <li className="nav-item">
+                <Link className="nav-link" to="/registrar">
+                  + Cliente
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/" onClick={handleLogout}>
+                  Salir
+                </Link>
+              </li>
+            </>
+            <>
+              <li className="nav-item">
+                <Link className="nav-link" to="/login">
+                  Admin
+                </Link>
+              </li>
+            </>
           </ul>
         </div>
       </nav>

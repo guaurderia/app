@@ -11,9 +11,5 @@ export const RegisterPage = withRouter(({ history }) => {
     setUser(user);
     history.push("/");
   };
-  return (
-    <div>
-      <Register {...{ handleRegister }} />
-    </div>
-  );
+  return <div>Registrar</div>;
 });

@@ -11,9 +11,5 @@ export const LoginPage = withRouter(({ history }) => {
     setUser(user);
     history.push("/");
   };
-  return (
-    <div>
-      <Login {...{ handleLogin }} />
-    </div>
-  );
+  return <div>Login</div>;
 });
