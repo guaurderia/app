@@ -1,5 +1,5 @@
-import React, { useContext } from "react";
-import axios from "axios";
+import React, { useContext } from "../node_modules/react";
+import axios from "../node_modules/axios";
 
 export const UserContext = React.createContext();
 

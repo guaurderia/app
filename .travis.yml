@@ -1,0 +1,20 @@
+language: node_js
+node_js:
+  - "8"
+stages:
+  - Build
+  - Server
+  - Client
+  - Test
+
+jobs:
+  include:
+    - stage: Build
+      script: npm install
+    - stage: Server
+      script: cd server && npm install && npm run travis:start
+    - stage: Client
+      script: cd client && npm install && npm run travis:start
+    - stage: Test
+      script:
+        - echo "skipping tests"  
