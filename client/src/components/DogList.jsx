@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
-const OwnerList = () => {
-  const getOwners = [
+const DogList = () => {
+  const getDogs = [
     { firstName: "Román", lastName: "Méndez" },
     { firstName: "Alicia", lastName: "Doblas" }
   ];
@@ -29,4 +29,4 @@ const OwnerList = () => {
   );
 };
 
-export default OwnerList;
+export default DogList;

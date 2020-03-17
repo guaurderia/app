@@ -6,12 +6,13 @@ const dogSchema = new Schema(
     name: { type: String, required: true },
     bread: { type: String, required: true },
     sex: { type: Number, required: true },
-    vaccinated: { type: Boolean, required: true },
+    vaccines: [{ type: String, required: true }],
     fixed: { type: Boolean, required: true },
-    last_heat: { type: Date },
+    heat: { had: { type: Boolean }, date: { type: Date } },
     chip: { type: String },
     character: { type: String },
-    user: { type: Schema.Types.ObjectId, ref: "User", required: true }
+    user: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    pass: [{ type: Schema.Types.ObjectId, ref: "Pass" }]
   },
   {
     timestamps: true
