@@ -13,14 +13,8 @@ const Header = () => {
         </button>
         <div className="collapse navbar-collapse d-flex flex-row-reverse" id="navbarNav">
           <div className="navbar-nav">
-            <Link className="nav-item nav-link" to="/dog/add">
-              + Añadir <span className="sr-only">(current)</span>
-            </Link>
             <Link className="nav-item nav-link" to="/dog/list">
               Perros
-            </Link>
-            <Link className="nav-item nav-link" to="/login">
-              Entrar
             </Link>
           </div>
         </div>

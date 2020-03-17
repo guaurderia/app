@@ -1,23 +1,26 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import dogBreads from "../../lib/dogBreads";
 
 const Form = styled.form`
   margin: 30px 200px;
 `;
 
-export const NewDogForm = ({ handleNewDog }) => {
+export const DogForm = () => {
   const [name, setName] = useState("");
-  const [bread, setBread] = useState("");
+  const [bread, setBread] = useState(dogBreads[0]);
   const [sex, setSex] = useState("macho");
   const [vaccines, setVaccines] = useState({ rabies: false, parvovirus: false, hepatitis: false, distemper: false });
   const [fixed, setFixed] = useState(false);
-  const [lastHeat, setLastHeat] = useState(null);
-  const [chip, SetChip] = useState("");
-  const [character, setCharacter] = useState("");
+  const [heat, setHeat] = useState({ had: true, date: new Date() });
+  const [chip, setChip] = useState("");
+  const [character, setCharacter] = useState("Tímido");
   const [user, setUser] = useState("");
   const [pass, setPass] = useState("");
 
-  console.log(vaccines);
+  console.log(heat);
 
   return (
     <Form
@@ -35,11 +38,52 @@ export const NewDogForm = ({ handleNewDog }) => {
         </div>
       </div>
       <div className="form-group row">
-        <label htmlFor="bread" className="col-sm-2 col-form-label">
+        <label htmlFor="character" className="col-sm-2 col-form-label">
           Raza
         </label>
         <div className="col-sm-10">
-          <input type="text" className="form-control" id="bread" value={bread} onChange={e => setBread(e.target.value)} />
+          <select className="form-control" id="bread" value={bread} onChange={e => setBread(e.target.value)}>
+            <option>-- Select --</option>
+            <option>*Cruze*</option>
+            {dogBreads.map((dog, i) => (
+              <option key={i}>{dog}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+      <div className="form-group row">
+        <label htmlFor="bread" className="col-sm-2 col-form-label">
+          Microchip
+        </label>
+        <div className="col-sm-10">
+          <input type="number" className="form-control" id="chip" value={chip} onChange={e => setChip(e.target.value)} />
+        </div>
+      </div>
+      <div className="form-group row">
+        <label htmlFor="character" className="col-sm-2 col-form-label">
+          Carácter
+        </label>
+        <div className="col-sm-10">
+          <select className="form-control" id="character" value={character} onChange={e => setCharacter(e.target.value)}>
+            <option>-- Select --</option>
+            <option>Tímido</option>
+            <option>Sociable</option>
+            <option>Hiperactivo</option>
+            <option>Tranquilo</option>
+          </select>
+        </div>
+      </div>
+      <div className="form-group row">
+        <div className="col-sm-2">Castrado</div>
+        <div className="col-sm-10">
+          <div className="form-check">
+            <input className="form-check-input" type="checkbox" id="fixed" checked={fixed} onChange={e => setFixed(!fixed)} />
+            <label className="form-check-label" htmlFor="female">
+              <div>
+                <span className={fixed ? "glyphicon glyphicon-ok" : "glyphicon glyphicon-remove"} aria-hidden="true"></span>
+              </div>
+            </label>
+          </div>
         </div>
       </div>
       <fieldset className="form-group">
@@ -61,17 +105,22 @@ export const NewDogForm = ({ handleNewDog }) => {
           </div>
         </div>
       </fieldset>
-      <div className="form-group row">
-        <div className="col-sm-2">Castrado</div>
-        <div className="col-sm-10">
-          <div className="form-check">
-            <input className="form-check-input" type="checkbox" id="fixed" checked={fixed} onChange={e => setFixed(!fixed)} />
-            <label className="form-check-label" htmlFor="female">
-              {fixed ? "Si" : "No"}
-            </label>
+      {sex === "female" && fixed === false && (
+        <div className="form-group row">
+          <div className="col-sm-2">Último Celo</div>
+          <div className="col-sm-10">
+            <div>
+              <DatePicker showPopperArrow={false} selected={heat.date} onChange={date => setHeat({ ...heat, date })} disabled={!heat.had} placeholderText="" />
+              <div className="form-check">
+                <input className="form-check-input" type="checkbox" id="heat" checked={!heat.had} onChange={e => setHeat(!heat.had ? { ...heat, had: true, date: new Date() } : { ...heat, had: false, date: null })} />
+                <label className="form-check-label" htmlFor="heat">
+                  Todavía no ha tenido su primer celo.
+                </label>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      )}
       <div className="form-group row">
         <div className="col-sm-2">Vacunas</div>
         <div className="col-sm-10">
@@ -111,5 +160,3 @@ export const NewDogForm = ({ handleNewDog }) => {
     </Form>
   );
 };
-
-export default NewDogForm;
