@@ -2,20 +2,39 @@ import React, { useState } from "react";
 
 const DogList = () => {
   const getDogs = [
-    { firstName: "Román", lastName: "Méndez" },
-    { firstName: "Alicia", lastName: "Doblas" }
+    {
+      name: "Leo",
+      bread: "Cruze",
+      sex: "female",
+      vaccines: { rabies: true, parvovirus: true, hepatitis: true, distemper: true },
+      fixed: true,
+      chip: "KJHSDUNAw193487299",
+      character: "Tímida",
+      user: { type: Schema.Types.ObjectId, ref: "User", required: true },
+      pass: [{ type: Schema.Types.ObjectId, ref: "Pass" }]
+    },
+    {
+      name: "Pepa",
+      bread: "Galgo",
+      sex: "female",
+      vaccines: { rabies: true, parvovirus: true, hepatitis: true, distemper: true },
+      fixed: true,
+      chip: "KJHSDUNAw193487299",
+      character: "Tímida",
+      user: { type: Schema.Types.ObjectId, ref: "User", required: true },
+      pass: [{ type: Schema.Types.ObjectId, ref: "Pass" }]
+    }
   ];
-  const [owners, setOwners] = useState(getOwners);
-  console.log(owners);
-  const addOwner = () => {
-    setOwners([...owners, { firstName: "name", lastName: "lastname" }]);
+  const [dogList, setDogList] = useState(getDogs);
+  const addDog = dog => {
+    setDogList([...dogList, dog]);
   };
 
   return (
     <div className="owner-list">
-      {owners.map((owner, i) => (
+      {dogList.map((dog, i) => (
         <li key={i} className="list-group-item">
-          {owner.lastName}, {owner.firstName}
+          {dog.name} {dog.bread} {dog.sex} {dog.character}
         </li>
       ))}
       <div className="container">

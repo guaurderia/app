@@ -11,16 +11,16 @@ const Form = styled.form`
 export const DogForm = () => {
   const [name, setName] = useState("");
   const [bread, setBread] = useState(dogBreads[0]);
-  const [sex, setSex] = useState("macho");
+  const [sex, setSex] = useState("male");
   const [vaccines, setVaccines] = useState({ rabies: false, parvovirus: false, hepatitis: false, distemper: false });
   const [fixed, setFixed] = useState(false);
   const [heat, setHeat] = useState({ had: true, date: new Date() });
   const [chip, setChip] = useState("");
-  const [character, setCharacter] = useState("Tímido");
+  const [character, setCharacter] = useState("");
   const [user, setUser] = useState("");
   const [pass, setPass] = useState("");
 
-  console.log(heat);
+  console.log(sex);
 
   return (
     <Form
@@ -57,20 +57,6 @@ export const DogForm = () => {
         </label>
         <div className="col-sm-10">
           <input type="number" className="form-control" id="chip" value={chip} onChange={e => setChip(e.target.value)} />
-        </div>
-      </div>
-      <div className="form-group row">
-        <label htmlFor="character" className="col-sm-2 col-form-label">
-          Carácter
-        </label>
-        <div className="col-sm-10">
-          <select className="form-control" id="character" value={character} onChange={e => setCharacter(e.target.value)}>
-            <option>-- Select --</option>
-            <option>Tímido</option>
-            <option>Sociable</option>
-            <option>Hiperactivo</option>
-            <option>Tranquilo</option>
-          </select>
         </div>
       </div>
       <div className="form-group row">
@@ -121,6 +107,20 @@ export const DogForm = () => {
           </div>
         </div>
       )}
+      <div className="form-group row">
+        <label htmlFor="character" className="col-sm-2 col-form-label">
+          Carácter
+        </label>
+        <div className="col-sm-10">
+          <select className="form-control" id="character" value={character} onChange={e => setCharacter(e.target.value)}>
+            <option>-- Select --</option>
+            <option>{sex === "female" ? "Tímida" : "Tímido"}</option>
+            <option>Sociable</option>
+            <option>{sex === "female" ? "Hiperactiva" : "Hiperactivo"}</option>
+            <option>{sex === "female" ? "Tranquila" : "Tranquilo"}</option>
+          </select>
+        </div>
+      </div>
       <div className="form-group row">
         <div className="col-sm-2">Vacunas</div>
         <div className="col-sm-10">
