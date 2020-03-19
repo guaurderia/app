@@ -1,8 +1,29 @@
 [![Build Status](https://travis-ci.org/guaurderia/app.svg?branch=master)](https://travis-ci.org/guaurderia/app)
 
-# Guaurdería README
+- [Guaurderia](#guaurderia)
+  - [Features](#features)
+  - [High Level Design](#high-level-design)
+  - [Tools](#tools)
+  - [Getting Started](#getting-started)
+    - [Prerequisites](#prerequisites)
+    - [MongoDB Setup](#mongodb-setup)
+      - [Install and Host MongoDB Locally](#install-and-host-mongodb-locally)
+      - [Install And Host Using Docker](#install-and-host-using-docker)
+        - [Run MongoDB Using Named Volume](#run-mongodb-using-named-volume)
+        - [Run MongoDB Using Bind Mount](#run-mongodb-using-bind-mount)
+      - [Third Party Hosting](#third-party-hosting)
+        - [MongoDB Atlas](#mongodb-atlas)
+        - [MLab](#mlab)
+  - [Install](#install)
+    - [Server](#server)
+      - [Build server](#build-server)
+    - [Client](#client)
+  - [Versioning](#versioning)
+  - [Authors](#authors)
 
-Guaurdería application that uses a [ReactJS] frontend to capture and manage assistance, an api written in [ReactJS], and [MongoDB] to store data.
+# Guaurderia
+
+Guaurderia app uses a [ReactJS] frontend to capture and manage assistance, an api written in [ReactJS], and [MongoDB] to store data.
 
 ## Features
 
@@ -10,11 +31,11 @@ Guaurdería application that uses a [ReactJS] frontend to capture and manage ass
 
 ## High Level Design
 
-![](./client/public/img/data_structure_v2.png)
+<img src="./client/public/img/data_structure_v2.png" width="60%" height="60%" />
 
 ---
 
-## Developed With
+## Tools
 
 * [NodeJS] - Javascript runtime
 * [MongoDB] - NoSQL database
@@ -132,7 +153,7 @@ To get started, signup for free account [here](https://mlab.com/signup/). The fr
 
 Please review the documentation [here](https://docs.mlab.com/)
 
-### Install
+## Install
 
 Follow the following steps to get development environment running.
 
@@ -148,52 +169,44 @@ Follow the following steps to get development environment running.
    git clone git@github.com:guaurderia/app.git
    ```
 
-1. Install node modules
-
-   ```bash
-   cd app
-   npm install
-   ```
 
 ### Server
 
-First of all declare `.env` variables in server:
+To start app server, you just need to run this commands:
 
-* Build
+#### Build server
 
    ```bash
    cd server
+   npm install
+   npm start
    ```
+
+
+[Optional]
+
+To change the default server behaviour you can create an `.env` file in server root path to declarte the server variables:
 
   ```bash
   vim .env
   ```
-  Define the following variables:
+  Example of server variables:
 
-  ```bash
-PORT=3000
-DBURL=mongodb://localhost/guaurderia
-```
+  ```bash PORT=3000 DBURL=mongodb://localhost/guaurderia
+  ```
 
-Once `.env` file is in place, install the server side:
+  Once `.env` file is in place, to start the server follow [build instructions](#Build-server)
 
-   ```bash
-   npm install
-   ```   
-and launch it:
-
-   ```bash
-   npm start
-   ```
 
 ### Client
 
-* Run client (app):
+To start the app, follow the next instructions:
 
   Start React app
 
   ```javascript
   cd client
+  npm install
   npm start
   ```
 
