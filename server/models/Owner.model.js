@@ -9,12 +9,12 @@ const ownerSchema = new Schema(
     password: { type: String },
     mainPhone: { type: Number, required: true },
     dni: { type: String, required: true },
-    dogs: { type: Schema.Types.ObjectId, ref: "Dog" }
+    dogs: { type: Schema.Types.ObjectId, ref: "dog" }
   },
   {
     timestamps: true
   }
 );
 
-const Owner = mongoose.model("Owner", ownerSchema);
+const Owner = mongoose.model("owner", ownerSchema);
 module.exports = Owner;
