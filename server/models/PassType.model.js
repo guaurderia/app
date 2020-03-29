@@ -13,5 +13,5 @@ const passTypeSchema = new Schema(
   }
 );
 
-const PassType = mongoose.model("PassType", passTypeSchema);
+const PassType = mongoose.model("passType", passTypeSchema);
 module.exports = PassType;

@@ -8,7 +8,7 @@ const Form = styled.form`
   margin: 30px 200px;
 `;
 
-export const DogForm = () => {
+export const DogForm = ({ handleNewDog }) => {
   const [name, setName] = useState("");
   const [bread, setBread] = useState(dogBreads[0]);
   const [sex, setSex] = useState("male");
@@ -26,7 +26,19 @@ export const DogForm = () => {
     <Form
       onSubmit={e => {
         e.preventDefault();
-        handleNewDog("dog", { name, bread, sex, vaccinated, fixed, lastHeat, chip, character, user, pass });
+        console.log("About to create dog with: " + 
+        "\nname:" + name +
+        "\nbread:" + bread +
+        "\nsex:" +  sex +
+        "\nvaccines:" +  vaccines +
+        "\nfixed:" +  fixed +
+        "\nheat:" +  heat +
+        "\nchip:" +  chip +
+        "\ncharacter:" +  character +
+        "\nuser:" +  user +
+        "\npass:" +  pass);
+        //handleNewDog(name, bread, sex, vaccines, fixed, heat, chip, character, user, pass);
+        handleNewDog(name, bread, sex, vaccines, fixed, heat, chip, character, user, pass);
       }}
     >
       <div className="form-group row">
@@ -150,6 +162,22 @@ export const DogForm = () => {
           </div>
         </div>
       </div>
+      {/* <div className="form-group row">
+        <label htmlFor="user" className="col-sm-2 col-form-label">
+          user
+        </label>
+        <div className="col-sm-10">
+          <input type="text" className="form-control" id="user" value={user} onChange={e => setUser(e.target.value)} />
+        </div>
+      </div>
+      <div className="form-group row">
+        <label htmlFor="pass" className="col-sm-2 col-form-label">
+          Pass
+        </label>
+        <div className="col-sm-10">
+          <input type="password" className="form-control" id="pass" value={pass} onChange={e => setPass(e.target.value)} />
+        </div>
+      </div> */}
       <div className="form-group row">
         <div className="col-sm-10">
           <button type="submit" className="btn btn-primary">

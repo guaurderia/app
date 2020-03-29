@@ -12,6 +12,7 @@ export const App = () => (
       <Main>
         <Switch>
           <Route path="/dog/list" component={DogListPage} />
+          <Route path="/dog/create" component={DogListPage} />
         </Switch>
       </Main>
       <Footer />
