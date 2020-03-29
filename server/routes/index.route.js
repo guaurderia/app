@@ -1,10 +1,21 @@
 const express = require("express");
 const router = express.Router();
-const owners = require("./owners.route");
-const dog = require("./dog");
+const Dog = require("../models/Dog.model");
+const { crudGenerator } = require("../routes/crud.model");
 
-router.use("/owners", owners);
-router.use("/dog", dog);
+router.use(
+  "/dog",
+  crudGenerator(Dog, {
+    createProtectFields: [],
+    populateFields: ["name", "breed"],
+    extraFieldsCreate: req => {
+      if (!req.user) throw new Error("To create a frase you have to login first");
+      return {
+        creator: req.user._id
+      };
+    }
+  })
+);
 
 router.get("/", (req, res, next) => {
   res.json({ status: "Bienvenido/a a la Guaurderia" });

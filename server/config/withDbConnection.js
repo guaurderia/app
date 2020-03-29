@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
+const { MongoError } = require("mongodb");
 require("dotenv").config();
 
-const dbUrl = process.env.DBURL ? process.env.DBURL : 'mongodb://localhost/test';
+const dbUrl = process.env.DBURL ? process.env.DBURL : "mongodb://localhost/test";
 
 const withDbConnection = async (fn, disconnectEnd = true) => {
   try {
@@ -23,4 +24,19 @@ const withDbConnection = async (fn, disconnectEnd = true) => {
   }
 };
 
-module.exports = withDbConnection;
+const dropIfExists = async Model => {
+  try {
+    await Model.collection.drop();
+  } catch (e) {
+    if (e instanceof MongoError) {
+      console.log(`Cannot drop collection ${Model.collection.name}, because does not exist in DB`);
+    } else {
+      throw e;
+    }
+  }
+};
+
+module.exports = {
+  dropIfExists,
+  withDbConnection
+};
