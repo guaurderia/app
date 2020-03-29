@@ -13,10 +13,7 @@ const crudGenerator = (
   const router = express.Router();
 
   const allFields = Object.keys(Model.schema.paths);
-  const createFields = _.without(
-    allFields,
-    ...["_id", "__v", "createdAt", "updatedAt", ...createProtectFields]
-  );
+  const createFields = _.without(allFields, ...["_id", "__v", "createdAt", "updatedAt", ...createProtectFields]);
 
   // Fields
   router.get(
@@ -28,6 +25,7 @@ const crudGenerator = (
 
   // Retrieve
   router.get("/", async (req, res, next) => {
+    console.log("FIND GET");
     const objs = await Model.find().populate(populateFields);
     return res.json(objs);
   });
