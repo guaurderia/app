@@ -1,18 +1,20 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const userSchema = new Schema(
+const ownerSchema = new Schema(
   {
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
     username: { type: String, required: true },
     password: { type: String },
-    roll: { type: String }
+    mainPhone: { type: Number, required: true },
+    dni: { type: String, required: true },
+    dogs: { type: Schema.Types.ObjectId, ref: "dog" }
   },
   {
     timestamps: true
   }
 );
 
-const User = mongoose.model("user", userSchema);
-module.exports = User;
+const Owner = mongoose.model("owner", ownerSchema);
+module.exports = Owner;

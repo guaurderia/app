@@ -1,14 +1,21 @@
 import React from "react";
-import { RegisterOwner } from "./components/RegisterOwner";
-import styled from "styled-components";
-
-const Body = styled.div`
-  margin: 50px 100px;
-`;
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import Main from "./layouts/Main";
+import Header from "./layouts/Header";
+import Footer from "./layouts/Footer";
+import DogListPage from "./pages/DogList.page";
 
 export const App = () => (
-  <Body>
-    <h1>🐶</h1>
-    <RegisterOwner />
-  </Body>
+  <div>
+    <Router>
+      <Header />
+      <Main>
+        <Switch>
+          <Route path="/dog/list" component={DogListPage} />
+          <Route path="/dog/create" component={DogListPage} />
+        </Switch>
+      </Main>
+      <Footer />
+    </Router>
+  </div>
 );

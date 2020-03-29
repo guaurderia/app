@@ -5,14 +5,20 @@ const dogSchema = new Schema(
   {
     name: { type: String, required: true },
     bread: { type: String, required: true },
-    age: { type: Number, required: true },
-    user: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    humans: { type: Schema.Types.ObjectId, ref: "Human" }
+    sex: { type: String, required: true },
+    vaccines: { rabies: { type: Boolean }, parvovirus: { type: Boolean }, hepatitis: { type: Boolean }, distemper: { type: Boolean } },
+    fixed: { type: Boolean, required: true },
+    heat: { had: { type: Boolean }, date: { type: Date } },
+    chip: { type: String },
+    character: { type: String }
+    //TODO: Inlcude user and password again
+    //user: { type: Schema.Types.ObjectId, ref: "user", required: true },
+    //pass: [{ type: Schema.Types.ObjectId, ref: "pass" }]
   },
   {
     timestamps: true
   }
 );
 
-const Dog = mongoose.model("Dog", dogSchema);
+const Dog = mongoose.model("dog", dogSchema);
 module.exports = Dog;
