@@ -9,27 +9,9 @@ const path = require("path");
 const cors = require("cors");
 const session = require("express-session");
 const MongoStore = require("connect-mongo")(session);
-<<<<<<< HEAD
 const dbUrl = process.env.DBURL ? process.env.DBURL : "mongodb://localhost/test";
 
 require("./config/db.config");
-=======
-const dbUrl = process.env.DBURL ? process.env.DBURL : 'mongodb://localhost/test';
-
-mongoose
-  .connect(dbUrl, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  })
-  .then(x => {
-    console.log(`Connected to Mongo! Database name: "${x.connections[0].name}"`);
-  })
-  .catch(err => {
-    console.error("Error connecting to mongo", err);
-  });
-
-const app_name = require("./package.json").name;
->>>>>>> f16ca83a73e500b6d98e7ae70308eedf16060c41
 
 const app = express();
 
@@ -47,11 +29,7 @@ app.use(
     store: new MongoStore({ mongooseConnection: mongoose.connection })
   })
 );
-<<<<<<< HEAD
 require("./middleware/auth/passport/index")(app);
-=======
-require("./auth")(app);
->>>>>>> f16ca83a73e500b6d98e7ae70308eedf16060c41
 app.use(express.static(path.join(__dirname, "public")));
 
 const index = require("./routes/index.route");
