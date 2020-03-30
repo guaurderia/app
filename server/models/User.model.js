@@ -3,11 +3,11 @@ const Schema = mongoose.Schema;
 
 const userSchema = new Schema(
   {
-    firstName: { type: String, required: [true, "Tienes que introducir tu nombre"] },
-    lastName: { type: String, required: [true, "Tienes que introducir tus apellidos"] },
-    username: { type: String, required: [true, "Introduce una dirección de correo electrónico correcta"] },
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
+    username: { type: String, required: true },
     password: { type: String },
-    admin: { type: Boolean, required: [true, "You must specify if you this user is an adminitrator"] }
+    admin: { type: Boolean, required: true }
   },
   {
     timestamps: true
