@@ -7,11 +7,7 @@ const userSchema = new Schema(
     lastName: { type: String, required: true },
     username: { type: String, required: true },
     password: { type: String },
-<<<<<<< HEAD
     admin: { type: Boolean, required: true }
-=======
-    roll: { type: String }
->>>>>>> f16ca83a73e500b6d98e7ae70308eedf16060c41
   },
   {
     timestamps: true
