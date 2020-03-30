@@ -29,7 +29,7 @@ app.use(
     store: new MongoStore({ mongooseConnection: mongoose.connection })
   })
 );
-require("./middleware/auth")(app);
+require("./middleware/auth/passport/index")(app);
 app.use(express.static(path.join(__dirname, "public")));
 
 const index = require("./routes/index.route");
