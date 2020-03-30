@@ -2,7 +2,11 @@ const mongoose = require("mongoose");
 const { MongoError } = require("mongodb");
 require("dotenv").config();
 
+<<<<<<< HEAD
 const dbUrl = process.env.DBURL ? process.env.DBURL : "mongodb://localhost/test";
+=======
+const dbUrl = process.env.DBURL ? process.env.DBURL : 'mongodb://localhost/test';
+>>>>>>> f16ca83a73e500b6d98e7ae70308eedf16060c41
 
 const withDbConnection = async (fn, disconnectEnd = true) => {
   try {
