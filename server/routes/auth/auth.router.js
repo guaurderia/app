@@ -31,18 +31,31 @@ router.post("/signup", isLoggedIn("admin"), signupFormValidation(), async (req, 
 
 router.post("/login", isLoggedOut("login"), passport.authenticate("local"), async (req, res) => {
   console.log("LOGIN USER", req.user);
-  res.json({ status: `Welcome back ${req.user.username}` });
+  res.json({ status: `Welcome back ${req.user.firstName}` });
 });
 
-router.post("/edit/:id", isLoggedIn(), async (req, res) => {
-  const id = req.params;
-  console.log(id);
-  res.json({ status: "Edit" });
+router.get("/edit/:id", isLoggedIn("admin"), async (req, res) => {
+  const { id } = req.params;
+  const user = await User.findById(id);
+  console.log(user);
+  const filteredUser = _.pick(user, ["username", "firstName", "lastName", "admin"]);
+  console.log("FILTERED USER", filteredUser);
+  res.json(filteredUser);
+});
+
+router.post("/edit/:id", isLoggedIn("admin"), async (req, res) => {
+  const { id } = req.params;
+  const { username, firstName, lastName, admin } = req.body;
+  await User.findByIdAndUpdate(id, { username, firstName, lastName, admin });
+  const updatedUser = await User.findById(id);
+  const filteredUser = _.pick(updatedUser, ["username", "firstName", "lastName", "admin"]);
+  res.json(filteredUser);
 });
 
 router.post("/logout", isLoggedIn(), async (req, res) => {
+  const name = req.user.firstName;
   req.logOut();
-  res.json({ status: "You are logged out" });
+  res.json(`Goodbye, ${name}`);
 });
 
 module.exports = router;

@@ -14,43 +14,55 @@ const crudGenerator = (
 
   const allFields = Object.keys(Model.schema.paths);
   const createFields = _.without(allFields, ...["_id", "__v", "createdAt", "updatedAt", ...createProtectFields]);
-
-  // Fields
-  router.get(
-    "/fields",
-    asyncController(async (req, res, next) => {
-      return res.json({ createFields });
-    })
-  );
+  const dataPicker = (req, obj) => ({ ..._.pick(obj, createFields), ...extraFieldsCreate(req) });
 
   // Retrieve
-  router.get("/", async (req, res, next) => {
-    console.log("FIND GET");
+  router.get("/list", async (req, res, next) => {
     const objs = await Model.find().populate(populateFields);
     return res.json(objs);
   });
 
-  // Create
   router.post(
     "/create",
     asyncController(async (req, res, next) => {
       // NOTE: For security reasons, only allow input certain fields
-      const data = {
-        ..._.pick(req.body, createFields),
-        ...extraFieldsCreate(req)
-      };
-      const obj = await Model.create(data);
-      return res.json(obj);
+      const data = dataPicker(req, req.body);
+      try {
+        const obj = await Model.create(data);
+        return res.json(obj);
+      } catch (err) {
+        if (err.name == "ValidationError") {
+          const keys = Object.keys(err.errors);
+          return res.status(422).json(keys.map(key => err.errors[key].message));
+        } else {
+          console.error(err);
+          return res.status(500).json(err);
+        }
+      }
     })
   );
 
-  // Delete
+  router.get("/edit/:id", async (req, res) => {
+    const { id } = req.params;
+    const obj = await Model.findById(id);
+    const data = dataPicker(req, obj);
+    res.json(data);
+  });
+
+  router.post("/edit/:id", async (req, res) => {
+    const { id } = req.params;
+    const data = dataPicker(req, req.body);
+    await Model.findByIdAndUpdate(id, data);
+    const updatedObj = await Model.findById(id);
+    res.json(updatedObj);
+  });
+
   router.get(
     "/delete/:id",
     asyncController(async (req, res, next) => {
       const { id } = req.params;
-      await Model.findByIdAndRemove(id);
-      return res.json({ status: "Deleted", id });
+      const obj = await Model.findByIdAndRemove(id);
+      return res.json(`${obj.name} has been deleted`);
     })
   );
   return router;
