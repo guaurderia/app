@@ -22,7 +22,7 @@ const crudGenerator = (
       // NOTE: For security reasons, only allow input certain fields
       const data = dataPicker(req, req.body);
       const { username } = req.body;
-      const exists = await User.find({ username });
+      const exists = await Model.find({ username });
 
       if (exists) {
         return res.status(409).json("User already exists");
