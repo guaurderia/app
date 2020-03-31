@@ -12,7 +12,7 @@ router.post("/signup", isLoggedIn("admin"), signupFormValidation(), async (req, 
   const existingUser = await User.findOne({ username });
 
   if (existingUser) {
-    return res.status(401).json({ status: "User already exists" });
+    return res.status(401).json("User already exists");
   } else {
     try {
       const newUser = await User.create({ username, password: hashPassword(password), ...rest });
@@ -34,20 +34,18 @@ router.post("/login", isLoggedOut("login"), passport.authenticate("local"), asyn
   res.json({ status: `Welcome back ${req.user.firstName}` });
 });
 
-router.get("/edit/:id", isLoggedIn("admin"), async (req, res) => {
-  const { id } = req.params;
-  const user = await User.findById(id);
+router.get("/profile", isLoggedIn("admin"), async (req, res) => {
+  const user = await User.findById(req.user._id);
   console.log(user);
   const filteredUser = _.pick(user, ["username", "firstName", "lastName", "admin"]);
   console.log("FILTERED USER", filteredUser);
   res.json(filteredUser);
 });
 
-router.post("/edit/:id", isLoggedIn("admin"), async (req, res) => {
-  const { id } = req.params;
+router.post("/update", isLoggedIn("admin"), async (req, res) => {
   const { username, firstName, lastName, admin } = req.body;
-  await User.findByIdAndUpdate(id, { username, firstName, lastName, admin });
-  const updatedUser = await User.findById(id);
+  await User.findByIdAndUpdate(req.user._id, { username, firstName, lastName, admin });
+  const updatedUser = await User.findById(req.user._id);
   const filteredUser = _.pick(updatedUser, ["username", "firstName", "lastName", "admin"]);
   res.json(filteredUser);
 });
