@@ -1,0 +1,153 @@
+{
+	"info": {
+		"_postman_id": "d346d200-54e2-497b-a1b9-78de15236da1",
+		"name": "guaurderia/dog",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "dog/create",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "name",
+							"value": "Pepa",
+							"type": "text"
+						},
+						{
+							"key": "fixed",
+							"value": "true",
+							"type": "text"
+						},
+						{
+							"key": "sex",
+							"value": "female",
+							"type": "text"
+						},
+						{
+							"key": "breed",
+							"value": "mix",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3000/dog/create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"dog",
+						"create"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": null,
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "dog/show/all",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/dog/show/all",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"dog",
+						"show",
+						"all"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": null,
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "dog/show",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/dog/show/5e808126dbb856a352538749",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"dog",
+						"show",
+						"5e808126dbb856a352538749"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "dog/update",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/dog/update/5e808126dbb856a352538749",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"dog",
+						"update",
+						"5e808126dbb856a352538749"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "dog/delete",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/dog/delete/5e808126dbb856a352538749",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"dog",
+						"delete",
+						"5e808126dbb856a352538749"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
