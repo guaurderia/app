@@ -9,7 +9,7 @@ const dogSchema = new Schema(
     vaccines: { rabies: { type: Boolean }, parvovirus: { type: Boolean }, hepatitis: { type: Boolean }, distemper: { type: Boolean } },
     fixed: { type: Boolean, required: true },
     heat: { had: { type: Boolean }, date: { type: Date } },
-    chip: { type: String },
+    chip: { type: String, required: true },
     character: { type: String },
     scan: { type: Number }
     //TODO: Inlcude user and password again

@@ -16,25 +16,23 @@ const crudGenerator = (
 
   const allFields = Object.keys(Model.schema.paths);
   const createFields = _.without(allFields, ...["_id", "__v", "createdAt", "updatedAt", ...createProtectFields]);
-  const dataPicker = (req, obj) => ({ ..._.pick(obj, createFields), ...extraFieldsCreate(req) });
-  const uniquePicker = obj => _.pick(obj, uniqueIndex);
-  const displayNamePicker = obj => _.pick(obj, displayName);
+  const dataCompiler = (req, obj) => ({ ..._.pick(obj, createFields), ...extraFieldsCreate(req) });
+  const dataPicker = (pick, obj) => _.pick(obj, pick);
 
   router.post(
     "/create",
     asyncController(async (req, res) => {
       // NOTE: For security reasons, only allow input certain fields
-      const data = dataPicker(req, req.body);
-      const unique = uniquePicker(req.body);
+      const data = dataCompiler(req, req.body);
+      const unique = dataPicker(uniqueIndex, req.body);
       const exists = await Model.findOne({ ...unique });
-      const extra = extraFieldsCreate(req);
-      console.log(extra);
+      console.log(unique);
       if (exists) {
-        return res.status(409).json("User already exists");
+        return res.status(409).json(`${uniqueIndex} ${Object.values(unique)} already exists in ${Model.modelName} db`);
       } else {
         try {
           const obj = await Model.create(data);
-          const pickedObj = dataPicker(req, obj);
+          const pickedObj = dataCompiler(req, obj);
           return res.json(pickedObj);
         } catch (err) {
           if (err.name == "ValidationError") {
@@ -57,13 +55,13 @@ const crudGenerator = (
   router.get("/show/:id", async (req, res) => {
     const { id } = req.params;
     const obj = await Model.findById(id);
-    const data = dataPicker(req, obj);
+    const data = dataCompiler(req, obj);
     res.json(data);
   });
 
   router.post("/update/:id", async (req, res) => {
     const { id } = req.params;
-    const data = dataPicker(req, req.body);
+    const data = dataCompiler(req, req.body);
     await Model.findByIdAndUpdate(id, data);
     const updatedObj = await Model.findById(id);
     res.json(updatedObj);
@@ -74,7 +72,9 @@ const crudGenerator = (
     asyncController(async (req, res, next) => {
       const { id } = req.params;
       const obj = await Model.findByIdAndRemove(id);
-      return res.json(`${Model.modelName} ${id} has been deleted`);
+      const name = Object.values(dataPicker(displayName, obj));
+      console.log(name);
+      return res.json(`${name} has been deleted from ${Model.modelName} db`);
     })
   );
   return router;

@@ -12,7 +12,7 @@ router.post("/signup", isLoggedIn("admin"), signupFormValidation(), async (req, 
   const existingUser = await User.findOne({ username });
 
   if (existingUser) {
-    return res.status(401).json("User already exists");
+    return res.status(409).json("User already exists");
   } else {
     try {
       const newUser = await User.create({ username, password: hashPassword(password), ...rest });

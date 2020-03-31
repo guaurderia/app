@@ -9,19 +9,14 @@ const { isLoggedIn } = require("../middleware/auth/isLogged");
 router.use(
   "/dog",
   isLoggedIn(),
-  crudGenerator(Dog, {
+  crudGenerator(Dog, "chip", "name", {
     createProtectFields: [],
     populateFields: [],
-    extraFieldsCreate: req => {
-      if (!req.user) throw new Error("To add a dog you have to login first");
-      return {
-        creator: req.user._id
-      };
-    }
+    extraFieldsCreate: req => ({ creator: req.user._id })
   })
 );
 
-router.use("/user", isLoggedIn("admin"), crudGenerator(User, "username"));
+router.use("/user", isLoggedIn("admin"), crudGenerator(User, "username", "firstName"));
 
 router.use("/auth", auth);
 
