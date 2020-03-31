@@ -22,14 +22,15 @@ const crudGenerator = (
       // NOTE: For security reasons, only allow input certain fields
       const data = dataPicker(req, req.body);
       const { username } = req.body;
-      const exists = await Model.find({ username });
+      const exists = await Model.findOne({ username });
 
       if (exists) {
         return res.status(409).json("User already exists");
       } else {
         try {
           const obj = await Model.create(data);
-          return res.json(obj);
+          const pickedObj = dataPicker(req, obj);
+          return res.json(pickedObj);
         } catch (err) {
           if (err.name == "ValidationError") {
             const keys = Object.keys(err.errors);
@@ -68,7 +69,7 @@ const crudGenerator = (
     asyncController(async (req, res, next) => {
       const { id } = req.params;
       const obj = await Model.findByIdAndRemove(id);
-      return res.json(`${obj.name} has been deleted`);
+      return res.json(`${Model.modelName} ${id} has been deleted`);
     })
   );
   return router;
