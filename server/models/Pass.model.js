@@ -7,7 +7,8 @@ const passSchema = new Schema(
     passType: { type: Schema.Types.ObjectId, ref: "passType" },
     purchase_date: { type: Date },
     duration_expires: { type: Date },
-    count_remaining: { type: Number }
+    count_remaining: { type: Number },
+    creator: { type: Schema.Types.ObjectId, ref: "user" }
   },
   {
     timestamps: true

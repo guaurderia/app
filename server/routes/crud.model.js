@@ -26,14 +26,13 @@ const crudGenerator = (
       const data = dataCompiler(req, req.body);
       const unique = dataPicker(uniqueIndex, req.body);
       const exists = await Model.findOne({ ...unique });
-      console.log(unique);
+      console.log("DATA", data);
       if (exists) {
         return res.status(409).json(`${uniqueIndex} ${Object.values(unique)} already exists in ${Model.modelName} db`);
       } else {
         try {
           const obj = await Model.create(data);
-          const pickedObj = dataCompiler(req, obj);
-          return res.json(pickedObj);
+          return res.json(obj);
         } catch (err) {
           if (err.name == "ValidationError") {
             const keys = Object.keys(err.errors);

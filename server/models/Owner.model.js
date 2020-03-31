@@ -9,7 +9,8 @@ const ownerSchema = new Schema(
     password: { type: String },
     mainPhone: { type: Number, required: true },
     dni: { type: String, required: true },
-    dogs: { type: Schema.Types.ObjectId, ref: "dog" }
+    dogs: { type: Schema.Types.ObjectId, ref: "dog" },
+    creator: { type: Schema.Types.ObjectId, ref: "user" }
   },
   {
     timestamps: true

@@ -11,7 +11,8 @@ const dogSchema = new Schema(
     heat: { had: { type: Boolean }, date: { type: Date } },
     chip: { type: String, required: true },
     character: { type: String },
-    scan: { type: Number }
+    scan: { type: Number },
+    creator: { type: Schema.Types.ObjectId, ref: "user" }
     //TODO: Inlcude user and password again
     //user: { type: Schema.Types.ObjectId, ref: "user", required: true },
     //pass: [{ type: Schema.Types.ObjectId, ref: "pass" }]
