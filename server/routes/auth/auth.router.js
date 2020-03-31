@@ -29,7 +29,7 @@ router.post("/signup", isLoggedIn("admin"), signupFormValidation(), async (req, 
   }
 });
 
-router.post("/login", isLoggedOut("login"), passport.authenticate("local"), async (req, res) => {
+router.post("/login", isLoggedOut(), passport.authenticate("local"), async (req, res) => {
   console.log("LOGIN USER", req.user);
   res.json({ status: `Welcome back ${req.user.firstName}` });
 });

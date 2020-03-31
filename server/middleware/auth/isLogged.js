@@ -13,18 +13,12 @@ const isLoggedIn = roll => (req, res, next) => {
   }
 };
 
-const isLoggedOut = routeName => (req, res, next) => {
+const isLoggedOut = () => (req, res, next) => {
   if (!req.user) return next();
   else {
-    switch (routeName) {
-      case "signup":
-        if (req.user.admin) return next();
-        else return res.json(`${req.user.firstName}, you need to loggout if you want to register another user`);
-      case "login":
-        return res.json(`You are already logged in as ${req.user.firstName}`);
-      default:
-        return res.json(`You are already logged in as ${req.user.firstName}`);
-    }
+    const userRoll = req.user.roll;
+    if (userRoll === "admin" || userRoll === "user") return next();
+    else return res.status(400).json(`${req.user.firstName}, you are already logged in`);
   }
 };
 

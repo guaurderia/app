@@ -7,7 +7,11 @@ const userSchema = new Schema(
     lastName: { type: String, required: true },
     username: { type: String, required: true },
     password: { type: String },
-    roll: { type: String, required: true }
+    mainPhone: { type: Number, required: true },
+    dni: { type: String, required: true },
+    dogs: { type: Schema.Types.ObjectId, ref: "dog" },
+    roll: { type: String, required: true },
+    creator: { type: Schema.Types.ObjectId, ref: "user" }
   },
   {
     timestamps: true

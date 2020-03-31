@@ -5,14 +5,14 @@ const admins = [
   {
     firstName: "Román",
     lastName: "Méndez",
-    username: "mendezbeck@gmail.com",
+    username: "mendezbeck@dev",
     password: "1234",
     roll: "admin"
   },
   {
     firstName: "Alicia",
     lastName: "Doblas",
-    username: "aliciadoblas@gmail.com",
+    username: "aliciadoblas@dev",
     password: "1234",
     roll: "admin"
   }
@@ -22,35 +22,35 @@ const users = [
   {
     firstName: "Pepe",
     lastName: "Rodriguez",
-    username: "pepe@gmail.com",
+    username: "pepe@dev",
     password: "1234",
     roll: "user"
   },
   {
     firstName: "Pablo",
     lastName: "Rodriguez",
-    username: "pablo@gmail.com",
+    username: "pablo@dev",
     password: "1234",
     roll: "user"
   },
   {
     firstName: "Ana",
     lastName: "Rodriguez",
-    username: "ana@gmail.com",
+    username: "ana@dev",
     password: "1234",
     roll: "user"
   },
   {
     firstName: "Sara",
     lastName: "Rodriguez",
-    username: "sara@gmail.com",
+    username: "sara@dev",
     password: "1234",
     roll: "user"
   },
   {
     firstName: "Manuel",
     lastName: "Rodriguez",
-    username: "manuel@gmail.com",
+    username: "manuel@dev",
     password: "1234",
     roll: "user"
   }
@@ -60,35 +60,35 @@ const owners = [
   {
     firstName: "Pepe",
     lastName: "Rodriguez",
-    username: "pepe@gmail.com",
+    username: "pepe@dev",
     password: "1234",
     roll: "owner"
   },
   {
     firstName: "Pablo",
     lastName: "Rodriguez",
-    username: "pablo@gmail.com",
+    username: "pablo@dev",
     password: "1234",
     roll: "owner"
   },
   {
     firstName: "Ana",
     lastName: "Rodriguez",
-    username: "ana@gmail.com",
+    username: "ana@dev",
     password: "1234",
     roll: "owner"
   },
   {
     firstName: "Sara",
     lastName: "Rodriguez",
-    username: "sara@gmail.com",
+    username: "sara@dev",
     password: "1234",
     roll: "owner"
   },
   {
     firstName: "Manuel",
     lastName: "Rodriguez",
-    username: "manuel@gmail.com",
+    username: "manuel@dev",
     password: "1234",
     roll: "owner"
   }

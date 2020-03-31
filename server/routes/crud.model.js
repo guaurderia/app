@@ -59,8 +59,12 @@ const crudGenerator = (
   router.get("/show/:id", async (req, res) => {
     const { id } = req.params;
     const obj = await Model.findById(id);
-    const data = dataCompiler(req, obj);
-    res.json(data);
+    if (obj) {
+      const data = dataCompiler(req, obj);
+      res.json(data);
+    } else {
+      res.status(422).json(`This ${Model.modelName} doesn't exist`);
+    }
   });
 
   router.post("/update/:id", isLoggedIn("user"), async (req, res) => {
