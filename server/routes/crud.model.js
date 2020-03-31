@@ -25,7 +25,7 @@ const crudGenerator = (
       const exists = await User.findOne({ username });
 
       if (exists) {
-        return res.status(401).json("User already exists");
+        return res.status(409).json("User already exists");
       } else {
         try {
           const obj = await Model.create(data);
