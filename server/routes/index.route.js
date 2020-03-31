@@ -21,11 +21,7 @@ router.use(
   })
 );
 
-router.use(
-  "/user",
-  isLoggedIn("admin"),
-  crudGenerator(User)
-);
+router.use("/user", isLoggedIn("admin"), crudGenerator(User, "username"));
 
 router.use("/auth", auth);
 

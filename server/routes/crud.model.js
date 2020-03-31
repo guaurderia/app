@@ -4,6 +4,8 @@ const { asyncController } = require("../middleware/asyncController");
 
 const crudGenerator = (
   Model,
+  uniqueIndex,
+  displayName,
   { createProtectFields, extraFieldsCreate, populateFields } = {
     createProtectFields: [],
     extraFieldsCreate: () => ({}),
@@ -15,15 +17,18 @@ const crudGenerator = (
   const allFields = Object.keys(Model.schema.paths);
   const createFields = _.without(allFields, ...["_id", "__v", "createdAt", "updatedAt", ...createProtectFields]);
   const dataPicker = (req, obj) => ({ ..._.pick(obj, createFields), ...extraFieldsCreate(req) });
+  const uniquePicker = obj => _.pick(obj, uniqueIndex);
+  const displayNamePicker = obj => _.pick(obj, displayName);
 
   router.post(
     "/create",
     asyncController(async (req, res) => {
       // NOTE: For security reasons, only allow input certain fields
       const data = dataPicker(req, req.body);
-      const { username } = req.body;
-      const exists = await Model.findOne({ username });
-
+      const unique = uniquePicker(req.body);
+      const exists = await Model.findOne({ ...unique });
+      const extra = extraFieldsCreate(req);
+      console.log(extra);
       if (exists) {
         return res.status(409).json("User already exists");
       } else {
@@ -44,7 +49,7 @@ const crudGenerator = (
     })
   );
 
-  router.get("/show/all", async (req, res, next) => {
+  router.get("/show/all", async (req, res) => {
     const objs = await Model.find().populate(populateFields);
     return res.json(objs);
   });
