@@ -24,16 +24,7 @@ router.use(
 router.use(
   "/user",
   isLoggedIn("admin"),
-  crudGenerator(User, {
-    createProtectFields: [],
-    populateFields: [],
-    extraFieldsCreate: req => {
-      if (!req.user) throw new Error("To add a user you have to be an administrator");
-      return {
-        creator: req.user._id
-      };
-    }
-  })
+  crudGenerator(User)
 );
 
 router.use("/auth", auth);

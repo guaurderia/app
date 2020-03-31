@@ -9,10 +9,7 @@
     "dev-windows": "nodemon ./bin/www"
   },
   "dependencies": {
-<<<<<<< HEAD
     "axios": "^0.19.2",
-=======
->>>>>>> f16ca83a73e500b6d98e7ae70308eedf16060c41
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
     "connect-mongo": "^3.2.0",

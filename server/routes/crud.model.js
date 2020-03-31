@@ -16,40 +16,46 @@ const crudGenerator = (
   const createFields = _.without(allFields, ...["_id", "__v", "createdAt", "updatedAt", ...createProtectFields]);
   const dataPicker = (req, obj) => ({ ..._.pick(obj, createFields), ...extraFieldsCreate(req) });
 
-  // Retrieve
-  router.get("/list", async (req, res, next) => {
-    const objs = await Model.find().populate(populateFields);
-    return res.json(objs);
-  });
-
   router.post(
     "/create",
-    asyncController(async (req, res, next) => {
+    asyncController(async (req, res) => {
       // NOTE: For security reasons, only allow input certain fields
       const data = dataPicker(req, req.body);
-      try {
-        const obj = await Model.create(data);
-        return res.json(obj);
-      } catch (err) {
-        if (err.name == "ValidationError") {
-          const keys = Object.keys(err.errors);
-          return res.status(422).json(keys.map(key => err.errors[key].message));
-        } else {
-          console.error(err);
-          return res.status(500).json(err);
+      const { username } = req.body;
+      const exists = await User.findOne({ username });
+
+      if (exists) {
+        return res.status(401).json("User already exists");
+      } else {
+        try {
+          const obj = await Model.create(data);
+          return res.json(obj);
+        } catch (err) {
+          if (err.name == "ValidationError") {
+            const keys = Object.keys(err.errors);
+            return res.status(422).json(keys.map(key => err.errors[key].message));
+          } else {
+            console.error(err);
+            return res.status(500).json(err);
+          }
         }
       }
     })
   );
 
-  router.get("/edit/:id", async (req, res) => {
+  router.get("/show/all", async (req, res, next) => {
+    const objs = await Model.find().populate(populateFields);
+    return res.json(objs);
+  });
+
+  router.get("/show/:id", async (req, res) => {
     const { id } = req.params;
     const obj = await Model.findById(id);
     const data = dataPicker(req, obj);
     res.json(data);
   });
 
-  router.post("/edit/:id", async (req, res) => {
+  router.post("/update/:id", async (req, res) => {
     const { id } = req.params;
     const data = dataPicker(req, req.body);
     await Model.findByIdAndUpdate(id, data);
