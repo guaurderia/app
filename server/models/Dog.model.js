@@ -12,9 +12,9 @@ const dogSchema = new Schema(
     chip: { type: String, required: true },
     character: { type: String },
     scan: { type: Number },
-    creator: { type: Schema.Types.ObjectId, ref: "user" }
+    creator: { type: Schema.Types.ObjectId, ref: "user" },
+    owner: { type: Schema.Types.ObjectId, ref: "owner", required: true }
     //TODO: Inlcude user and password again
-    //user: { type: Schema.Types.ObjectId, ref: "user", required: true },
     //pass: [{ type: Schema.Types.ObjectId, ref: "pass" }]
   },
   {

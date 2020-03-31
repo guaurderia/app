@@ -1,6 +1,7 @@
 const express = require("express");
 const _ = require("lodash");
 const { asyncController } = require("../middleware/asyncController");
+const { isLoggedIn } = require("../middleware/auth/isLogged");
 
 const crudGenerator = (
   Model,
@@ -21,12 +22,16 @@ const crudGenerator = (
 
   router.post(
     "/create",
+    isLoggedIn("user"),
     asyncController(async (req, res) => {
       // NOTE: For security reasons, only allow input certain fields
       const data = dataCompiler(req, req.body);
       const unique = dataPicker(uniqueIndex, req.body);
-      const exists = await Model.findOne({ ...unique });
+      const exists = await Model.findOne({ unique });
       console.log("DATA", data);
+      console.log("UNIQUE", unique);
+      console.log("EXISTS", exists);
+      console.log("DATE", new Date());
       if (exists) {
         return res.status(409).json(`${uniqueIndex} ${Object.values(unique)} already exists in ${Model.modelName} db`);
       } else {
@@ -58,7 +63,7 @@ const crudGenerator = (
     res.json(data);
   });
 
-  router.post("/update/:id", async (req, res) => {
+  router.post("/update/:id", isLoggedIn("user"), async (req, res) => {
     const { id } = req.params;
     const data = dataCompiler(req, req.body);
     await Model.findByIdAndUpdate(id, data);
@@ -68,6 +73,7 @@ const crudGenerator = (
 
   router.get(
     "/delete/:id",
+    isLoggedIn("user"),
     asyncController(async (req, res, next) => {
       const { id } = req.params;
       const obj = await Model.findByIdAndRemove(id);

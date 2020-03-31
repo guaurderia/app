@@ -7,7 +7,7 @@ const userSchema = new Schema(
     lastName: { type: String, required: true },
     username: { type: String, required: true },
     password: { type: String },
-    admin: { type: Boolean, required: true }
+    roll: { type: String, required: true }
   },
   {
     timestamps: true

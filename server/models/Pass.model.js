@@ -3,17 +3,17 @@ const Schema = mongoose.Schema;
 
 const passSchema = new Schema(
   {
-    dog: { type: Schema.Types.ObjectId, ref: "dog" },
-    passType: { type: Schema.Types.ObjectId, ref: "passType" },
-    purchase_date: { type: Date },
-    duration_expires: { type: Date },
-    count_remaining: { type: Number },
-    creator: { type: Schema.Types.ObjectId, ref: "user" }
+    dog: { type: Schema.Types.ObjectId, ref: "dog", required: true },
+    passType: { type: Schema.Types.ObjectId, ref: "passType", required: true },
+    "purchase-date": { type: Date, required: true },
+    "duration-expires": { type: Date },
+    "count-remaining": { type: Number },
+    creator: { type: Schema.Types.ObjectId, ref: "user", required: true }
   },
   {
     timestamps: true
   }
 );
 
-const Pass = mongoose.model("passType", passSchema);
+const Pass = mongoose.model("pass", passSchema);
 module.exports = Pass;
