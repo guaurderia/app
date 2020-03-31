@@ -6,7 +6,7 @@ const isLoggedIn = roll => (req, res, next) => {
       if (userRoll === "admin") return next();
       else return res.status(401).json("You need to be an adminitrator to access this page");
     }
-    if (roll === "user") {
+    if (roll === "staff") {
       if (userRoll === "admin" || userRoll === "user") return next();
       else return res.status(401).json("You need to be an adminitrator or staff to access this page");
     } else return next();

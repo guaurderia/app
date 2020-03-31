@@ -57,7 +57,13 @@ const crudGenerator = (
   });
 
   router.get("/show/:id", async (req, res) => {
-    const { id } = req.params;
+    console.log("SHOW PROFILE");
+    let id;
+    if (Model.modelName === "user") {
+      id = req.user._id;
+    } else {
+      id = req.params.id;
+    }
     const obj = await Model.findById(id);
     if (obj) {
       const data = dataCompiler(req, obj);

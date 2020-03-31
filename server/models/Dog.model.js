@@ -13,7 +13,7 @@ const dogSchema = new Schema(
     character: { type: String },
     scan: { type: Number },
     creator: { type: Schema.Types.ObjectId, ref: "user" },
-    owner: { type: Schema.Types.ObjectId, ref: "owner", required: true }
+    owner: { type: Schema.Types.ObjectId, ref: "owner" }
     //TODO: Inlcude user and password again
     //pass: [{ type: Schema.Types.ObjectId, ref: "pass" }]
   },
