@@ -3,8 +3,8 @@ const Schema = mongoose.Schema;
 
 const passTypeSchema = new Schema(
   {
-    name: { type: String },
-    price: { type: Number },
+    name: { type: String, required: true },
+    price: { type: Number, required: true },
     duration: { type: Date },
     count: { type: Number }
   },
