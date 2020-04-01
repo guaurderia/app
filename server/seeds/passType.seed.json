@@ -1,0 +1,27 @@
+[
+  {
+    "name": "Mensual Completa",
+    "subscription": true,
+    "price": 390,
+    "duration": 30
+  },
+  {
+    "name": "Mensual Media",
+    "subscription": true,
+    "price": 190,
+    "duration": 15
+  },
+  {
+    "name": "Dia Completo",
+    "subscription": false,
+    "price": 20,
+    "count": 2
+  },
+  {
+    "name": "Dia Medio",
+    "subscription": false,
+    "price": 390,
+    "duration": 30,
+    "count": 1
+  }
+]

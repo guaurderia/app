@@ -8,7 +8,7 @@
     "dev": "DEBUG=back:* nodemon ./bin/www",
     "dev-windows": "nodemon ./bin/www",
     "test": "jest",
-    "seeds": "node seeds/dog.seed.js & node seeds/user.seed.js"
+    "seeds": "node seeds/seed.js"
   },
   "dependencies": {
     "axios": "^0.19.2",
