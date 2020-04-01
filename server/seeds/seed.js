@@ -6,6 +6,7 @@ const PassType = require("../models/PassType.model");
 const dogSeed = require("./dog.seed");
 const userSeed = require("./user.seed");
 const passTypeSeed = require("./passType.seed");
+const _ = require("lodash");
 
 const createSeeds = async (Model, data) => {
   try {
@@ -29,9 +30,10 @@ const randomDate = (start, end, startHour, endHour) => {
 
 const createPass = async (dog, passType, creator) => {
   const purchaseDate = randomDate("2020-01-01", "2020-04-01", 8, 20);
+  const expiresDate = new Date(purchaseDate.getTime());
   const remaining = () => {
-    if (passType.subscription) return { "duration-expires": Date(purchaseDate + passType.duration) };
-    else return { "count-remaining": Math.floor(Math.random() * passType.count) };
+    if (passType.type === "month") return { "duration-expires": expiresDate.setMonth(expiresDate.getMonth() + passType.duration) };
+    else return { "count-remaining": Math.floor(Math.random() * passType.duration) };
   };
   return {
     dog: dog._id,
@@ -49,17 +51,33 @@ const seedAll = () =>
     await createSeeds(Dog, dogSeed);
     await createSeeds(PassType, passTypeSeed);
 
+    const owners = await User.find({ roll: "owner" });
+    const staff = await User.find({ roll: "staff" });
+    const admins = await User.find({ roll: "admin" });
+    const passTypes = await PassType.find();
     const dogs = await Dog.find();
-    console.log("DOGS", dogs);
+
     let passSeed = [];
     for (let dog of dogs) {
-      const randomPassType = await PassType.aggregate([{ $sample: { size: 1 } }]);
-      const randomUser = await User.aggregate([{ $sample: { size: 1 } }]);
-      createPass(dog, ...randomPassType, ...randomUser).then(pass => (passSeed = [...passSeed, pass]));
+      const randomPassType = passTypes[_.random(passTypes.length - 1)];
+      const randomStaff = staff[_.random(staff.length - 1)];
+      const randomOwner = owners[_.random(owners.length - 1)];
+      await Dog.findOneAndUpdate({ _id: dog._id }, { owner: randomOwner, creator: randomStaff });
+      createPass(dog, randomPassType, randomStaff).then(pass => (passSeed = [...passSeed, pass]));
     }
-    console.log("PASS SEED", passSeed);
+    for (let s of staff) {
+      const randomAdmin = admins[_.random(admins.length - 1)];
+      await User.findOneAndUpdate({ _id: s._id, roll: "staff" }, { creator: randomAdmin });
+    }
+    for (let o of owners) {
+      const randomStaff = staff[_.random(staff.length - 1)];
+      await User.findOneAndUpdate({ _id: o._id, roll: "owner" }, { creator: randomStaff });
+    }
 
     await createSeeds(Pass, passSeed);
   });
 
 seedAll();
+Pass.find()
+  .populate("passType")
+  .then(e => console.log(e));

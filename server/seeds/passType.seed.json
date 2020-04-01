@@ -1,27 +1,30 @@
 [
   {
     "name": "Mensual Completa",
-    "subscription": true,
-    "price": 390,
-    "duration": 30
+    "type": "month",
+    "duration": 1,
+    "hours": 12,
+    "price": 390
   },
   {
     "name": "Mensual Media",
-    "subscription": true,
-    "price": 190,
-    "duration": 15
+    "type": "month",
+    "duration": 1,
+    "hours": 6,
+    "price": 190
   },
   {
     "name": "Dia Completo",
-    "subscription": false,
-    "price": 20,
-    "count": 2
+    "type": "day",
+    "duration": 10,
+    "hours": 12,
+    "price": 100
   },
   {
     "name": "Dia Medio",
-    "subscription": false,
-    "price": 390,
-    "duration": 30,
-    "count": 1
+    "type": "day",
+    "duration": 10,
+    "hours": 6,
+    "price": 50
   }
 ]
