@@ -1,8 +1,8 @@
-const { withDbConnection, dropIfExists } = require("../config/withDbConnection");
-const User = require("../models/User.model");
-const Dog = require("../models/Dog.model");
-const Pass = require("../models/Pass.model");
-const PassType = require("../models/PassType.model");
+const { withDbConnection, dropIfExists } = require("../../config/withDbConnection");
+const User = require("../../models/User.model");
+const Dog = require("../../models/Dog.model");
+const Pass = require("../../models/Pass.model");
+const PassType = require("../../models/PassType.model");
 const dogSeed = require("./dog.seed");
 const userSeed = require("./user.seed");
 const passTypeSeed = require("./passType.seed");
@@ -32,17 +32,22 @@ const createPass = async (dog, passType, creator) => {
   const purchaseDate = randomDate("2020-01-01", "2020-04-01", 8, 20);
   const expiresDate = new Date(purchaseDate.getTime());
   const remaining = () => {
-    if (passType.type === "month") return { "duration-expires": expiresDate.setMonth(expiresDate.getMonth() + passType.duration) };
-    else return { "count-remaining": Math.floor(Math.random() * passType.duration) };
+    if (passType.type === "month") return { expires: expiresDate.setMonth(expiresDate.getMonth() + passType.duration) };
+    else return { count: Math.floor(Math.random() * passType.duration) };
   };
   return {
     dog: dog._id,
     passType: passType._id,
-    "purchase-date": purchaseDate,
-    "start-date": purchaseDate,
+    purchased: purchaseDate,
+    starts: purchaseDate,
     ...remaining(),
     creator: creator._id
   };
+};
+
+const randomAttendance = () => {
+  const startTime = randomDate("2020-01-01", "2020-04-01", 8, 16);
+  const endTime = new Date(startTime.getTime());
 };
 
 const seedAll = () =>
