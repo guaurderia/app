@@ -1,13 +1,13 @@
 [
   {
-    "name": "Mensual Completa",
+    "name": "Mensual Jornada Completa",
     "type": "month",
     "duration": 1,
     "hours": 12,
     "price": 390
   },
   {
-    "name": "Mensual Media",
+    "name": "Mensual Media Jornada",
     "type": "month",
     "duration": 1,
     "hours": 6,

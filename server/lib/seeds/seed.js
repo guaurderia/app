@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const { withDbConnection, dropIfExists } = require("../../config/withDbConnection");
 const User = require("../../models/User.model");
 const Dog = require("../../models/Dog.model");
@@ -30,10 +31,11 @@ const randomDate = (start, end, startHour, endHour) => {
 };
 
 const createPass = async (dog, passType, creator) => {
-  const purchaseDate = randomDate("2020-01-01", "2020-04-01", 8, 20);
-  const expiresDate = new Date(purchaseDate.getTime());
+  const purchaseDate = randomDate("2020-04-01", "2020-05-01", 8, 20);
+  const expiresDate = new Date(purchaseDate);
   const remaining = () => {
-    if (passType.type === "month") return { expires: expiresDate.setMonth(expiresDate.getMonth() + passType.duration) };
+    expiresDate.setMonth(expiresDate.getMonth() + passType.duration);
+    if (passType.type === "month") return { expires: expiresDate };
     else return { count: Math.floor(Math.random() * passType.duration) };
   };
   return {
@@ -52,7 +54,7 @@ const randomAttendance = number => {
     const startHour = _.random(8, 16);
     const timeToClose = 20 - startHour;
     const endHour = startHour + _.random(timeToClose);
-    const startDate = randomDate("2020-01-01", "2020-04-01", startHour, startHour);
+    const startDate = randomDate("2020-04-01", "2020-05-01", startHour, startHour);
     const endDate = () => {
       const startCopy = new Date(startDate);
       startCopy.setHours(endHour);
@@ -99,12 +101,9 @@ const seedAll = () =>
       const randomStaff = staff[_.random(staff.length - 1)];
       attendanceSeed = [...attendanceSeed, { dog: randomDog, startTime: a.startTime, endTime: a.endTime, creator: randomStaff }];
     }
-
+    console.log(passSeed);
     await createSeeds(Pass, passSeed);
     await createSeeds(Attendance, attendanceSeed);
   });
 
 seedAll();
-Pass.find()
-  .populate("passType")
-  .then(e => console.log(e));
