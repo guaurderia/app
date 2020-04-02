@@ -1,27 +1,36 @@
 const Pass = require("../../models/Pass.model");
 const Dog = require("../../models/Dog.model");
 const Attendance = require("../../models/Attendance.model");
-const PassType = require("../../models/PassType.model");
+require("../../models/PassType.model");
 const { withDbConnection } = require("../../config/withDbConnection");
 
-var getPass = async (dog, active) => {
-  const passes = await Pass.find({ dog: dog._id }).populate("passType");
+var getPass = async (dog, type, active) => {
+  const passes = await Pass.find({ dog: dog._id })
+    .populate({ path: "passType", math: { type: type } })
+    .populate("dog");
   const today = new Date();
-  const monthPasses = passes.filter(pass => (active ? pass.expires > today : pass.expires < today));
-  const dayPasses = passes.filter(pass => (active ? pass.count > 0 : pass.count === 0));
-  return { monthPasses: monthPasses, dayPasses: dayPasses };
+  let result;
+  if (passes.length > 0) {
+    if (type === "month") {
+      result = passes.filter(pass => (active ? pass.expires > today : pass.expires < today));
+    } else if (type === "day") {
+      result = passes.filter(pass => (active ? pass.count > 0 : pass.count === 0));
+    }
+  } else {
+    result = `No pass found for ${dog.name}`;
+  }
+  return result;
 };
 
 const usePass = (pass, attendance) => {
+  console.log("USE PASS", pass, attendance);
   const monthPass = pass.passType.type === "month";
   const dayPass = pass.passType.type === "day";
   const expired = new Date() > pass.expires;
   const partTimeHours = 6;
   const isPartTime = pass.passType.hours <= partTimeHours;
-  const totalTime = monthPass ? attendance.endTime.getHours() - attendance.startTime.getHours() : null;
+  const totalTime = attendance.endTime.getHours() - attendance.startTime.getHours();
   let valid;
-
-  console.log("USE PASS", monthPass, dayPass, expired, isPartTime);
 
   if (monthPass && !expired) {
     if (isPartTime) {
@@ -46,14 +55,14 @@ const usePass = (pass, attendance) => {
   if (dayPass && pass.count) {
     if (isPartTime) {
       if (totalTime <= partTimeHours) {
-        console.log(`Bono ${pass.passType.name} es válido. Días disponibles: ${pass.count}. Horas asistencia: ${attendance}`);
+        console.log(`Bono ${pass.passType.name} es válido. Días disponibles: ${pass.count}. Horas asistencia: ${totalTime}`);
         valid = true;
       } else {
         console.log(`Bono ${pass.passType.name} ha sido superado. Has superado por ${attendance - partTimeHours} el tiempo de tu bono.`);
         valid = false;
       }
     } else {
-      console.log(`Bono de 10 días válido. Días disponibles: ${pass.count}. Horas asistencia: ${attendance}`);
+      console.log(`Bono de 10 días válido. Días disponibles: ${pass.count}. Horas asistencia: ${totalTime}`);
       valid = true;
     }
   } else if (dayPass) {
@@ -64,14 +73,12 @@ const usePass = (pass, attendance) => {
 };
 withDbConnection(async () => {
   const dog = await Dog.aggregate([{ $sample: { size: 1 } }]); // random dog
-  console.log("DOG", dog);
-  const passes = await getPass(...dog, true);
-  console.log("PASSES", passes);
+  const passes = await getPass(...dog, "day", true);
+  console.log(passes);
   const attendances = await Attendance.find({ dog: dog })
     .limit(-1)
     .skip()
     .populate("dog");
-  console.log("ATTENDANCE", attendances);
-  usePass(passes.monthPasses[0], ...attendances);
-  console.log("PASSES", passes, "ATTENDANCE", attendances);
+  if (passes.length > 0) usePass(...passes, ...attendances);
+  else console.log("No pass available");
 });
