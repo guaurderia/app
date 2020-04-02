@@ -1,14 +1,94 @@
-const mongoose = require("mongoose");
+require("mongoose");
 const { withDbConnection, dropIfExists } = require("../../config/withDbConnection");
 const User = require("../../models/User.model");
 const Dog = require("../../models/Dog.model");
 const Pass = require("../../models/Pass.model");
 const PassType = require("../../models/PassType.model");
 const Attendance = require("../../models/Attendance.model");
-const dogSeed = require("./dog.seed");
-const userSeed = require("./user.seed");
 const passTypeSeed = require("./passType.seed");
 const _ = require("lodash");
+const faker = require("faker");
+
+const randomDate = (start, end, startHour, endHour) => {
+  const startDate = new Date(start);
+  const endDate = new Date(end);
+  const date = new Date(+startDate + Math.random() * (endDate - startDate));
+  const hour = (startHour + Math.random() * (endHour - startHour)) | 0;
+  date.setHours(hour);
+  return date;
+};
+
+// Randomizers
+
+const randomAttendance = number => {
+  let attendance = [];
+  for (let i = 0; i < number; i++) {
+    const startHour = _.random(8, 16);
+    const timeToClose = 20 - startHour;
+    const endHour = startHour + _.random(timeToClose);
+    const startDate = randomDate("2020-04-01", "2020-05-01", startHour, startHour);
+    const endDate = () => {
+      const startCopy = new Date(startDate);
+      startCopy.setHours(endHour);
+      return startCopy;
+    };
+    attendance = [...attendance, { startTime: startDate, endTime: endDate() }];
+  }
+  return attendance;
+};
+
+const randomDog = number => {
+  let dogs = [];
+  for (let i = 0; i < number; i++) {
+    let switcher1 = i % 2 === 0;
+    let switcher2 = i % 3 === 0;
+    let switcher3 = i % 4 === 0;
+    let switcher4 = i % 5 === 0;
+    const name = faker.name.firstName();
+    const breed = faker.name.firstName();
+    const sex = switcher1 ? "male" : "female";
+    const vaccines = { rabies: switcher2, parvovirus: switcher1, hepatitis: switcher3, distemper: switcher4 };
+    const fixed = switcher4;
+    const heat = { had: switcher1, date: faker.date.past() };
+    const chip = faker.random.uuid();
+    const character = _.random(0, 5);
+    const scan = faker.random.number() * 300;
+    dogs = [...dogs, { name, breed, sex, vaccines, fixed, heat, chip, character, scan }];
+  }
+  console.log("DOGS", dogs);
+  return dogs;
+};
+
+const randomUser = number => {
+  let users = [];
+  const rolls = ["staff", "owner", "owner", "owner", "owner"];
+  for (let i = 0; i < number; i++) {
+    const firstName = faker.name.firstName();
+    const lastName = faker.name.lastName();
+    const username = faker.internet.email();
+    const password = 1234;
+    const mainPhone = faker.phone
+      .phoneNumberFormat()
+      .split("-")
+      .join("")
+      .slice(0, 9);
+    const dni =
+      faker.phone
+        .phoneNumberFormat()
+        .split("-")
+        .join("")
+        .slice(0, 8) + faker.name.findName().slice(0, 1);
+    const roll = rolls[i % 5];
+    users = [...users, { firstName, lastName, username, password, mainPhone, dni, roll }];
+  }
+  const admin = { firstName: "Admin", lastName: "Istrator", username: "admin@dev", password: 1234, mainPhone: 666777888, dni: "55556666Y", roll: "admin" };
+  users = [...users, admin];
+
+  console.log("USERS", users);
+  return users;
+};
+
+// Seed Creators
 
 const createSeeds = async (Model, data) => {
   try {
@@ -19,15 +99,6 @@ const createSeeds = async (Model, data) => {
   } catch (error) {
     console.log(error);
   }
-};
-
-const randomDate = (start, end, startHour, endHour) => {
-  const startDate = new Date(start);
-  const endDate = new Date(end);
-  const date = new Date(+startDate + Math.random() * (endDate - startDate));
-  const hour = (startHour + Math.random() * (endHour - startHour)) | 0;
-  date.setHours(hour);
-  return date;
 };
 
 const createPass = async (dog, passType, creator) => {
@@ -48,25 +119,12 @@ const createPass = async (dog, passType, creator) => {
   };
 };
 
-const randomAttendance = number => {
-  let attendance = [];
-  for (let i = 0; i < number; i++) {
-    const startHour = _.random(8, 16);
-    const timeToClose = 20 - startHour;
-    const endHour = startHour + _.random(timeToClose);
-    const startDate = randomDate("2020-04-01", "2020-05-01", startHour, startHour);
-    const endDate = () => {
-      const startCopy = new Date(startDate);
-      startCopy.setHours(endHour);
-      return startCopy;
-    };
-    attendance = [...attendance, { startTime: startDate, endTime: endDate() }];
-  }
-  return attendance;
-};
-
 const seedAll = () =>
   withDbConnection(async () => {
+    const dogSeed = randomDog(10);
+    const userSeed = randomUser(10);
+    const attendances = randomAttendance(20);
+
     await createSeeds(User, userSeed);
     await createSeeds(Dog, dogSeed);
     await createSeeds(PassType, passTypeSeed);
@@ -76,7 +134,6 @@ const seedAll = () =>
     const admins = await User.find({ roll: "admin" });
     const passTypes = await PassType.find();
     const dogs = await Dog.find();
-    const attendances = randomAttendance(20);
 
     let passSeed = [];
     let attendanceSeed = [];
@@ -101,7 +158,7 @@ const seedAll = () =>
       const randomStaff = staff[_.random(staff.length - 1)];
       attendanceSeed = [...attendanceSeed, { dog: randomDog, startTime: a.startTime, endTime: a.endTime, creator: randomStaff }];
     }
-    console.log(passSeed);
+
     await createSeeds(Pass, passSeed);
     await createSeeds(Attendance, attendanceSeed);
   });
