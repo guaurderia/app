@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const attendanceSchema = new Schema(
   {
-    dog: { type: Schema.Types.ObjectId, ref: "dog" },
+    dog: { type: Schema.Types.ObjectId, ref: "dog", required: true },
     startTime: { type: Date },
     endTime: { type: Date },
     creator: { type: Schema.Types.ObjectId, ref: "user" }

@@ -5,7 +5,7 @@ const User = require("../models/User.model");
 const Pass = require("../models/Pass.model");
 const PassType = require("../models/PassType.model");
 const Attendance = require("../models/Attendance.model");
-const auth = require("./auth/auth.router");
+const auth = require("./auth/auth.routes");
 const { crudGenerator } = require("../routes/crud.model");
 const { isLoggedIn } = require("../middleware/auth/isLogged");
 

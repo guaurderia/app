@@ -3,6 +3,7 @@ const User = require("../../models/User.model");
 const Dog = require("../../models/Dog.model");
 const Pass = require("../../models/Pass.model");
 const PassType = require("../../models/PassType.model");
+const Attendance = require("../../models/Attendance.model");
 const dogSeed = require("./dog.seed");
 const userSeed = require("./user.seed");
 const passTypeSeed = require("./passType.seed");
@@ -45,9 +46,21 @@ const createPass = async (dog, passType, creator) => {
   };
 };
 
-const randomAttendance = () => {
-  const startTime = randomDate("2020-01-01", "2020-04-01", 8, 16);
-  const endTime = new Date(startTime.getTime());
+const randomAttendance = number => {
+  let attendance = [];
+  for (let i = 0; i < number; i++) {
+    const startHour = _.random(8, 16);
+    const timeToClose = 20 - startHour;
+    const endHour = startHour + _.random(timeToClose);
+    const startDate = randomDate("2020-01-01", "2020-04-01", startHour, startHour);
+    const endDate = () => {
+      const startCopy = new Date(startDate);
+      startCopy.setHours(endHour);
+      return startCopy;
+    };
+    attendance = [...attendance, { startTime: startDate, endTime: endDate() }];
+  }
+  return attendance;
 };
 
 const seedAll = () =>
@@ -61,8 +74,11 @@ const seedAll = () =>
     const admins = await User.find({ roll: "admin" });
     const passTypes = await PassType.find();
     const dogs = await Dog.find();
+    const attendances = randomAttendance(20);
 
     let passSeed = [];
+    let attendanceSeed = [];
+
     for (let dog of dogs) {
       const randomPassType = passTypes[_.random(passTypes.length - 1)];
       const randomStaff = staff[_.random(staff.length - 1)];
@@ -78,8 +94,14 @@ const seedAll = () =>
       const randomStaff = staff[_.random(staff.length - 1)];
       await User.findOneAndUpdate({ _id: o._id, roll: "owner" }, { creator: randomStaff });
     }
+    for (let a of attendances) {
+      const randomDog = dogs[_.random(dogs.length - 1)];
+      const randomStaff = staff[_.random(staff.length - 1)];
+      attendanceSeed = [...attendanceSeed, { dog: randomDog, startTime: a.startTime, endTime: a.endTime, creator: randomStaff }];
+    }
 
     await createSeeds(Pass, passSeed);
+    await createSeeds(Attendance, attendanceSeed);
   });
 
 seedAll();
