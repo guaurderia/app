@@ -7,7 +7,8 @@ const passTypeSchema = new Schema(
     type: { type: String, required: true }, // monthly or daily
     duration: { type: Number, required: true }, // number of months or days
     hours: { type: Number, required: true }, // number of hours determining part-time and full-time
-    price: { type: Number, required: true }
+    price: { type: Number, required: true },
+    "overtime-rate": { type: Number, required: true }
   },
   {
     timestamps: true

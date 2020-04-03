@@ -1,5 +1,4 @@
 const Pass = require("../../models/Pass.model");
-const Dog = require("../../models/Dog.model");
 const Attendance = require("../../models/Attendance.model");
 require("../../models/PassType.model");
 const { withDbConnection } = require("../../config/withDbConnection");
@@ -32,26 +31,31 @@ const usePass = (pass, attendance) => {
   const monthPass = pass.passType.type === "month";
   const dayPass = pass.passType.type === "day";
   const totalTime = getTotalTime(attendance);
-  const overtime = totalTime > pass.passType.hours;
-  const expired = () => (monthPass ? pass.expires < new Date() : !pass.count);
+  const isOvertime = totalTime > pass.passType.hours;
+  const isExpired = () => (monthPass ? pass.expires < new Date() : !pass.count);
+  const getOvertime = () => {
+    const overtime = totalTime - pass.passType.hours;
+    const amountOwed = overtime * pass.passType["overtime-rate"];
+    console.log(`El horario del bono ${pass.passType.name} ha sido superado. Deberá abonar ${amountOwed}€.`);
+  };
   let valid;
 
-  if (monthPass && !expired()) {
-    if (!overtime) {
+  if (monthPass && !isExpired()) {
+    if (!isOvertime) {
       console.log(`Bono ${pass.passType.name} es valido. Fecha expiración: ${pass.expires}`);
       valid = true;
     } else {
-      console.log(`Bono ${pass.passType.name} ha sido superado. Has superado por ${totalTime - partTimeHours} el tiempo de tu bono.`);
+      getOvertime();
       valid = false;
     }
   } else if (monthPass) console.log(`Bono ${pass.passType.name} ha caducado.`);
 
-  if (dayPass && !expired()) {
-    if (!overtime) {
+  if (dayPass && !isExpired()) {
+    if (!isOvertime) {
       console.log(`Bono ${pass.passType.name} es válido. Días disponibles: ${pass.count}. Horas asistencia: ${totalTime}`);
       valid = true;
     } else {
-      console.log(`Bono ${pass.passType.name} ha sido superado. Has superado por ${attendance - partTimeHours} el tiempo de tu bono.`);
+      getOvertime();
       valid = false;
     }
   } else if (dayPass) console.log(`Bono ${pass.passType.name} ha sido usado.`);
@@ -61,9 +65,7 @@ const usePass = (pass, attendance) => {
 
 const checkout = async attId => {
   const [attendance] = await Attendance.find({ _id: attId }).populate("dog");
-  console.log("ATTENDANCE", attendance);
   const passes = await getPass(false, attendance.dog, "all");
-  console.log("PASSES", passes);
   if (passes.length > 0) return passes.forEach(pass => usePass(pass, attendance));
   else return console.log(`${attendance.dog.name} no tiene ningún bono activo`);
 };
