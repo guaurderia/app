@@ -1,9 +1,10 @@
 const Pass = require("../../models/Pass.model");
 const Attendance = require("../../models/Attendance.model");
 require("../../models/PassType.model");
+require("../../models/Dog.model");
 const { withDbConnection } = require("../../config/withDbConnection");
 
-const getTotalTime = attendance => attendance.endTime.getHours() - attendance.startTime.getHours();
+const getTotalMinutes = attendance => (attendance.endTime.getTime() - attendance.startTime.getTime()) / 1000 / 60;
 
 const getPass = async (active, dog, type) => {
   const passes = await Pass.find({ dog: dog._id })
@@ -30,15 +31,17 @@ const getPass = async (active, dog, type) => {
 const usePass = (pass, attendance) => {
   const monthPass = pass.passType.type === "month";
   const dayPass = pass.passType.type === "day";
-  const totalTime = getTotalTime(attendance);
-  const isOvertime = totalTime > pass.passType.hours;
+  const totalMinutes = getTotalMinutes(attendance);
+  const isOvertime = totalMinutes > pass.passType.hours * 60;
   const isExpired = () => (monthPass ? pass.expires < new Date() : !pass.count);
   const getOvertime = () => {
-    const overtime = totalTime - pass.passType.hours;
-    const amountOwed = overtime * pass.passType["overtime-rate"];
+    const overtime = totalMinutes - pass.passType.hours * 60;
+    const amountOwed = overtime * (pass.passType["overtime-rate"] / 60);
     console.log(`El horario del bono ${pass.passType.name} ha sido superado. Deberá abonar ${amountOwed}€.`);
   };
-  let valid;
+  let valid = false;
+  console.log("PASS", pass);
+  console.log("ATTENDANCE", attendance);
 
   if (monthPass && !isExpired()) {
     if (!isOvertime) {
@@ -52,7 +55,7 @@ const usePass = (pass, attendance) => {
 
   if (dayPass && !isExpired()) {
     if (!isOvertime) {
-      console.log(`Bono ${pass.passType.name} es válido. Días disponibles: ${pass.count}. Horas asistencia: ${totalTime}`);
+      console.log(`Bono ${pass.passType.name} es válido. Días disponibles: ${pass.count}. Horas asistencia: ${totalMinutes / 60}`);
       valid = true;
     } else {
       getOvertime();
@@ -70,4 +73,4 @@ const checkout = async attId => {
   else return console.log(`${attendance.dog.name} no tiene ningún bono activo`);
 };
 
-withDbConnection(() => checkout("5e87249e941e9f31036ae0c6").then(e => console.log(e)));
+withDbConnection(() => checkout("5e87249e941e9f31036ae0cd").then(e => console.log(e)));
