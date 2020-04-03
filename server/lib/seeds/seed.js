@@ -9,6 +9,18 @@ const passTypeSeed = require("./passType.seed");
 const _ = require("lodash");
 const faker = require("faker");
 
+//-----------
+
+// start and end dates from which random attendances are created
+const attendanceStart = "2020-04-01";
+const attendanceEnd = "2020-05-01";
+
+// start and end dates from which random passes are created
+const passStart = "2020-01-01";
+const passEnd = "2020-06-01";
+
+//-----------
+
 const randomDate = (start, end, startHour, endHour) => {
   const startDate = new Date(start);
   const endDate = new Date(end);
@@ -26,7 +38,7 @@ const randomAttendance = number => {
     const startHour = _.random(8, 16);
     const timeToClose = 20 - startHour;
     const endHour = startHour + _.random(timeToClose);
-    const startDate = randomDate("2020-04-01", "2020-05-01", startHour, startHour);
+    const startDate = randomDate(attendanceStart, attendanceEnd, startHour, startHour);
     const endDate = () => {
       const startCopy = new Date(startDate);
       startCopy.setHours(endHour);
@@ -55,7 +67,6 @@ const randomDog = number => {
     const scan = faker.random.number() * 300;
     dogs = [...dogs, { name, breed, sex, vaccines, fixed, heat, chip, character, scan }];
   }
-  console.log("DOGS", dogs);
   return dogs;
 };
 
@@ -83,8 +94,6 @@ const randomUser = number => {
   }
   const admin = { firstName: "Admin", lastName: "Istrator", username: "admin@dev", password: 1234, mainPhone: 666777888, dni: "55556666Y", roll: "admin" };
   users = [...users, admin];
-
-  console.log("USERS", users);
   return users;
 };
 
@@ -95,14 +104,14 @@ const createSeeds = async (Model, data) => {
     if ((await Model.find()).length > 0) await dropIfExists(Model);
     await Model.create(data);
     const created = await Model.find();
-    console.log(`${created.length} ${Model.modelName} created`);
+    console.log(`${created.length} ${Model.modelName} created: ${created}`);
   } catch (error) {
     console.log(error);
   }
 };
 
 const createPass = async (dog, passType, creator) => {
-  const purchaseDate = randomDate("2020-04-01", "2020-05-01", 8, 20);
+  const purchaseDate = randomDate(passStart, passEnd, 8, 20);
   const expiresDate = new Date(purchaseDate);
   const remaining = () => {
     expiresDate.setMonth(expiresDate.getMonth() + passType.duration);
@@ -143,6 +152,7 @@ const seedAll = () =>
       const randomStaff = staff[_.random(staff.length - 1)];
       const randomOwner = owners[_.random(owners.length - 1)];
       await Dog.findOneAndUpdate({ _id: dog._id }, { owner: randomOwner, creator: randomStaff });
+      createPass(dog, randomPassType, randomStaff).then(pass => (passSeed = [...passSeed, pass]));
       createPass(dog, randomPassType, randomStaff).then(pass => (passSeed = [...passSeed, pass]));
     }
     for (let s of staff) {
