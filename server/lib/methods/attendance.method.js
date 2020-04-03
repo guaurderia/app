@@ -33,22 +33,29 @@ const usePass = (pass, attendance) => {
   const dayPass = pass.passType.type === "day";
   const totalTime = getTotalTime(attendance);
   const overtime = totalTime > pass.passType.hours;
+  const expired = () => (monthPass ? pass.expires < new Date() : !pass.count);
   let valid;
 
-  if (monthPass && !overtime) {
-    console.log(`Bono ${pass.passType.name} es valido. Fecha expiración: ${pass.expires}`);
-    valid = true;
-  } else if (monthPass) {
-    console.log(`Bono ${pass.passType.name} ha sido superado. Has superado por ${totalTime - partTimeHours} el tiempo de tu bono.`);
-    valid = false;
-  }
-  if (dayPass && !overtime) {
-    console.log(`Bono ${pass.passType.name} es válido. Días disponibles: ${pass.count}. Horas asistencia: ${totalTime}`);
-    valid = true;
-  } else if (dayPass) {
-    console.log(`Bono ${pass.passType.name} ha sido superado. Has superado por ${attendance - partTimeHours} el tiempo de tu bono.`);
-    valid = false;
-  }
+  if (!expired) {
+    if (monthPass && !overtime) {
+      console.log(`Bono ${pass.passType.name} es valido. Fecha expiración: ${pass.expires}`);
+      valid = true;
+    } else if (monthPass) {
+      console.log(`Bono ${pass.passType.name} ha sido superado. Has superado por ${totalTime - partTimeHours} el tiempo de tu bono.`);
+      valid = false;
+    }
+  } else console.log(`Bono ${pass.passType.name} ha caducado.`);
+
+  if (!expired) {
+    if (dayPass && !overtime) {
+      console.log(`Bono ${pass.passType.name} es válido. Días disponibles: ${pass.count}. Horas asistencia: ${totalTime}`);
+      valid = true;
+    } else if (dayPass) {
+      console.log(`Bono ${pass.passType.name} ha sido superado. Has superado por ${attendance - partTimeHours} el tiempo de tu bono.`);
+      valid = false;
+    }
+  } else console.log(`Bono ${pass.passType.name} ha sido usado.`);
+
   return valid;
 };
 
