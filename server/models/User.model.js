@@ -9,7 +9,6 @@ const userSchema = new Schema(
     password: { type: String },
     mainPhone: { type: Number, required: true },
     dni: { type: String, required: true },
-    dogs: { type: Schema.Types.ObjectId, ref: "dog" },
     roll: { type: String, required: true },
     creator: { type: Schema.Types.ObjectId, ref: "user" }
   },

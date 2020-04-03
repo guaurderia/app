@@ -1,5 +1,5 @@
-const { withDbConnection, dropIfExists } = require("../config/withDbConnection");
-const Breeds = require("../models/Breed.model");
+const { withDbConnection, dropIfExists } = require("../../config/withDbConnection");
+const Breeds = require("../../models/Breed.model");
 const axios = require("axios");
 
 const getBreeds = async () => {
