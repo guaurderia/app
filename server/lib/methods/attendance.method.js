@@ -36,25 +36,25 @@ const usePass = (pass, attendance) => {
   const expired = () => (monthPass ? pass.expires < new Date() : !pass.count);
   let valid;
 
-  if (!expired) {
-    if (monthPass && !overtime) {
+  if (monthPass && !expired()) {
+    if (!overtime) {
       console.log(`Bono ${pass.passType.name} es valido. Fecha expiración: ${pass.expires}`);
       valid = true;
-    } else if (monthPass) {
+    } else {
       console.log(`Bono ${pass.passType.name} ha sido superado. Has superado por ${totalTime - partTimeHours} el tiempo de tu bono.`);
       valid = false;
     }
-  } else console.log(`Bono ${pass.passType.name} ha caducado.`);
+  } else if (monthPass) console.log(`Bono ${pass.passType.name} ha caducado.`);
 
-  if (!expired) {
-    if (dayPass && !overtime) {
+  if (dayPass && !expired()) {
+    if (!overtime) {
       console.log(`Bono ${pass.passType.name} es válido. Días disponibles: ${pass.count}. Horas asistencia: ${totalTime}`);
       valid = true;
-    } else if (dayPass) {
+    } else {
       console.log(`Bono ${pass.passType.name} ha sido superado. Has superado por ${attendance - partTimeHours} el tiempo de tu bono.`);
       valid = false;
     }
-  } else console.log(`Bono ${pass.passType.name} ha sido usado.`);
+  } else if (dayPass) console.log(`Bono ${pass.passType.name} ha sido usado.`);
 
   return valid;
 };
@@ -68,4 +68,4 @@ const checkout = async attId => {
   else return console.log(`${attendance.dog.name} no tiene ningún bono activo`);
 };
 
-withDbConnection(() => checkout("5e87249e941e9f31036ae0c8").then(e => console.log(e)));
+withDbConnection(() => checkout("5e87249e941e9f31036ae0c6").then(e => console.log(e)));
