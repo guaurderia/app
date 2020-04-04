@@ -9,23 +9,21 @@ const path = require("path");
 const cors = require("cors");
 const session = require("express-session");
 const MongoStore = require("connect-mongo")(session);
-const dbUrl = process.env.DBURL ? process.env.DBURL : "mongodb://localhost/test";
 
 require("./config/db.config");
 
 const app = express();
 
-const whitelist = ["http://localhost:1234"];
-const corsOptions = {
-  origin: function(origin, callback) {
-    if (!origin) return callback(null, true);
+var whitelist = [process.env.CLIENT_URL, process.env.SERVER_URL];
+var corsOptions = {
+  origin: function (origin, callback) {
     if (whitelist.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
       callback(new Error("Not allowed by CORS"));
     }
   },
-  credentials: true
+  credentials: true,
 };
 
 // Middleware Setup
@@ -39,7 +37,7 @@ app.use(
     secret: "keyboard cat",
     resave: true,
     saveUninitialized: true,
-    store: new MongoStore({ mongooseConnection: mongoose.connection })
+    store: new MongoStore({ mongooseConnection: mongoose.connection }),
   })
 );
 require("./middleware/auth/passport/index")(app);

@@ -1,123 +1,189 @@
-import React, { useState, useEffect, useReducer } from "react";
-import { DogItemContentGrid, LinkStyle } from "./style";
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import { DogItemContentGrid, ItemStyle, PassElement } from "./style";
 import Grid from "@material-ui/core/Grid";
 import { connect } from "react-redux";
-import { getData, postData } from "../../redux/actions";
+import { getData, postData, setData } from "../../redux/actions";
 import _ from "lodash";
+import { DateTime } from "luxon";
+import { formatTime, activeTime } from "../../services/Format/Time";
+import { getPass, isValidPass, createDayPass } from "../../services/Logic/Pass";
+import ErrorMessage from "../Error";
 
-const DogItem = ({ dog, urlParams, postStart, postUpdate, getActiveAttendance, activeAttendance }) => {
-  const [attendance, setAttendance] = useState(_.head(activeAttendance));
+const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, postPassUpdate, activeAttendance, passList, setPassList }) => {
+  const [attendance, setAttendance] = useState();
   const [button, setButton] = useState("start");
-  const [timer, setTimer] = useState({ time: activeTime(attendance), active: false });
+  const [timer, setTimer] = useState({ active: false });
+  const [activePasses, setActivePasses] = useState();
+  const [selectedPass, setSelectedPass] = useState();
+  const [error, setError] = useState();
 
   useEffect(() => {
-    getActiveAttendance(dog._id);
-    if (button === "end") setTimer({ ...timer, active: true });
+    const [foundActiveAttendance] = activeAttendance.filter((att) => att.dog._id === dog._id);
+    if (foundActiveAttendance) {
+      const dogActiveAttendance = _.omit(foundActiveAttendance, "dog");
+      const startTime = dogActiveAttendance.startTime;
+      const endTime = dogActiveAttendance.endTime;
+
+      setAttendance(dogActiveAttendance);
+
+      if (endTime) {
+        setButton("confirm");
+        setTimer({ time: activeTime(startTime, endTime), active: false });
+      } else {
+        setButton("end");
+        setTimer({ time: activeTime(startTime), active: true });
+      }
+    } else {
+      setAttendance(null);
+    }
   }, []);
 
   useEffect(() => {
-    if (_.head(activeAttendance)) {
-      const [dogActiveAttendance] = activeAttendance.filter((att) => att.dog.toString() === dog._id.toString());
-      if (dogActiveAttendance) {
-        setAttendance(dogActiveAttendance);
-        if (dogActiveAttendance.endTime) {
-          setButton("confirm");
-          setTimer({ time: activeTime(dogActiveAttendance), active: false });
-        } else {
-          setButton("end");
-          setTimer({ ...timer, active: true });
-        }
+    setActivePasses(() => {
+      const dogPasses = passList.filter((pass) => pass.dog._id.toString() === dog._id);
+      const active = getPass(dogPasses, true);
+      if (attendance) {
+        const validPasses = isValidPass(attendance, active);
+        const selectedIsValid = validPasses?.some((pass) => {
+          return selectedPass?.id === pass.id;
+        });
+        if (!selectedIsValid) setSelectedPass();
+        console.log("VALID PASSES", validPasses, dog.name);
+        return validPasses;
+      } else {
+        setSelectedPass();
+        return active;
       }
-    }
-  }, [activeAttendance]);
-
-  useEffect(() => {
-    let interval = null;
-    const active = activeTime(attendance);
-    if (timer.active) {
-      interval = setInterval(() => {
-        console.log("TIMER TIME IN INTERVAL", timer.time);
-        setTimer({ ...timer, time: active + 1 });
-      }, 1000);
-    } else if (!timer.active) {
-      clearInterval(interval);
-    }
-    return () => clearInterval(interval);
-  }, [timer]);
-
-  function activeTime(attendance) {
-    const startTime = attendance?.startTime ? Math.floor(new Date(attendance.startTime).getTime() / 1000) : undefined;
-    const endTime = Math.floor((new Date(attendance?.endTime).getTime() || Date.now()) / 1000);
-    console.log("ACTIVE TIME", startTime, endTime);
-    return endTime - startTime || 0;
-  }
+    });
+  }, [attendance, passList]);
 
   const handleClick = () => {
     switch (button) {
       case "start":
-        const start = { dog: dog._id, startTime: new Date().toJSON(), confirmed: false };
-        postStart(start);
+        const start = { dog: dog._id, startTime: DateTime.local().toJSON(), confirmed: false };
+        postAttendanceCreate(start);
         setAttendance(start);
         setButton("end");
         setTimer({ ...timer, active: true });
         break;
       case "end":
-        const end = { ...attendance, endTime: new Date().toJSON() };
-        postUpdate(end);
+        const end = { ...attendance, dog: dog._id, endTime: DateTime.local().toJSON() };
+        postAttendanceUpdate(end);
         setAttendance(end);
         setButton("confirm");
         setTimer({ ...timer, active: false });
         break;
       case "confirm":
-        const confirmed = { ...attendance, confirmed: true };
-        postUpdate(confirmed);
-        setAttendance({});
-        setButton("start");
-        setTimer({ ...timer, time: 0 });
+        if (selectedPass) {
+          const confirmed = { ...attendance, dog: dog._id, confirmed: true };
+          postAttendanceUpdate(confirmed);
+          setAttendance({});
+          setButton("start");
+          setTimer({ active: false });
+          checkOut(selectedPass);
+          setSelectedPass();
+          setError();
+        } else {
+          setError("Tienes que selectionar un bono");
+        }
         break;
     }
   };
 
   const ShowTime = ({ time }) => {
-    const getTime = _.get(attendance, time);
-    if (getTime) {
-      const timeFormat = getTime.slice(11, 16);
-      return <div>{timeFormat}</div>;
-    } else return <></>;
+    const timeFormat = formatTime(time);
+    if (timeFormat) return <div>{timeFormat}</div>;
+    else return <></>;
   };
 
-  const active = () => (urlParams === dog._id ? "active" : "");
+  const handlePassSelection = (pass) =>
+    useCallback(() => {
+      if (attendance) setSelectedPass(pass);
+    });
+
+  const handlePassCreation = () => {
+    createDayPass(dog, attendance).then((res) => setPassList(res.data));
+  };
+
+  function checkOut(pass) {
+    if (pass) {
+      const { id } = pass;
+      if (pass.type === "day" || pass.type === "one") {
+        const updatedPass = { id, count: pass.remainingCount - 1 };
+        postPassUpdate(updatedPass);
+      }
+    }
+  }
+
+  const ShowPasses = () => {
+    let selected = "";
+    if (activePasses?.length) {
+      console.log("SHOW PASSES IF", activePasses.length, dog.name, activePasses);
+      return activePasses.map((pass, i) => {
+        if (pass.type === "day" || pass.type === "one") {
+          selected = pass.id === selectedPass?.id ? "selected" : "";
+          return (
+            <PassElement key={i} onClick={handlePassSelection(pass)} className={selected}>
+              {pass.name} {pass.remainingCount}
+            </PassElement>
+          );
+        }
+        if (pass.type === "month") {
+          selected = pass.id === selectedPass?.id ? "selected" : "";
+          return (
+            <PassElement key={i} onClick={handlePassSelection(pass)} className={selected}>
+              {pass.name} {pass.expires}
+            </PassElement>
+          );
+        }
+      });
+    } else if (attendance?.endTime) {
+      console.log("SHOW PASSES ELSE");
+      return <PassElement onClick={handlePassCreation}>Crea un pase de día</PassElement>;
+    }
+    return <></>;
+  };
+
+  const selected = () => (urlParams === dog._id ? "active" : "");
+  const active = () => (timer.active ? "active-attendance" : "");
+  const ended = () => (button === "confirm" ? "ended-attendance" : "");
   return (
-    <LinkStyle className={`list-group-item ${active()}`} key={dog._id} to={`/dogs/show/${dog._id}`}>
+    <ItemStyle className={`list-group-item ${selected()} ${active()} ${ended()}`} key={dog._id} to={`/dogs/show/${dog._id}`}>
       <DogItemContentGrid container>
-        <Grid item xs={7}>
+        <Grid item xs={8}>
           {dog.name}
         </Grid>
-        <Grid item xs={2}>
+        <Grid item xs={4}>
           <button onClick={handleClick}>{button}</button>
+          {error && <ErrorMessage msg={error} />}
         </Grid>
-        <Grid item xs={3} style={{ display: "flex", justifyContent: "space-around" }}>
-          <ShowTime time="startTime" />
-          <ShowTime time="endTime" />
-          {timer.time > 0 && <div>{timer.time}</div>}
+        <Grid item xs={6}>
+          <ShowPasses />
+        </Grid>
+        <Grid item xs={4} style={{ display: "flex", justifyContent: "space-around" }}>
+          {attendance?.startTime && <ShowTime time={attendance.startTime} />}
+          {attendance?.endTime && <ShowTime time={attendance?.endTime} />}
+          {timer && <ShowTime time={timer.time} />}
         </Grid>
       </DogItemContentGrid>
-    </LinkStyle>
+    </ItemStyle>
   );
 };
 
 const mapStateToProps = (state) => {
   return {
     activeAttendance: state.attendance.active,
-    loading: state.attendance.loading,
+    passList: state.pass.list,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    postStart: (obj) => dispatch(postData("/attendance/create", "attendance", obj)),
-    postUpdate: (obj) => dispatch(postData(`/attendance/update/?dog=${obj.dog}&confirmed=false`, "attendance", obj)),
-    getActiveAttendance: () => dispatch(getData(`/attendance/show/?confirmed=false`, "attendance", "active")),
+    postAttendanceCreate: (obj) => dispatch(postData("/attendance/create", "attendance", obj, "list")),
+    postAttendanceUpdate: (obj) => dispatch(postData(`/attendance/update/?dog=${obj.dog}&confirmed=false`, "attendance", obj, "list")),
+    postPassUpdate: (obj) => dispatch(postData(`/pass/update/?_id=${obj.id}`, "pass", obj, "list")),
+    getAttendance: () => dispatch(getData(`/attendance/show/all`, "attendance", "list")),
+    setPassList: (obj) => dispatch(setData("pass", obj, "list")),
   };
 };
 

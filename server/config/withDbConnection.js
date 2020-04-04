@@ -2,13 +2,13 @@ const mongoose = require("mongoose");
 const { MongoError } = require("mongodb");
 require("dotenv").config();
 
-const dbUrl = process.env.DBURL ? process.env.DBURL : "mongodb://localhost/test";
+const dbUrl = process.env.DBURL_REMOTE || "mongodb://localhost/test";
 
 const withDbConnection = async (fn, disconnectEnd = true) => {
   try {
     await mongoose.connect(dbUrl, {
       useNewUrlParser: true,
-      useUnifiedTopology: true
+      useUnifiedTopology: true,
     });
     console.log(`Connection Ready on ${dbUrl}`);
     await fn();
@@ -24,7 +24,7 @@ const withDbConnection = async (fn, disconnectEnd = true) => {
   }
 };
 
-const dropIfExists = async Model => {
+const dropIfExists = async (Model) => {
   try {
     await Model.collection.drop();
   } catch (e) {
@@ -38,5 +38,5 @@ const dropIfExists = async Model => {
 
 module.exports = {
   dropIfExists,
-  withDbConnection
+  withDbConnection,
 };

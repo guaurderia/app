@@ -23,9 +23,8 @@ const crudGenerator = (
 
   router.post(
     "/create",
-    isLoggedIn("user"),
     asyncController(async (req, res) => {
-      // NOTE: For security reasons, only allow input certain fields
+      console.log("REQ BODY IN CREATE", req.body);
       const data = dataCompiler(req, req.body);
       const unique = dataPicker(uniqueIndex, req.body);
       const exists = await Model.findOne({ unique });
@@ -34,8 +33,10 @@ const crudGenerator = (
         return res.status(409).json(`${uniqueIndex} ${Object.values(unique)} already exists in ${Model.modelName} db`);
       } else {
         try {
-          const created = await Model.create(data);
-          return res.json(created);
+          console.log("DATA IN CREATE", data);
+          await Model.create(data);
+          const list = await Model.find().populate(populateFields);
+          return res.json(list);
         } catch (err) {
           if (err.name == "ValidationError") {
             const keys = Object.keys(err.errors);
@@ -61,24 +62,22 @@ const crudGenerator = (
       data = await Model.findById(req.user._id);
       res.json(data);
     } else {
-      data = await Model.find(query);
-      const response = data.map((obj) => dataCompiler(req, obj));
-      res.json(response);
+      data = await Model.find(query).populate(populateFields);
+      console.log("DATA RETURN SHOW", data, query);
+      res.json(data);
     }
   });
 
-  router.post("/update/?", isLoggedIn("user"), async (req, res) => {
+  router.post("/update/?", async (req, res) => {
     const query = req.query;
     const data = dataCompiler(req, req.body);
     await Model.findOneAndUpdate(query, data);
-    const updatedObj = await Model.find(query);
-    console.log("UPDATED OBJ", updatedObj, query);
-    res.json(updatedObj);
+    const list = await Model.find().populate(populateFields);
+    res.json(list);
   });
 
   router.get(
     "/delete/:id",
-    isLoggedIn("user"),
     asyncController(async (req, res, next) => {
       const { id } = req.params;
       const obj = await Model.findByIdAndRemove(id);
