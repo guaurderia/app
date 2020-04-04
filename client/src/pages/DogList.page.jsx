@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { DogForm } from "../components/DogForm";
 import { createDog } from "../../lib/dogs.api";
 import { withRouter } from "react-router-dom";
+import DogList from "../components/DogList";
 
 const DogListPage = withRouter(({ history }) => {
   const [error, setError] = useState();
@@ -22,14 +23,15 @@ const DogListPage = withRouter(({ history }) => {
     }
   };
   return (
-  <div>
+    <div>
+      <DogList />
       <h2 align="center">Create new dog</h2>
       {error && (
         <div className="alert alert-danger" role="alert">
           {error}
         </div>
       )}
-      <DogForm {...{ handleNewDog }}/>
+      <DogForm {...{ handleNewDog }} />
     </div>
   );
 });

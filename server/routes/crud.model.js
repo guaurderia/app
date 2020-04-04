@@ -28,10 +28,7 @@ const crudGenerator = (
       const data = dataCompiler(req, req.body);
       const unique = dataPicker(uniqueIndex, req.body);
       const exists = await Model.findOne({ unique });
-      console.log("DATA", data);
-      console.log("UNIQUE", unique);
-      console.log("EXISTS", exists);
-      console.log("DATE", new Date());
+
       if (exists) {
         return res.status(409).json(`${uniqueIndex} ${Object.values(unique)} already exists in ${Model.modelName} db`);
       } else {
