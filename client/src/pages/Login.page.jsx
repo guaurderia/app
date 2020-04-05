@@ -1,35 +1,28 @@
-import React, { useState } from "react";
+import React from "react";
+import { useForm } from "react-hook-form";
 import { connect } from "react-redux";
 import { postData } from "../redux/actions";
 import { withRouter } from "react-router-dom";
 
-const Login = withRouter(({ history, login }) => {
-  const [form, setForm] = useState({ username: "", password: "" });
+const Login = withRouter(({ history, login, user }) => {
+  const { register, handleSubmit } = useForm();
+  const onSubmit = data => {
+    login(data);
+    console.log("USER AFTER LOGIN", user);
+    history.push("/dog/list");
+  };
   return (
-    <form
-      onSubmit={e => {
-        e.preventDefault();
-        console.log(form);
-        login(form);
-        history.push("/dog/list");
-      }}
-    >
+    <form onSubmit={handleSubmit(onSubmit)}>
       <div className="form-group">
         <label htmlFor="exampleInputEmail1">Email address</label>
-        <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" value={form.username} onChange={e => setForm({ ...form, username: e.target.value })} />
+        <input type="email" name="username" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" ref={register} />
         <small id="emailHelp" className="form-text text-muted">
           We'll never share your email with anyone else.
         </small>
       </div>
       <div className="form-group">
         <label htmlFor="exampleInputPassword1">Password</label>
-        <input type="password" className="form-control" id="exampleInputPassword1" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} />
-      </div>
-      <div className="form-group form-check">
-        <input type="checkbox" className="form-check-input" id="exampleCheck1" />
-        <label className="form-check-label" htmlFor="exampleCheck1">
-          Check me out
-        </label>
+        <input type="password" name="password" className="form-control" id="exampleInputPassword1" ref={register} />
       </div>
       <button type="submit" className="btn btn-primary">
         Submit
@@ -38,11 +31,7 @@ const Login = withRouter(({ history, login }) => {
   );
 });
 
-const mapStateToProps = state => {
-  return {
-    user: state.user
-  };
-};
+const mapStateToProps = state => ({ user: state.user.data });
 
 const mapDispatchToProps = dispatch => {
   return {

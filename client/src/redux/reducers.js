@@ -1,64 +1,48 @@
-const dogState = {
+import { combineReducers } from "redux";
+
+const initialState = {
   loading: false,
-  dogs: [],
-  selected: null,
+  data: "",
   error: ""
 };
 
-export const dogReducer = (state = dogState, action) => {
+export const reducer = (state = initialState, action) => {
+  const name = action.name ? action.name.toUpperCase() : "";
   switch (action.type) {
-    case "REQUEST":
+    case `REQUEST_${name}`:
       return {
         ...state,
         loading: true
       };
-    case "SUCCESS":
+    case `SUCCESS_${name}`:
       return {
-        ...state,
         loading: false,
-        dogs: action.list,
+        data: action.data,
         error: ""
       };
-    case "FAILURE":
+    case `FAILURE_${name}`:
       return {
         ...state,
         loading: false,
-        dogs: [],
-        error: action.payload
+        error: action.data
       };
     default:
       return state;
   }
 };
 
-const userState = {
-  loading: false,
-  user: {},
-  error: ""
+export const crudReducer = (reducer, reducerName) => {
+  return (state, action) => {
+    const { name } = action;
+    const isInitializationCall = state === undefined;
+    if (name !== reducerName && !isInitializationCall) return state;
+
+    return reducer(state, action);
+  };
 };
 
-export const userReducer = (state = userState, action) => {
-  switch (action.type) {
-    case "REQUEST":
-      return {
-        ...state,
-        loading: true
-      };
-    case "SUCCESS":
-      return {
-        ...state,
-        loading: false,
-        user: action.user,
-        error: ""
-      };
-    case "FAILURE":
-      return {
-        ...state,
-        loading: false,
-        user: [],
-        error: action.payload
-      };
-    default:
-      return state;
-  }
-};
+export const rootReducer = combineReducers({
+  dog: crudReducer(reducer, "dog"),
+  user: crudReducer(reducer, "user"),
+  attendance: crudReducer(reducer, "attendance")
+});

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useForm } from "react-hook-form";
 import styled from "styled-components";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -26,17 +27,7 @@ export const DogForm = ({ handleNewDog }) => {
     <Form
       onSubmit={e => {
         e.preventDefault();
-        console.log("About to create dog with: " + 
-        "\nname:" + name +
-        "\nbread:" + bread +
-        "\nsex:" +  sex +
-        "\nvaccines:" +  vaccines +
-        "\nfixed:" +  fixed +
-        "\nheat:" +  heat +
-        "\nchip:" +  chip +
-        "\ncharacter:" +  character +
-        "\nuser:" +  user +
-        "\npass:" +  pass);
+        console.log("About to create dog with: " + "\nname:" + name + "\nbread:" + bread + "\nsex:" + sex + "\nvaccines:" + vaccines + "\nfixed:" + fixed + "\nheat:" + heat + "\nchip:" + chip + "\ncharacter:" + character + "\nuser:" + user + "\npass:" + pass);
         //handleNewDog(name, bread, sex, vaccines, fixed, heat, chip, character, user, pass);
         handleNewDog(name, bread, sex, vaccines, fixed, heat, chip, character, user, pass);
       }}

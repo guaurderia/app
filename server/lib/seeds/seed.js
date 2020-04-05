@@ -19,6 +19,11 @@ const attendanceEnd = "2020-05-01";
 const passStart = "2020-01-01";
 const passEnd = "2020-06-01";
 
+// Seeds
+const numberOfDogs = 50;
+const numberOfUsers = 20;
+const numberOfAttendances = 20;
+
 //-----------
 
 const randomDate = (start, end, startHour, endHour) => {
@@ -130,9 +135,9 @@ const createPass = async (dog, passType, creator) => {
 
 const seedAll = () =>
   withDbConnection(async () => {
-    const dogSeed = randomDog(10);
-    const userSeed = randomUser(10);
-    const attendances = randomAttendance(20);
+    const dogSeed = randomDog(numberOfDogs);
+    const userSeed = randomUser(numberOfUsers);
+    const attendances = randomAttendance(numberOfAttendances);
 
     await createSeeds(User, userSeed);
     await createSeeds(Dog, dogSeed);

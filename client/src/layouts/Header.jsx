@@ -1,26 +1,38 @@
 import React from "react";
+import { connect } from "react-redux";
 import { Link } from "react-router-dom";
+import { getData } from "../redux/actions";
 
-const Header = () => {
+const Header = ({ user, logout }) => {
   return (
     <header>
       <nav className="navbar navbar-expand-lg navbar-light">
         <Link className="navbar-brand" to="/">
           Guaurdería
         </Link>
-        <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-          <span className="navbar-toggler-icon"></span>
-        </button>
-        <div className="collapse navbar-collapse d-flex flex-row-reverse" id="navbarNav">
-          <div className="navbar-nav">
-            <Link className="nav-item nav-link" to="/dog/list">
-              Perros
+        <div className="navbar-nav">
+          <Link className="nav-item nav-link" to="/dog/list">
+            Perros
+          </Link>
+        </div>
+        <div className="navbar-nav">
+          <Link className="nav-item nav-link" to="/login">
+            Login
+          </Link>
+        </div>
+        <div className="navbar-nav">
+          {user && (
+            <Link className="nav-item nav-link" to="/" onClick={logout}>
+              Logout
             </Link>
-          </div>
+          )}
         </div>
       </nav>
     </header>
   );
 };
 
-export default Header;
+const mapStateToProps = state => ({ user: state.user.data });
+const mapDispatchToProps = dispatch => ({ logout: () => dispatch(getData("/auth/logout", "user")) });
+
+export default connect(mapStateToProps, mapDispatchToProps)(Header);

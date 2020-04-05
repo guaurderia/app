@@ -3,9 +3,9 @@ import { connect } from "react-redux";
 import { getData } from "../redux/actions";
 
 const DogList = ({ getList, list, user }) => {
-  console.log(user);
   useEffect(() => {
     getList();
+    console.log("USER", user);
   }, [user]);
   return (
     <div className="owner-list">
@@ -28,14 +28,15 @@ const DogList = ({ getList, list, user }) => {
 
 const mapStateToProps = state => {
   return {
-    list: state.dog.dogs,
-    user: state.user.user
+    list: state.dog.data,
+    user: state.user.data
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    getList: () => dispatch(getData("/dog/show/all"))
+    getList: () => dispatch(getData("/dog/show/all", "dog")),
+    getUser: () => dispatch(getData("/auth/login", "user"))
   };
 };
 

@@ -34,10 +34,9 @@ router.post("/login", isLoggedOut(), passport.authenticate("local"), async (req,
   res.json(req.user);
 });
 
-router.post("/logout", isLoggedIn(), async (req, res) => {
-  const name = req.user.firstName;
+router.get("/logout", isLoggedIn(), async (req, res) => {
   req.logOut();
-  res.json(`Goodbye, ${name}`);
+  res.status(202).json("");
 });
 
 module.exports = router;
