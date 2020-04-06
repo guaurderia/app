@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { useForm } from "react-hook-form";
 import styled from "styled-components";
@@ -17,6 +17,8 @@ const DogForm = ({ createDog }) => {
   const sex = watch("sex", null);
   const heat = watch("heat", { had: false, date: null });
   const vaccines = watch("vaccines", { rabies: false, parvovirus: false, hepatitis: false, distemper: false });
+
+  useEffect(() => {});
 
   console.log("HEAT", heat);
   console.log("FIXED", fixed);

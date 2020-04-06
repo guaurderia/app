@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
 import DogForm from "../components/DogForm2";
-import { createDog } from "../../lib/dogs.api";
+import { createDog } from "../../lib/user.api";
 import { withRouter } from "react-router-dom";
 import DogList from "../components/DogList";
 
