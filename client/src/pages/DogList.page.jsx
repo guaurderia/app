@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import { DogForm } from "../components/DogForm";
+import DogForm from "../components/DogForm2";
 import { createDog } from "../../lib/dogs.api";
 import { withRouter } from "react-router-dom";
 import DogList from "../components/DogList";
 
-const DogListPage = withRouter(({ history, user }) => {
+const DogListPage = withRouter(({ history, user, loading }) => {
   const [error, setError] = useState();
 
   const handleNewDog = async (name, bread, sex, vaccines, fixed, heat, chip, character, user, pass) => {
@@ -23,8 +23,8 @@ const DogListPage = withRouter(({ history, user }) => {
       setError(e.message);
     }
   };
-  if (!user.data) {
-    if (user.loading) return <div>Loading...</div>;
+  if (!user) {
+    if (loading) return <div>Loading...</div>;
     else return <div>This page is restricted</div>;
   } else {
     return (
@@ -42,6 +42,8 @@ const DogListPage = withRouter(({ history, user }) => {
   }
 });
 
-const mapStateToProps = state => ({ user: state.user });
+const mapStateToProps = state => {
+  return { user: state.user.data, loading: state.user.loading };
+};
 
 export default connect(mapStateToProps)(DogListPage);
