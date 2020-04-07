@@ -10,7 +10,7 @@ const crudGenerator = (
   { createProtectFields, extraFieldsCreate, populateFields } = {
     createProtectFields: [],
     extraFieldsCreate: () => ({}),
-    populateFields: []
+    populateFields: [],
   }
 ) => {
   const router = express.Router();
@@ -33,12 +33,13 @@ const crudGenerator = (
         return res.status(409).json(`${uniqueIndex} ${Object.values(unique)} already exists in ${Model.modelName} db`);
       } else {
         try {
-          const obj = await Model.create(data);
-          return res.json(obj);
+          await Model.create(data);
+          const list = await Model.find();
+          return res.json(list);
         } catch (err) {
           if (err.name == "ValidationError") {
             const keys = Object.keys(err.errors);
-            return res.status(422).json(keys.map(key => err.errors[key].message));
+            return res.status(422).json(keys.map((key) => err.errors[key].message));
           } else {
             console.error(err);
             return res.status(500).json(err);

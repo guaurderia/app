@@ -8,13 +8,14 @@ import dogBreeds from "../../../lib/dogBreeds";
 import _ from "lodash";
 import { TextField, Checkbox, RadioGroup, FormControlLabel, Radio } from "@material-ui/core";
 import Select, { makeAnimated } from "react-select";
+import { postData } from "../../redux/actions"
 
 const Form = styled.form`
   margin: 30px 200px;
 `;
 
 const DogForm = ({ createDog }) => {
-  const { register, handleSubmit, watch, control, setValue } = useForm();
+  const { register, handleSubmit, watch, control } = useForm();
   const form = watch();
 
   console.log("form", form);
@@ -34,6 +35,9 @@ const DogForm = ({ createDog }) => {
   ];
 
   const onSubmit = (obj) => {
+    obj.breed = obj.breed.value
+    obj.character = obj.character.value
+    // obj.vaccines = obj.vaccines.map(e => e.value)
     createDog(obj);
   };
   return (
@@ -61,7 +65,7 @@ const DogForm = ({ createDog }) => {
             <div>
               <Controller as={<DatePicker />} showPopperArrow={true} selected={_.get(form, "heat.date") || new Date()} control={control} defaultValue={null} name="heat.date" disabled={_.get(form, "heat.had") ? true : false} />
               <div className="form-check">
-                <Controller as={Checkbox} control={control} name="heat.had" defaultValue={false} onClick={(e) => console.log(register)} />
+                <Controller as={Checkbox} control={control} name="heat.had" defaultValue={false} />
                 <label className="form-check-label" htmlFor="heat">
                   Todavía no ha tenido su primer celo.
                 </label>
@@ -81,7 +85,8 @@ const DogForm = ({ createDog }) => {
     />
       <div className="form-group row">
         <div className="col-sm-10">
-          <button type="submit" className="btn btn-primary">
+          <button type="submit" className="btn btn-primary" onClick={() => {
+          }}>
             + Añadir
           </button>
         </div>

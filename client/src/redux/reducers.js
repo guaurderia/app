@@ -3,7 +3,7 @@ import { combineReducers } from "redux";
 const initialState = {
   loading: false,
   data: "",
-  error: ""
+  error: "",
 };
 
 export const reducer = (state = initialState, action) => {
@@ -12,19 +12,19 @@ export const reducer = (state = initialState, action) => {
     case `REQUEST_${name}`:
       return {
         ...state,
-        loading: true
+        loading: true,
       };
     case `SUCCESS_${name}`:
       return {
         loading: false,
         data: action.data,
-        error: ""
+        error: "",
       };
     case `FAILURE_${name}`:
       return {
         ...state,
         loading: false,
-        error: action.data
+        error: action.data,
       };
     default:
       return state;
@@ -44,5 +44,5 @@ export const crudReducer = (reducer, reducerName) => {
 export const rootReducer = combineReducers({
   dog: crudReducer(reducer, "dog"),
   user: crudReducer(reducer, "user"),
-  attendance: crudReducer(reducer, "attendance")
+  attendance: crudReducer(reducer, "attendance"),
 });

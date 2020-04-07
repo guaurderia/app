@@ -6,7 +6,7 @@ const DogList = ({ getList, list, user }) => {
   useEffect(() => {
     getList();
     console.log("USER", user);
-  }, [user]);
+  }, []);
   return (
     <div className="owner-list">
       {list &&
@@ -26,17 +26,17 @@ const DogList = ({ getList, list, user }) => {
   );
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     list: state.dog.data,
-    user: state.user.data
+    user: state.user.data,
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
     getList: () => dispatch(getData("/dog/show/all", "dog")),
-    getUser: () => dispatch(getData("/auth/login", "user"))
+    getUser: () => dispatch(getData("/auth/login", "user")),
   };
 };
 

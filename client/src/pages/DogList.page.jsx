@@ -12,21 +12,6 @@ const DogListPage = withRouter(({ history, user, loading, getUser }) => {
     getUser();
   }, []);
 
-  const handleNewDog = async (name, bread, sex, vaccines, fixed, heat, chip, character, user, pass) => {
-    // Handle errors
-    try {
-      // CLIENT VALIDATION LOGIC
-      if (name == "" || chip == "") {
-        throw new Error("Opps! Por lo menos necesitamos nombre y chip.");
-      }
-      const dog = await createDog(name, bread, sex, vaccines, fixed, heat, chip, character, user, pass);
-      //history.push("/dog/list");
-      history.push("/dog/create");
-    } catch (e) {
-      console.log(e);
-      setError(e.message);
-    }
-  };
   if (!user) {
     if (loading) return <div>Loading...</div>;
     else return <div>This page is restricted</div>;
@@ -40,7 +25,7 @@ const DogListPage = withRouter(({ history, user, loading, getUser }) => {
             {error}
           </div>
         )}
-        <DogForm {...{ handleNewDog }} />
+        <DogForm />
       </div>
     );
   }
