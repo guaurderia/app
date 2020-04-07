@@ -18,8 +18,10 @@
   },
   "homepage": "https://github.com/guaurderia/app#readme",
   "dependencies": {
+    "@material-ui/core": "^4.9.9",
     "axios": "^0.19.2",
     "bootstrap": "^3.4.1",
+    "lodash": "^4.17.15",
     "parcel": "^1.12.4",
     "prop-types": "^15.7.2",
     "react": "^16.13.0",
@@ -28,6 +30,7 @@
     "react-hook-form": "^5.2.0",
     "react-redux": "^7.2.0",
     "react-router-dom": "^5.1.2",
+    "react-select": "^3.1.0",
     "redux": "^4.0.5",
     "redux-devtools-extension": "^2.13.8",
     "redux-logger": "^3.0.6",

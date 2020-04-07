@@ -1,12 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import DogForm from "../components/DogForm2";
+import { getData } from "../redux/actions";
+import DogForm from "../components/DogForm";
 import { createDog } from "../../lib/user.api";
 import { withRouter } from "react-router-dom";
 import DogList from "../components/DogList";
 
-const DogListPage = withRouter(({ history, user, loading }) => {
+const DogListPage = withRouter(({ history, user, loading, getUser }) => {
   const [error, setError] = useState();
+  useEffect(() => {
+    getUser();
+  }, []);
 
   const handleNewDog = async (name, bread, sex, vaccines, fixed, heat, chip, character, user, pass) => {
     // Handle errors
@@ -42,8 +46,12 @@ const DogListPage = withRouter(({ history, user, loading }) => {
   }
 });
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return { user: state.user.data, loading: state.user.loading };
 };
 
-export default connect(mapStateToProps)(DogListPage);
+const mapDispatchToProps = (dispatch) => {
+  return { getUser: () => dispatch(getData("/user/show/me", "user")) };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(DogListPage);
