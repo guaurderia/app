@@ -7,7 +7,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import dogBreeds from "../../../lib/dogBreeds";
 import _ from "lodash";
 import { TextField, Checkbox, RadioGroup, FormControlLabel, Radio } from "@material-ui/core";
-import Select from "react-select";
+import Select, { makeAnimated } from "react-select";
 
 const Form = styled.form`
   margin: 30px 200px;
@@ -15,13 +15,6 @@ const Form = styled.form`
 
 const DogForm = ({ createDog }) => {
   const { register, handleSubmit, watch, control, setValue } = useForm();
-  const [breed, setBreed] = useState();
-
-  const handleBreed = (value) => {
-    console.log(value);
-    setBreed(value);
-    setValue("breed", "fuck");
-  };
   const form = watch();
 
   console.log("form", form);
@@ -33,15 +26,20 @@ const DogForm = ({ createDog }) => {
     { value: "hiperactive", label: form.sex === "female" ? "Hiperactiva" : "Hiperactivo" },
     { value: "calm", label: form.sex === "female" ? "Tranquila" : "Tranquilo" },
   ];
+  const vaccines = [
+    { value: "rabies", label: "Antirábica" },
+    { value: "parvovirus", label: "Parvovirus" },
+    { value: "hepatitis", label: "Hepatitis" },
+    { value: "distemper", label: "Moquillo" },
+  ];
 
   const onSubmit = (obj) => {
-    e.preventDefault();
     createDog(obj);
   };
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
       <Controller as={TextField} control={control} name="name" label="Nombre" defaultValue="" />
-      <Controller as={Select} value={breed} options={breeds} control={control} rules={{ required: true }} name="breed" label="Raza" onChange={(value) => handleBreed(value)} defaultValue="" />
+      <Controller as={Select} value={form.breed} options={breeds} control={control} rules={{ required: true }} name="breed" label="Raza" defaultValue=""/>
       <Controller as={TextField} id="outlined-basic" control={control} name="chip" label="Microchip" defaultValue="" />
       <Controller as={Checkbox} control={control} name="fixed" label="Castrado" defaultValue={false} />
       <Controller
@@ -72,36 +70,15 @@ const DogForm = ({ createDog }) => {
           </div>
         </div>
       )}
-      <Controller as={Select} options={character} control={control} name="character" label="Carácter" onChange={([{ value }]) => value} defaultValue="" />
-      <div className="form-group row">
-        <div className="col-sm-2">Vacunas</div>
-        <div className="col-sm-10">
-          <div className="form-check">
-            <input className="form-check-input" type="checkbox" name="vaccines.rabies" ref={register} />
-            <label className="form-check-label" htmlFor="female">
-              Antirábica
-            </label>
-          </div>
-          <div className="form-check">
-            <input className="form-check-input" type="checkbox" name="vaccines.parvovirus" ref={register} />
-            <label className="form-check-label" htmlFor="female">
-              Parvovirus
-            </label>
-          </div>
-          <div className="form-check">
-            <input className="form-check-input" type="checkbox" name="vaccines.hepatitis" ref={register} />
-            <label className="form-check-label" htmlFor="female">
-              Hepatitis
-            </label>
-          </div>
-          <div className="form-check">
-            <input className="form-check-input" type="checkbox" name="vaccines.distemper" ref={register} />
-            <label className="form-check-label" htmlFor="female">
-              Moquillo
-            </label>
-          </div>
-        </div>
-      </div>
+      <Controller as={Select} options={character} control={control} name="character" label="Carácter" defaultValue="" />
+      <Controller as={Select}
+      control={control}
+      name="vaccines"
+      closeMenuOnSelect={false}
+      defaultValue=""
+      isMulti
+      options={vaccines}
+    />
       <div className="form-group row">
         <div className="col-sm-10">
           <button type="submit" className="btn btn-primary">
