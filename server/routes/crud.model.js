@@ -51,6 +51,7 @@ const crudGenerator = (
 
   router.get("/show/all", async (req, res) => {
     const objs = await Model.find().populate(populateFields);
+    console.log(objs);
     return res.json(objs);
   });
 

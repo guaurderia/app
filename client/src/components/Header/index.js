@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-import { getData } from "../redux/actions";
+import { getData } from "../../redux/actions";
 
 const Header = ({ user, logout }) => {
   return (
@@ -11,14 +11,16 @@ const Header = ({ user, logout }) => {
           Guaurdería
         </Link>
         <div className="navbar-nav">
-          <Link className="nav-item nav-link" to="/dog/list">
+          <Link className="nav-item nav-link" to="/dogs">
             Perros
           </Link>
         </div>
         <div className="navbar-nav">
-          <Link className="nav-item nav-link" to="/login">
-            Login
-          </Link>
+          {!user && (
+            <Link className="nav-item nav-link" to="/login">
+              Login
+            </Link>
+          )}
         </div>
         <div className="navbar-nav">
           {user && (
@@ -32,7 +34,7 @@ const Header = ({ user, logout }) => {
   );
 };
 
-const mapStateToProps = state => ({ user: state.user.data });
-const mapDispatchToProps = dispatch => ({ logout: () => dispatch(getData("/auth/logout", "user")) });
+const mapStateToProps = (state) => ({ user: state.user.data });
+const mapDispatchToProps = (dispatch) => ({ logout: () => dispatch(getData("/auth/logout", "user")) });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Header);

@@ -6,10 +6,10 @@ import { withRouter } from "react-router-dom";
 
 const Login = withRouter(({ history, login, user }) => {
   const { register, handleSubmit } = useForm();
-  const onSubmit = data => {
+  const onSubmit = (data) => {
     login(data);
     console.log("USER AFTER LOGIN", user);
-    history.push("/dog/list");
+    history.push("/dogs");
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -31,11 +31,11 @@ const Login = withRouter(({ history, login, user }) => {
   );
 });
 
-const mapStateToProps = state => ({ user: state.user.data });
+const mapStateToProps = (state) => ({ user: state.user.data });
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
-    login: obj => dispatch(postData("/auth/login", "user", obj))
+    login: (obj) => dispatch(postData("/auth/login", "user", obj)),
   };
 };
 
