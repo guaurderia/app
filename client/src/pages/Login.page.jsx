@@ -2,14 +2,13 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { connect } from "react-redux";
 import { postData } from "../redux/actions";
-import { withRouter } from "react-router-dom";
+import { navigate } from "hookrouter";
 
-const Login = withRouter(({ history, login, user }) => {
+const Login = ({ login, user }) => {
   const { register, handleSubmit } = useForm();
   const onSubmit = (data) => {
     login(data);
-    console.log("USER AFTER LOGIN", user);
-    history.push("/dogs");
+    navigate("/dogs");
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -29,7 +28,7 @@ const Login = withRouter(({ history, login, user }) => {
       </button>
     </form>
   );
-});
+};
 
 const mapStateToProps = (state) => ({ user: state.user.data });
 

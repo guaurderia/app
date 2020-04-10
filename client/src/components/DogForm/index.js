@@ -11,7 +11,15 @@ import Form from "./style";
 import { character, breed, vaccines } from "./data";
 
 const DogForm = ({ createDog, selected }) => {
-  const { register, handleSubmit, watch, control, reset } = useForm({ defaultValues: selected });
+  const filtered = () => {
+    const basics = { ..._.pick(selected, ["name", "vaccines", "heat", "sex", "fixed", "chip", "character", "scan"]) };
+    const [breed] = _.at(selected, "breed.name");
+    const [owner] = _.at(selected, "owner.firstName");
+    const [creator] = _.at(selected, "creator.firstName");
+    return { ...basics, breed, owner, creator };
+  };
+
+  const { register, handleSubmit, watch, control, reset } = useForm({ defaultValues: filtered() });
   const form = watch();
 
   console.log("FORM", form);
@@ -25,7 +33,7 @@ const DogForm = ({ createDog, selected }) => {
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
       <Controller as={TextField} control={control} name="name" label="Nombre" variant="outlined" />
-      <Controller as={Select} value={form.breed} options={breed} control={control} rules={{ required: true }} name="breed" label="Raza" />
+      <Controller as={Select} options={breed} control={control} rules={{ required: true }} name="breed" label="Raza" />
       <Controller as={TextField} control={control} name="chip" label="Microchip" variant="outlined" />
       <FormLabel component="legend">Castrado</FormLabel>
       <Controller as={Checkbox} control={control} name="fixed" label="Castrado" defaultValue={false} />
@@ -50,7 +58,7 @@ const DogForm = ({ createDog, selected }) => {
           </label>
         </>
       )}
-      <Controller as={Select} options={character} control={control} name="character" label="Carácter" />
+      <Controller as={Select} options={character(form.sex)} control={control} name="character" label="Carácter" />
       <Controller as={Select} control={control} name="vaccines" closeMenuOnSelect={false} isMulti options={vaccines} />
       <div className="form-group row">
         <div className="col-sm-10">

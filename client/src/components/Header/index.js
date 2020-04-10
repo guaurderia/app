@@ -1,32 +1,35 @@
 import React from "react";
+import { useRoutes, A } from "hookrouter";
+import { routes } from "../../utils/routes";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { getData } from "../../redux/actions";
 
 const Header = ({ user, logout }) => {
+  const routeResult = useRoutes(routes);
   return (
     <header>
       <nav className="navbar navbar-expand-lg navbar-light">
-        <Link className="navbar-brand" to="/">
+        <A className="navbar-brand" href="/">
           Guaurdería
-        </Link>
+        </A>
         <div className="navbar-nav">
-          <Link className="nav-item nav-link" to="/dogs">
+          <A className="nav-item nav-link" href="/dogs">
             Perros
-          </Link>
+          </A>
         </div>
         <div className="navbar-nav">
           {!user && (
-            <Link className="nav-item nav-link" to="/login">
+            <A className="nav-item nav-link" href="/login">
               Login
-            </Link>
+            </A>
           )}
         </div>
         <div className="navbar-nav">
           {user && (
-            <Link className="nav-item nav-link" to="/" onClick={logout}>
+            <A className="nav-item nav-link" href="/" onClick={logout}>
               Logout
-            </Link>
+            </A>
           )}
         </div>
       </nav>

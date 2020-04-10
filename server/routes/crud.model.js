@@ -1,5 +1,6 @@
 const express = require("express");
 const _ = require("lodash");
+require("../models/Breed.model");
 const { asyncController } = require("../middleware/asyncController");
 const { isLoggedIn } = require("../middleware/auth/isLogged");
 

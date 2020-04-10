@@ -1,25 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import { useDog } from "../../pages/Dogs/context";
 import { connect } from "react-redux";
-import { getData } from "../../redux/actions";
-import { Link } from "react-router-dom";
+import { Link, useParams, useLocation } from "react-router-dom";
 import { DogListContainer } from "./style";
+import _ from "lodash";
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    width: "100%",
-    maxWidth: 360,
-    backgroundColor: theme.palette.background.paper,
-  },
-}));
-
-const DogList = ({ getList, list, selected, setSelected }) => {
-  const classes = useStyles();
-
-  useEffect(() => {
-    getList();
-  }, []);
+const DogList = ({ list, selected, setSelected }) => {
+  const id = _.last(useLocation().pathname.split("/"));
+  console.log("PARAMS", location);
 
   const handleListItemClick = (dog) => {
     setSelected(dog);
@@ -27,14 +14,13 @@ const DogList = ({ getList, list, selected, setSelected }) => {
   const createList = () => {
     if (list) {
       const dogList = list.map((dog) => {
-        const active = () => (selected === dog ? "active" : "");
+        const active = () => (id === dog._id ? "active" : "");
         return (
           <Link className={`list-group-item ${active()}`} key={dog._id} onClick={(e) => handleListItemClick(dog)} to={`/dogs/show/${dog._id}`}>
             {dog.name} {dog.bread} {dog.sex} {dog.character}
           </Link>
         );
       });
-      console.log("LIST", dogList);
       return dogList;
     } else {
       return "List could not be loaded";
@@ -49,10 +35,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    getList: () => dispatch(getData("/dog/show/all", "dog")),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(DogList);
+export default connect(mapStateToProps)(DogList);
