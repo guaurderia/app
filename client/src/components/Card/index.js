@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
-import TableLayout from "./style";
+import { TableLayout, Sidebar } from "./style";
 import Button from "@material-ui/core/Button";
 import _ from "lodash";
 import { Link, useParams } from "react-router-dom";
@@ -38,15 +38,12 @@ const DogCard = ({ list }) => {
       return table;
     };
     return (
-      <div>
-        <Button variant="contained">
-          <Link to={`/dogs/create`}>Nuevo</Link>
-        </Button>
+      <Sidebar>
         {createCard()}
         <Button variant="contained">
           <Link to={`/dogs/edit/${dog._id}`}>Editar</Link>
         </Button>
-      </div>
+      </Sidebar>
     );
   } else return <div>Loading...</div>;
 };

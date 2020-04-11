@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-const Table = styled.div`
+export const TableLayout = styled.div`
   display: flex;
   > div {
     width: 100px;
@@ -11,4 +11,8 @@ const Table = styled.div`
   }
 `;
 
-export default Table;
+export const Sidebar = styled.div`
+  background: #f7f7f7;
+  padding: 20px;
+  overflow: hidden;
+`;

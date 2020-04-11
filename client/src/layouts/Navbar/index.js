@@ -1,37 +1,37 @@
 import React from "react";
-import { useRoutes, A } from "hookrouter";
-import { routes } from "../../utils/routes";
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 import { getData } from "../../redux/actions";
 
-const Header = ({ user, logout }) => {
-  const routeResult = useRoutes(routes);
+const Navbar = ({ user, logout }) => {
   return (
     <header>
       <nav className="navbar navbar-expand-lg navbar-light">
-        <A className="navbar-brand" href="/">
+        <NavLink className="navbar-brand" to="/">
           Guaurdería
-        </A>
+        </NavLink>
         <div className="navbar-nav">
-          <A className="nav-item nav-link" href="/dogs">
+          <NavLink className="nav-item nav-link" to="/dogs">
             Perros
-          </A>
+          </NavLink>
         </div>
         <div className="navbar-nav">
           {!user && (
-            <A className="nav-item nav-link" href="/login">
+            <NavLink className="nav-item nav-link" to="/login">
               Login
-            </A>
+            </NavLink>
           )}
         </div>
         <div className="navbar-nav">
           {user && (
-            <A className="nav-item nav-link" href="/" onClick={logout}>
+            <NavLink className="nav-item nav-link" to="/" onClick={logout}>
               Logout
-            </A>
+            </NavLink>
           )}
         </div>
+        <button variant="contained">
+          <Link to="/dogs/form/create">Nuevo</Link>
+        </button>
       </nav>
     </header>
   );
@@ -40,4 +40,4 @@ const Header = ({ user, logout }) => {
 const mapStateToProps = (state) => ({ user: state.user.data });
 const mapDispatchToProps = (dispatch) => ({ logout: () => dispatch(getData("/auth/logout", "user")) });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Header);
+export default connect(mapStateToProps, mapDispatchToProps)(Navbar);

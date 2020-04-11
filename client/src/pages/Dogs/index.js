@@ -2,11 +2,10 @@ import React, { useState, useEffect } from "react";
 import { Route, Switch, useParams } from "react-router-dom";
 import { connect } from "react-redux";
 import { getData } from "../../redux/actions";
-import DogForm from "../../components/DogForm";
-import DogList from "../../components/DogList";
-import Grid from "../../layouts/Grid";
-import DogContainer from "./style";
-import DogCard from "../../components/DogCard";
+import DogForm from "../../layouts/Form";
+import DogList from "../../layouts/List";
+import { GridContainer, DogsContainer } from "./style";
+import DogCard from "../../components/Card";
 import _ from "lodash";
 
 const DogsPage = ({ user, loading, getUser, getList }) => {
@@ -22,15 +21,21 @@ const DogsPage = ({ user, loading, getUser, getList }) => {
   }
   if (user) {
     return (
-      <DogContainer>
-        <Grid>
-          <DogList {...{ selected, setSelected }} />
-          <Switch>
-            <Route path="/dogs/show/:id" render={() => <DogCard />} />
-            <Route path="/dogs/edit/:id" render={() => <DogForm {...{ selected }} />} />
-          </Switch>
-        </Grid>
-      </DogContainer>
+      <DogsContainer>
+        <Switch>
+          <Route path="/dogs/form/:type">
+            <DogForm />
+          </Route>
+          <Route path="/dogs">
+            <GridContainer>
+              <DogList {...{ selected, setSelected }} />
+              <Route path="/dogs/show/:id">
+                <DogCard />
+              </Route>
+            </GridContainer>
+          </Route>
+        </Switch>
+      </DogsContainer>
     );
   } else return <div>This page is restricted</div>;
 };

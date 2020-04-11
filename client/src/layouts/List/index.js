@@ -1,24 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { Link, useParams, useLocation } from "react-router-dom";
-import { DogListContainer } from "./style";
+import { DogListContainer, LinkStyle } from "./style";
 import _ from "lodash";
 
-const DogList = ({ list, selected, setSelected }) => {
+const DogList = ({ list }) => {
   const id = _.last(useLocation().pathname.split("/"));
   console.log("PARAMS", location);
 
-  const handleListItemClick = (dog) => {
-    setSelected(dog);
-  };
   const createList = () => {
     if (list) {
       const dogList = list.map((dog) => {
         const active = () => (id === dog._id ? "active" : "");
         return (
-          <Link className={`list-group-item ${active()}`} key={dog._id} onClick={(e) => handleListItemClick(dog)} to={`/dogs/show/${dog._id}`}>
+          <LinkStyle className={`list-group-item ${active()}`} key={dog._id} to={`/dogs/show/${dog._id}`}>
             {dog.name} {dog.bread} {dog.sex} {dog.character}
-          </Link>
+          </LinkStyle>
         );
       });
       return dogList;
