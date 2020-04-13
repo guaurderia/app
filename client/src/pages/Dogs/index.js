@@ -5,21 +5,22 @@ import { getData } from "../../redux/actions";
 import DogForm from "../../layouts/Form";
 import DogList from "../../layouts/List";
 import { GridContainer, DogsContainer } from "./style";
-import DogCard from "../../components/Card";
 import _ from "lodash";
+import Sidebar from "../../layouts/Sidebar";
 
-const DogsPage = ({ user, loading, getUser, getList }) => {
+const DogsPage = ({ user, loading, getUser, getDogs, getAttendances, list }) => {
   const [selected, setSelected] = useState({});
 
   useEffect(() => {
     getUser();
-    getList();
+    getDogs();
+    getAttendances();
   }, []);
 
   if (loading) {
     return <div>Loading...</div>;
   }
-  if (user) {
+  if (user && list) {
     return (
       <DogsContainer>
         <Switch>
@@ -30,7 +31,7 @@ const DogsPage = ({ user, loading, getUser, getList }) => {
             <GridContainer>
               <DogList {...{ selected, setSelected }} />
               <Route path="/dogs/show/:id">
-                <DogCard />
+                <Sidebar />
               </Route>
             </GridContainer>
           </Route>
@@ -45,7 +46,11 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => {
-  return { getUser: () => dispatch(getData("/user/show/me", "user")), getList: () => dispatch(getData("/dog/show/all", "dog")) };
+  return {
+    getUser: () => dispatch(getData("/user/show/me", "user")),
+    getDogs: () => dispatch(getData("/dog/show/all", "dog")),
+    getAttendances: () => dispatch(getData("/attendance/show/all", "attendance")),
+  };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(DogsPage);

@@ -3,28 +3,25 @@ import { connect } from "react-redux";
 import { Link, useParams, useLocation } from "react-router-dom";
 import { DogListContainer, LinkStyle } from "./style";
 import _ from "lodash";
+import DogItem from "../../components/Item";
 
 const DogList = ({ list }) => {
-  const id = _.last(useLocation().pathname.split("/"));
-  console.log("PARAMS", location);
+  const urlParams = _.last(useLocation().pathname.split("/"));
 
   const createList = () => {
     if (list) {
-      const dogList = list.map((dog) => {
-        const active = () => (id === dog._id ? "active" : "");
-        return (
-          <LinkStyle className={`list-group-item ${active()}`} key={dog._id} to={`/dogs/show/${dog._id}`}>
-            {dog.name} {dog.bread} {dog.sex} {dog.character}
-          </LinkStyle>
-        );
-      });
+      const dogList = list.map((dog) => <DogItem key={dog._id} {...{ dog, urlParams }} />);
       return dogList;
     } else {
       return "List could not be loaded";
     }
   };
 
-  return <DogListContainer className="list-group list-group-flush">{createList()}</DogListContainer>;
+  return (
+    <DogListContainer className="list-group list-group-flush">
+      <DogItem dog={list[0]} {...{ urlParams }} />
+    </DogListContainer>
+  );
 };
 const mapStateToProps = (state) => {
   return {

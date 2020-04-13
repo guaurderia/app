@@ -25,6 +25,7 @@ export const postData = (url, name, obj) => {
       .then((res) => {
         const data = res.data;
         dispatch({ type: `SUCCESS_${name.toUpperCase()}`, data, name });
+        return data;
       })
       .catch((error) => {
         dispatch({ type: `FAILURE_${name.toUpperCase()}`, error: error.response.data, name });

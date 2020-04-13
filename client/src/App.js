@@ -5,13 +5,21 @@ import store from "./redux/store";
 import Navbar from "./layouts/Navbar";
 import Footer from "./layouts/Footer";
 import DogsPage from "./pages/Dogs";
+import LoginPage from "./pages/Login";
 
 const App = () => {
   return (
     <Provider store={store}>
       <Router>
         <Navbar />
-        <DogsPage />
+        <Switch>
+          <Route path="/dogs">
+            <DogsPage />
+          </Route>
+          <Route path="/login">
+            <LoginPage />
+          </Route>
+        </Switch>
         <Footer />
       </Router>
     </Provider>

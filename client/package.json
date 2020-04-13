@@ -19,6 +19,7 @@
   "homepage": "https://github.com/guaurderia/app#readme",
   "dependencies": {
     "@material-ui/core": "^4.9.9",
+    "@material-ui/icons": "^4.9.1",
     "axios": "^0.19.2",
     "bootstrap": "^3.4.1",
     "hookrouter": "^1.2.3",

@@ -34,9 +34,8 @@ const crudGenerator = (
         return res.status(409).json(`${uniqueIndex} ${Object.values(unique)} already exists in ${Model.modelName} db`);
       } else {
         try {
-          await Model.create(data);
-          const list = await Model.find();
-          return res.json(list);
+          const created = await Model.create(data);
+          return res.json(created);
         } catch (err) {
           if (err.name == "ValidationError") {
             const keys = Object.keys(err.errors);
@@ -56,20 +55,20 @@ const crudGenerator = (
     return res.json(objs);
   });
 
-  router.get("/show/:id", async (req, res) => {
-    console.log("SHOW PROFILE");
-    let id;
-    if (Model.modelName === "user") {
-      id = req.user._id;
-    } else {
-      id = req.params.id;
-    }
-    const obj = await Model.findById(id);
-    if (obj) {
-      const data = dataCompiler(req, obj);
+  router.get("/show/?", async (req, res) => {
+    const query = req.query;
+    let data;
+    if (_.has(query, "me")) {
+      data = await Model.findById(req.user._id);
       res.json(data);
     } else {
-      res.status(422).json(`This ${Model.modelName} doesn't exist`);
+      data = await Model.find(query);
+      if (data.length > 0) {
+        const response = data.map((obj) => dataCompiler(req, obj));
+        res.json(response);
+      } else {
+        res.status(422).json(`This ${Model.modelName} doesn't exist`);
+      }
     }
   });
 
