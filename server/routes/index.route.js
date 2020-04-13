@@ -5,7 +5,7 @@ const User = require("../models/User.model");
 const Pass = require("../models/Pass.model");
 const PassType = require("../models/PassType.model");
 const Attendance = require("../models/Attendance.model");
-const auth = require("./auth/auth.router");
+const auth = require("./auth/auth.routes");
 const { crudGenerator } = require("../routes/crud.model");
 const { isLoggedIn } = require("../middleware/auth/isLogged");
 
@@ -16,8 +16,8 @@ router.use(
   isLoggedIn(),
   crudGenerator(Dog, "chip", "name", {
     createProtectFields: [],
-    populateFields: [],
-    extraFieldsCreate: req => ({ creator: req.user._id })
+    populateFields: ["breed", "owner", "creator"],
+    extraFieldsCreate: (req) => ({ creator: req.user._id }),
   })
 );
 
@@ -29,7 +29,7 @@ router.use(
   crudGenerator(Pass, "_id", "_id", {
     createProtectFields: [],
     populateFields: ["dog", "passType", "creator"],
-    extraFieldsCreate: req => ({ creator: req.user._id })
+    extraFieldsCreate: (req) => ({ creator: req.user._id }),
   })
 );
 
@@ -39,7 +39,7 @@ router.use(
   crudGenerator(Attendance, "_id", "_id", {
     createProtectFields: [],
     populateFields: ["dog", "creator"],
-    extraFieldsCreate: req => ({ creator: req.user._id })
+    extraFieldsCreate: (req) => ({ creator: req.user._id }),
   })
 );
 

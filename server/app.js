@@ -15,8 +15,21 @@ require("./config/db.config");
 
 const app = express();
 
+const whitelist = ["http://localhost:1234"];
+const corsOptions = {
+  origin: function(origin, callback) {
+    if (!origin) return callback(null, true);
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true
+};
+
 // Middleware Setup
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(logger("dev"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));

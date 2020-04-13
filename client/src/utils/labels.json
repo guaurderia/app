@@ -1,0 +1,19 @@
+[
+  { "value": "name", "label": { "spanish": "nombre", "english": "name" } },
+  { "value": "last_name", "label": { "spanish": "apellidos", "english": "last name" } },
+  { "value": "phone_number", "label": { "spanish": "número de teléfono", "english": "phone number" } },
+  { "value": "email", "label": { "spanish": "correo electrónico", "english": "email" } },
+  { "value": "breed", "label": { "spanish": "raza", "english": "breed" } },
+  { "value": "gender", "label": { "spanish": "sexo", "english": "gender" } },
+  { "value": "vaccines", "label": { "spanish": "vacunas", "english": "vaccines" } },
+  { "value": "fixed", "label": { "spanish": "castrado", "english": "fixed" } },
+  { "value": "heat", "label": { "spanish": "celo", "english": "heat" } },
+  { "value": "last_heat", "label": { "spanish": "último celo", "english": "last heat" } },
+  { "value": "date", "label": { "spanish": "fecha", "english": "date" } },
+  { "value": "chip", "label": { "spanish": "chip", "english": "chip" } },
+  { "value": "character", "label": { "spanish": "carácter", "english": "character" } },
+  { "value": "creator", "label": { "spanish": "creador", "english": "creator" } },
+  { "value": "owner", "label": { "spanish": "dueño", "english": "owner" } },
+  { "value": "registered_by", "label": { "spanish": "registrado por", "english": "registered by" } },
+  { "value": "pid", "label": { "spanish": "dni", "english": "pid" } }
+]
