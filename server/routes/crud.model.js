@@ -17,7 +17,7 @@ const crudGenerator = (
   const router = express.Router();
 
   const allFields = Object.keys(Model.schema.paths);
-  const createFields = _.without(allFields, ...["_id", "__v", "createdAt", "updatedAt", ...createProtectFields]);
+  const createFields = _.without(allFields, ...["__v", "createdAt", "updatedAt", ...createProtectFields]);
   const dataCompiler = (req, obj) => ({ ..._.pick(obj, createFields), ...extraFieldsCreate(req) });
   const dataPicker = (pick, obj) => _.pick(obj, pick);
 

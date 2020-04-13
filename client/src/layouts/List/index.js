@@ -25,7 +25,7 @@ const DogList = ({ list }) => {
 };
 const mapStateToProps = (state) => {
   return {
-    list: state.dog.data,
+    list: state.dog.list,
   };
 };
 

@@ -42,14 +42,14 @@ const DogsPage = ({ user, loading, getUser, getDogs, getAttendances, list }) => 
 };
 
 const mapStateToProps = (state) => {
-  return { user: state.user.data, loading: state.user.loading, list: state.dog.data };
+  return { user: state.user.me, loading: state.user.loading, list: state.dog.list };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getUser: () => dispatch(getData("/user/show/me", "user")),
-    getDogs: () => dispatch(getData("/dog/show/all", "dog")),
-    getAttendances: () => dispatch(getData("/attendance/show/all", "attendance")),
+    getUser: () => dispatch(getData("/user/show/?me", "user", "me")),
+    getDogs: () => dispatch(getData("/dog/show/all", "dog", "list")),
+    getAttendances: () => dispatch(getData("/attendance/show/all", "attendance", "list")),
   };
 };
 

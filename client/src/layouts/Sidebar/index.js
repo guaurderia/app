@@ -26,7 +26,7 @@ const Sidebar = ({ list }) => {
 };
 
 const mapStateToProps = (state) => {
-  return { list: state.dog.data };
+  return { list: state.dog.list };
 };
 
 export default connect(mapStateToProps)(Sidebar);
