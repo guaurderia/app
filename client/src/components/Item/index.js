@@ -4,18 +4,7 @@ import Grid from "@material-ui/core/Grid";
 import { connect } from "react-redux";
 import { getData, postData } from "../../redux/actions";
 
-const calculateTime = () => {
-  let timeLeft = {
-    days: Math.floor(1000 * 60 * 60 * 24),
-    hours: Math.floor((1000 * 60 * 60) % 24),
-    minutes: Math.floor((1000 / 60) % 60),
-    seconds: Math.floor(1000 % 60),
-  };
-  return timeLeft;
-};
-
-const DogItem = ({ dog, urlParams, getActiveAttendance, postStart, postUpdate, activeAttendances }) => {
-  const [time, setTime] = useState(0);
+const DogItem = ({ dog, urlParams, getActiveAttendance, postStart, postUpdate, activeAttendances, loading }) => {
   const [attendance, setAttendance] = useState(null);
   const [button, setButton] = useState("start");
 
@@ -31,15 +20,11 @@ const DogItem = ({ dog, urlParams, getActiveAttendance, postStart, postUpdate, a
         return att.dog.toString() === dog._id.toString();
       });
       setAttendance(dogAttendance);
-      handleButtonState();
     } else {
       setAttendance(null);
     }
-  }, [activeAttendances]);
-
-  useEffect(() => {
     handleButtonState();
-  }, [attendance]);
+  }, [loading]);
 
   const handleButtonState = () => {
     if (attendance) {
@@ -50,7 +35,7 @@ const DogItem = ({ dog, urlParams, getActiveAttendance, postStart, postUpdate, a
     }
   };
 
-  const handleTimer = () => {
+  const handleClick = () => {
     switch (button) {
       case "start":
         postStart({ dog, startTime: Date.now(), confirmed: false });
@@ -62,9 +47,8 @@ const DogItem = ({ dog, urlParams, getActiveAttendance, postStart, postUpdate, a
         postUpdate({ ...attendance, confirmed: true });
         break;
     }
-    setAttendance(getActiveAttendance(dog._id));
-    handleButtonState();
     getActiveAttendance();
+    setButton("loading...");
   };
 
   const active = () => (urlParams === dog._id ? "active" : "");
@@ -75,7 +59,7 @@ const DogItem = ({ dog, urlParams, getActiveAttendance, postStart, postUpdate, a
           {dog.name}
         </Grid>
         <Grid item xs={2}>
-          <button onClick={(e) => handleTimer()}>{button}</button>
+          <button onClick={(e) => handleClick()}>{button}</button>
         </Grid>
         <Grid item xs={2}>
           <div>{}</div>
@@ -88,7 +72,7 @@ const DogItem = ({ dog, urlParams, getActiveAttendance, postStart, postUpdate, a
 const mapStateToProps = (state) => {
   return {
     activeAttendances: state.attendance.active,
-    serverRequest: state.attendance.loading,
+    loading: state.attendance.loading,
   };
 };
 
