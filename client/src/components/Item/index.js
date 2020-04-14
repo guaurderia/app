@@ -11,29 +11,6 @@ const DogItem = ({ dog, urlParams, postStart, postUpdate, getActiveAttendance, a
   const [timer, setTimer] = useState(0);
   const [isActive, setIsActive] = useState(false);
 
-  const toggleTimer = () => setIsActive(!isActive);
-
-  useEffect(() => {
-    let interval = null;
-    if (isActive) {
-      interval = setInterval(() => {
-        setTimer((time) => time + 1);
-      }, 1000);
-    } else if (!isActive && timer !== 0) {
-      clearInterval(interval);
-    }
-    return () => clearInterval(interval);
-  }, [isActive, timer]);
-
-  console.log("ATT", attendance, "MONGO", activeAttendance);
-
-  function setTime() {
-    if (attendance?.startTime) {
-      const secondsPast = (Date.now() - new Date(attendance.startTime).getTime()) / 1000;
-      setTimer(secondsPast);
-    } else return setTimer(0);
-  }
-
   useEffect(() => {
     getActiveAttendance(dog._id);
     setTime();
@@ -47,6 +24,27 @@ const DogItem = ({ dog, urlParams, postStart, postUpdate, getActiveAttendance, a
       else setButton("end");
     }
   }, [activeAttendance]);
+
+  useEffect(() => {
+    let interval = null;
+    if (isActive) {
+      interval = setInterval(() => {
+        setTimer((time) => time + 1);
+      }, 1000);
+    } else if (!isActive && timer !== 0) {
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval);
+  }, [isActive, timer]);
+
+  const toggleTimer = () => setIsActive(!isActive);
+
+  const setTime = () => {
+    if (attendance?.startTime) {
+      const secondsPast = (Date.now() - new Date(attendance.startTime).getTime()) / 1000;
+      setTimer(secondsPast);
+    } else return setTimer(0);
+  };
 
   const handleClick = () => {
     switch (button) {
