@@ -51,7 +51,6 @@ const crudGenerator = (
 
   router.get("/show/all", async (req, res) => {
     const objs = await Model.find().populate(populateFields);
-    console.log(objs);
     return res.json(objs);
   });
 
@@ -68,11 +67,12 @@ const crudGenerator = (
     }
   });
 
-  router.post("/update/:id", isLoggedIn("user"), async (req, res) => {
-    const { id } = req.params;
+  router.post("/update/?", isLoggedIn("user"), async (req, res) => {
+    const query = req.query;
     const data = dataCompiler(req, req.body);
-    await Model.findByIdAndUpdate(id, data);
-    const updatedObj = await Model.findById(id);
+    await Model.findOneAndUpdate(query, data);
+    const updatedObj = await Model.find(query);
+    console.log("UPDATED OBJ", updatedObj);
     res.json(updatedObj);
   });
 
