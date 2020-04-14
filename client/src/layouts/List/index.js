@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
+import { getData } from "../../redux/actions";
 import { Link, useParams, useLocation } from "react-router-dom";
 import { DogListContainer, LinkStyle } from "./style";
 import _ from "lodash";
 import DogItem from "../../components/Item";
 
-const DogList = ({ list }) => {
+const DogList = ({ list, getActiveAttendance }) => {
   const urlParams = _.last(useLocation().pathname.split("/"));
+
+  useEffect(() => {
+    getActiveAttendance();
+  });
 
   const createList = () => {
     if (list) {
@@ -29,4 +34,10 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(DogList);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    getActiveAttendance: () => dispatch(getData(`/attendance/show/?confirmed=false`, "attendance", "active")),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(DogList);

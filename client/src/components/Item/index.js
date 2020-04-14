@@ -1,54 +1,35 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 import { DogItemContentGrid, LinkStyle } from "./style";
 import Grid from "@material-ui/core/Grid";
 import { connect } from "react-redux";
 import { getData, postData } from "../../redux/actions";
+import axios from "axios";
 
-const DogItem = ({ dog, urlParams, getActiveAttendance, postStart, postUpdate, activeAttendances, loading }) => {
-  const [attendance, setAttendance] = useState(null);
+const DogItem = ({ dog, urlParams, postStart, postUpdate, activeAttendances }) => {
+  const [attendance, setAttendance] = useState({});
   const [button, setButton] = useState("start");
-
-  console.log("ATT AT TOP", attendance, activeAttendances, button);
-
-  useEffect(() => {
-    getActiveAttendance();
-  }, []);
-
-  useEffect(() => {
-    if (activeAttendances) {
-      const [dogAttendance] = activeAttendances.filter((att) => {
-        return att.dog.toString() === dog._id.toString();
-      });
-      setAttendance(dogAttendance);
-    } else {
-      setAttendance(null);
-    }
-    handleButtonState();
-  }, [loading]);
-
-  const handleButtonState = () => {
-    if (attendance) {
-      if (attendance.endTime) setButton("confirm");
-      else setButton("end");
-    } else {
-      setButton("start");
-    }
-  };
 
   const handleClick = () => {
     switch (button) {
       case "start":
-        postStart({ dog, startTime: Date.now(), confirmed: false });
+        const start = { dog, startTime: new Date(), confirmed: false };
+        postStart(start);
+        setAttendance(start);
+        setButton("end");
         break;
       case "end":
-        postUpdate({ ...attendance, endTime: Date.now() });
+        const end = { endTime: new Date() };
+        postUpdate(end);
+        setAttendance({ ...attendance, ...end });
+        setButton("confirm");
         break;
       case "confirm":
-        postUpdate({ ...attendance, confirmed: true });
+        const confirmed = { confirmed: true };
+        postUpdate(confirmed);
+        setAttendance({ ...attendance, ...confirmed });
+        setButton("start");
         break;
     }
-    getActiveAttendance();
-    setButton("loading...");
   };
 
   const active = () => (urlParams === dog._id ? "active" : "");
@@ -59,7 +40,7 @@ const DogItem = ({ dog, urlParams, getActiveAttendance, postStart, postUpdate, a
           {dog.name}
         </Grid>
         <Grid item xs={2}>
-          <button onClick={(e) => handleClick()}>{button}</button>
+          <button onClick={handleClick}>{button}</button>
         </Grid>
         <Grid item xs={2}>
           <div>{}</div>
@@ -80,7 +61,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     postStart: (obj) => dispatch(postData("/attendance/create", "attendance", obj)),
     postUpdate: (obj) => dispatch(postData(`/attendance/update/${obj._id}`, "attendance", obj)),
-    getActiveAttendance: () => dispatch(getData(`/attendance/show/?confirmed=false`, "attendance", "active")),
+    getActiveAttendance: () => dispatch(getData("/attendance/show/?confirmed=false", "attendance", "active")),
   };
 };
 

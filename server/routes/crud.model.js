@@ -63,12 +63,8 @@ const crudGenerator = (
       res.json(data);
     } else {
       data = await Model.find(query);
-      if (data.length > 0) {
-        const response = data.map((obj) => dataCompiler(req, obj));
-        res.json(response);
-      } else {
-        res.status(422).json(`This ${Model.modelName} doesn't exist`);
-      }
+      const response = data.map((obj) => dataCompiler(req, obj));
+      res.json(response);
     }
   });
 
