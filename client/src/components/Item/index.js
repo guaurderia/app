@@ -6,7 +6,7 @@ import { getData, postData } from "../../redux/actions";
 import _ from "lodash";
 
 const DogItem = ({ dog, urlParams, postStart, postUpdate, getActiveAttendance, activeAttendance }) => {
-  const [attendance, setAttendance] = useState(activeAttendance);
+  const [attendance, setAttendance] = useState(_.head(activeAttendance));
   const [button, setButton] = useState("start");
 
   console.log("ATT", attendance, "MONGO", activeAttendance);
@@ -27,13 +27,13 @@ const DogItem = ({ dog, urlParams, postStart, postUpdate, getActiveAttendance, a
   const handleClick = () => {
     switch (button) {
       case "start":
-        const start = { dog, startTime: new Date(), confirmed: false };
+        const start = { dog: dog._id, startTime: new Date().toJSON(), confirmed: false };
         postStart(start);
         setAttendance(start);
         setButton("end");
         break;
       case "end":
-        const end = { ...attendance, endTime: new Date() };
+        const end = { ...attendance, endTime: new Date().toJSON() };
         console.log("END", end);
         postUpdate(end);
         setAttendance(end);
@@ -42,7 +42,7 @@ const DogItem = ({ dog, urlParams, postStart, postUpdate, getActiveAttendance, a
       case "confirm":
         const confirmed = { ...attendance, confirmed: true };
         postUpdate(confirmed);
-        setAttendance(confirmed);
+        setAttendance({});
         setButton("start");
         break;
     }
@@ -58,8 +58,9 @@ const DogItem = ({ dog, urlParams, postStart, postUpdate, getActiveAttendance, a
         <Grid item xs={2}>
           <button onClick={handleClick}>{button}</button>
         </Grid>
-        <Grid item xs={2}>
-          <div>{}</div>
+        <Grid item xs={2} style={{ display: "flex" }}>
+          {attendance?.startTime && <div>{attendance.startTime.slice(11, 16)}</div>}
+          {attendance?.endTime && <div>{attendance.endTime.slice(11, 16)}</div>}
         </Grid>
       </DogItemContentGrid>
     </LinkStyle>

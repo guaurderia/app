@@ -72,7 +72,7 @@ const crudGenerator = (
     const data = dataCompiler(req, req.body);
     await Model.findOneAndUpdate(query, data);
     const updatedObj = await Model.find(query);
-    console.log("UPDATED OBJ", updatedObj);
+    console.log("UPDATED OBJ", updatedObj, query);
     res.json(updatedObj);
   });
 
