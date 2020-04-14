@@ -8,11 +8,35 @@ import _ from "lodash";
 const DogItem = ({ dog, urlParams, postStart, postUpdate, getActiveAttendance, activeAttendance }) => {
   const [attendance, setAttendance] = useState(_.head(activeAttendance));
   const [button, setButton] = useState("start");
+  const [timer, setTimer] = useState(0);
+  const [isActive, setIsActive] = useState(false);
+
+  const toggleTimer = () => setIsActive(!isActive);
+
+  useEffect(() => {
+    let interval = null;
+    if (isActive) {
+      interval = setInterval(() => {
+        setTimer((time) => time + 1);
+      }, 1000);
+    } else if (!isActive && timer !== 0) {
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval);
+  }, [isActive, timer]);
 
   console.log("ATT", attendance, "MONGO", activeAttendance);
 
+  function setTime() {
+    if (attendance?.startTime) {
+      const secondsPast = (Date.now() - new Date(attendance.startTime).getTime()) / 1000;
+      setTimer(secondsPast);
+    } else return setTimer(0);
+  }
+
   useEffect(() => {
     getActiveAttendance(dog._id);
+    setTime();
   }, []);
 
   useEffect(() => {
@@ -31,19 +55,21 @@ const DogItem = ({ dog, urlParams, postStart, postUpdate, getActiveAttendance, a
         postStart(start);
         setAttendance(start);
         setButton("end");
+        toggleTimer();
         break;
       case "end":
         const end = { ...attendance, endTime: new Date().toJSON() };
-        console.log("END", end);
         postUpdate(end);
         setAttendance(end);
         setButton("confirm");
+        toggleTimer();
         break;
       case "confirm":
         const confirmed = { ...attendance, confirmed: true };
         postUpdate(confirmed);
         setAttendance({});
         setButton("start");
+        setTimer(0);
         break;
     }
   };
@@ -52,15 +78,16 @@ const DogItem = ({ dog, urlParams, postStart, postUpdate, getActiveAttendance, a
   return (
     <LinkStyle className={`list-group-item ${active()}`} key={dog._id} to={`/dogs/show/${dog._id}`}>
       <DogItemContentGrid container>
-        <Grid item xs={8}>
+        <Grid item xs={7}>
           {dog.name}
         </Grid>
         <Grid item xs={2}>
           <button onClick={handleClick}>{button}</button>
         </Grid>
-        <Grid item xs={2} style={{ display: "flex" }}>
+        <Grid item xs={3} style={{ display: "flex", justifyContent: "space-around" }}>
           {attendance?.startTime && <div>{attendance.startTime.slice(11, 16)}</div>}
           {attendance?.endTime && <div>{attendance.endTime.slice(11, 16)}</div>}
+          <div>{timer}</div>
         </Grid>
       </DogItemContentGrid>
     </LinkStyle>
