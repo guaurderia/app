@@ -15,5 +15,8 @@
   { "value": "creator", "label": { "spanish": "creador", "english": "creator" } },
   { "value": "owner", "label": { "spanish": "dueño", "english": "owner" } },
   { "value": "registered_by", "label": { "spanish": "registrado por", "english": "registered by" } },
-  { "value": "pid", "label": { "spanish": "dni", "english": "pid" } }
+  { "value": "pid", "label": { "spanish": "dni", "english": "pid" } },
+  { "value": "arrival", "label": { "spanish": "entrada", "english": "arrival" } },
+  { "value": "exit", "label": { "spanish": "salida", "english": "exit" } },
+  { "value": "time", "label": { "spanish": "tiempo", "english": "time" } }
 ]

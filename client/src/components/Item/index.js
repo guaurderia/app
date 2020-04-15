@@ -11,7 +11,11 @@ const DogItem = ({ dog, urlParams, postStart, postUpdate, getActiveAttendance, a
   const [timer, setTimer] = useState({ time: activeTime(attendance), active: false });
 
   useEffect(() => {
-    getActiveAttendance(dog._id);
+    try {
+      getActiveAttendance(dog._id);
+    } catch (err) {
+      console.log("ERROR GETTING ACTIVE ATTENDANCE", err);
+    }
     if (button === "end") setTimer({ ...timer, active: true });
   }, []);
 
@@ -36,7 +40,6 @@ const DogItem = ({ dog, urlParams, postStart, postUpdate, getActiveAttendance, a
     const active = activeTime(attendance);
     if (timer.active) {
       interval = setInterval(() => {
-        console.log("TIMER TIME IN INTERVAL", timer.time);
         setTimer({ ...timer, time: active + 1 });
       }, 1000);
     } else if (!timer.active) {

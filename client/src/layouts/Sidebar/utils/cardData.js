@@ -10,13 +10,21 @@ export const cardDataFilter = (element) => {
   return table;
 };
 
-const label = (value, language) => labels.map((l) => (l.value === value ? l.label[language] : ""));
+const label = (value, language) => {
+  const [filter] = labels.filter((l) => l.value === value);
+  return filter.label[language];
+};
 
-export const dogGeneralDisplay = (dog, language) => [
-  { value: dog.name, label: label("name", language) },
-  { value: dog.character.map((e) => e.label[language]).join(", "), label: label("character", language) },
-  { value: dog.chip, label: label("chip", language) },
-];
+export const dogGeneralDisplay = (dog, language) => {
+  return {
+    title: "general",
+    content: [
+      { value: dog.name, label: label("name", language) },
+      { value: dog.character.map((e) => e.label[language]).join(", "), label: label("character", language) },
+      { value: dog.chip, label: label("chip", language) },
+    ],
+  };
+};
 
 export const dogSexDisplay = (dog, language) => {
   const formatedDate = _.reverse(dog.heat.date.slice(0, 10).split("-")).join("/");
@@ -27,24 +35,46 @@ export const dogSexDisplay = (dog, language) => {
   if (dog.fixed) {
     return basic;
   } else if (dog.heat.had) {
-    return [...basic, { value: formatedDate, label: label("last_heat", language) }];
+    return { title: "sex", content: [...basic, { value: formatedDate, label: label("last_heat", language) }] };
   } else {
-    return [...basic, { value: "TODO", label: label("last_heat", language) }];
+    return { title: "sex", content: [...basic, { value: "TODO", label: label("last_heat", language) }] };
   }
 };
 
 export const dogMedicalDisplay = (dog, language) => {
   const vaccines = dog.vaccines.map((vac) => vac.label[language]);
-  return [{ value: vaccines.join(", "), label: label("vaccines", language) }];
+  return { title: "medical", content: [{ value: vaccines.join(", "), label: label("vaccines", language) }] };
 };
 
 export const dogOwnerDisplay = (dog, language) => {
   const owner = dog.owner;
-  return [
-    { value: owner.firstName, label: label("name", language) },
-    { value: owner.lastName, label: label("last_name", language) },
-    { value: owner.dni, label: label("pid", language) },
-    { value: owner.mainPhone, label: label("phone_number", language) },
-    { value: owner.username, label: label("email", language) },
-  ];
+  return {
+    title: "owner",
+    content: [
+      { value: owner.firstName, label: label("name", language) },
+      { value: owner.lastName, label: label("last_name", language) },
+      { value: owner.dni, label: label("pid", language) },
+      { value: owner.mainPhone, label: label("phone_number", language) },
+      { value: owner.username, label: label("email", language) },
+    ],
+  };
+};
+
+export const dogAttendanceDisplay = (attendance, language) => {
+  const attendanceList = attendance.map((att) => {
+    const subtitle = new Date(att.startTime).toDateString();
+    const startTime = att.startTime.slice(11, 16);
+    const endTime = att.endTime.slice(11, 16);
+    const totalMin = Math.floor((new Date(att.endTime).getTime() - new Date(att.startTime).getTime()) / 1000 / 60);
+    const totalHours = totalMin / 60;
+    return {
+      title: subtitle,
+      content: [
+        { value: startTime, label: label("arrival", language) },
+        { value: endTime, label: label("exit", language) },
+        { value: `${totalHours}:${totalMin}`, label: label("time", language) },
+      ],
+    };
+  });
+  return { title: "attendance", content: attendanceList };
 };
