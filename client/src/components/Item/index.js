@@ -8,43 +8,45 @@ import _ from "lodash";
 const DogItem = ({ dog, urlParams, postStart, postUpdate, getActiveAttendance, activeAttendance }) => {
   const [attendance, setAttendance] = useState(_.head(activeAttendance));
   const [button, setButton] = useState("start");
-  const [timer, setTimer] = useState(0);
-  const [isActive, setIsActive] = useState(false);
+  const [timer, setTimer] = useState({ time: activeTime(attendance), active: false });
 
   useEffect(() => {
     getActiveAttendance(dog._id);
-    setTime();
+    if (button === "end") setTimer({ ...timer, active: true });
   }, []);
 
   useEffect(() => {
     if (_.head(activeAttendance)) {
       const [dbAttendance] = activeAttendance;
       setAttendance(dbAttendance);
-      if (dbAttendance.endTime) setButton("confirm");
-      else setButton("end");
+      if (dbAttendance.endTime) {
+        setButton("confirm");
+        setTimer({ time: activeTime(dbAttendance), active: false });
+      } else {
+        setButton("end");
+        setTimer({ ...timer, active: true });
+      }
     }
   }, [activeAttendance]);
 
   useEffect(() => {
     let interval = null;
-    if (isActive) {
+    if (timer.active) {
       interval = setInterval(() => {
-        setTimer((time) => time + 1);
+        setTimer({ ...timer, time: timer.time + 1 });
       }, 1000);
-    } else if (!isActive && timer !== 0) {
+    } else if (!timer.active) {
       clearInterval(interval);
     }
     return () => clearInterval(interval);
-  }, [isActive, timer]);
+  }, [timer]);
 
-  const toggleTimer = () => setIsActive(!isActive);
-
-  const setTime = () => {
-    if (attendance?.startTime) {
-      const secondsPast = (Date.now() - new Date(attendance.startTime).getTime()) / 1000;
-      setTimer(secondsPast);
-    } else return setTimer(0);
-  };
+  function activeTime(attendance) {
+    const startTime = attendance?.startTime ? Math.floor(new Date(attendance.startTime).getTime() / 1000) : undefined;
+    const endTime = Math.floor((new Date(attendance?.endTime).getTime() || Date.now()) / 1000);
+    console.log("ACTIVE TIME", startTime, endTime);
+    return endTime - startTime || 0;
+  }
 
   const handleClick = () => {
     switch (button) {
@@ -53,23 +55,31 @@ const DogItem = ({ dog, urlParams, postStart, postUpdate, getActiveAttendance, a
         postStart(start);
         setAttendance(start);
         setButton("end");
-        toggleTimer();
+        setTimer({ ...timer, active: true });
         break;
       case "end":
         const end = { ...attendance, endTime: new Date().toJSON() };
         postUpdate(end);
         setAttendance(end);
         setButton("confirm");
-        toggleTimer();
+        setTimer({ ...timer, active: false });
         break;
       case "confirm":
         const confirmed = { ...attendance, confirmed: true };
         postUpdate(confirmed);
         setAttendance({});
         setButton("start");
-        setTimer(0);
+        setTimer({ ...timer, time: 0 });
         break;
     }
+  };
+
+  const ShowTime = ({ time }) => {
+    const getTime = _.get(attendance, time);
+    if (getTime) {
+      const timeFormat = getTime.slice(11, 16);
+      return <div>{timeFormat}</div>;
+    } else return <></>;
   };
 
   const active = () => (urlParams === dog._id ? "active" : "");
@@ -83,9 +93,9 @@ const DogItem = ({ dog, urlParams, postStart, postUpdate, getActiveAttendance, a
           <button onClick={handleClick}>{button}</button>
         </Grid>
         <Grid item xs={3} style={{ display: "flex", justifyContent: "space-around" }}>
-          {attendance?.startTime && <div>{attendance.startTime.slice(11, 16)}</div>}
-          {attendance?.endTime && <div>{attendance.endTime.slice(11, 16)}</div>}
-          <div>{timer}</div>
+          <ShowTime time="startTime" />
+          <ShowTime time="endTime" />
+          <div>{timer.time}</div>
         </Grid>
       </DogItemContentGrid>
     </LinkStyle>
