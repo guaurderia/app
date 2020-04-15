@@ -30,14 +30,13 @@ router.post("/signup", isLoggedIn("admin"), signupFormValidation(), async (req, 
 });
 
 router.post("/login", isLoggedOut(), passport.authenticate("local"), async (req, res) => {
-  console.log("LOGIN USER", req.user);
-  res.json({ status: `Welcome back ${req.user.firstName}` });
+  console.log("REQ BODY", req.body);
+  res.json(req.user);
 });
 
-router.post("/logout", isLoggedIn(), async (req, res) => {
-  const name = req.user.firstName;
+router.get("/logout", isLoggedIn(), async (req, res) => {
   req.logOut();
-  res.json(`Goodbye, ${name}`);
+  res.status(202).json("");
 });
 
 module.exports = router;

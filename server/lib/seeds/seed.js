@@ -5,6 +5,7 @@ const Dog = require("../../models/Dog.model");
 const Pass = require("../../models/Pass.model");
 const PassType = require("../../models/PassType.model");
 const Attendance = require("../../models/Attendance.model");
+const Breed = require("../../models/Breed.model");
 const passTypeSeed = require("./passType.seed");
 const _ = require("lodash");
 const faker = require("faker");
@@ -19,6 +20,11 @@ const attendanceEnd = "2020-05-01";
 const passStart = "2020-01-01";
 const passEnd = "2020-06-01";
 
+// Seeds
+const numberOfDogs = 20;
+const numberOfUsers = 10;
+const numberOfAttendances = 10;
+
 //-----------
 
 const randomDate = (start, end, startHour, endHour) => {
@@ -32,7 +38,7 @@ const randomDate = (start, end, startHour, endHour) => {
 
 // Randomizers
 
-const randomAttendance = number => {
+const randomAttendance = (number) => {
   let attendance = [];
   for (let i = 0; i < number; i++) {
     const startHour = _.random(8, 16);
@@ -49,28 +55,34 @@ const randomAttendance = number => {
   return attendance;
 };
 
-const randomDog = number => {
+const randomDog = (number) => {
   let dogs = [];
   for (let i = 0; i < number; i++) {
     let switcher1 = i % 2 === 0;
-    let switcher2 = i % 3 === 0;
-    let switcher3 = i % 4 === 0;
     let switcher4 = i % 5 === 0;
     const name = faker.name.firstName();
-    const breed = faker.name.firstName();
-    const sex = switcher1 ? "male" : "female";
-    const vaccines = { rabies: switcher2, parvovirus: switcher1, hepatitis: switcher3, distemper: switcher4 };
+    const sex = { value: switcher1 ? "male" : "female", label: { spanish: switcher1 ? "Macho" : "Hembra" } };
+    const vaccines = [
+      { value: "rabies", label: { spanish: "Antirábica" } },
+      { value: "parvovirus", label: { spanish: "Parvovirus" } },
+      { value: "hepatitis", label: { spanish: "Hepatitis" } },
+      { value: "distemper", label: { spanish: "Moquillo" } },
+    ];
     const fixed = switcher4;
     const heat = { had: switcher1, date: faker.date.past() };
     const chip = faker.random.uuid();
-    const character = _.random(0, 5);
+    const character = [
+      { value: "shy", label: { spanish: "Tímido" } },
+      { value: "hiperactive", label: { spanish: "Hiperactivo" } },
+      { value: "agressive", label: { spanish: "Agresivo" } },
+    ];
     const scan = faker.random.number() * 300;
-    dogs = [...dogs, { name, breed, sex, vaccines, fixed, heat, chip, character, scan }];
+    dogs = [...dogs, { name, sex, vaccines, fixed, heat, chip, character, scan }];
   }
   return dogs;
 };
 
-const randomUser = number => {
+const randomUser = (number) => {
   let users = [];
   const rolls = ["staff", "owner", "owner", "owner", "owner"];
   for (let i = 0; i < number; i++) {
@@ -78,17 +90,8 @@ const randomUser = number => {
     const lastName = faker.name.lastName();
     const username = faker.internet.email();
     const password = 1234;
-    const mainPhone = faker.phone
-      .phoneNumberFormat()
-      .split("-")
-      .join("")
-      .slice(0, 9);
-    const dni =
-      faker.phone
-        .phoneNumberFormat()
-        .split("-")
-        .join("")
-        .slice(0, 8) + faker.name.findName().slice(0, 1);
+    const mainPhone = faker.phone.phoneNumberFormat().split("-").join("").slice(0, 9);
+    const dni = faker.phone.phoneNumberFormat().split("-").join("").slice(0, 8) + faker.name.findName().slice(0, 1);
     const roll = rolls[i % 5];
     users = [...users, { firstName, lastName, username, password, mainPhone, dni, roll }];
   }
@@ -124,15 +127,15 @@ const createPass = async (dog, passType, creator) => {
     purchased: purchaseDate,
     starts: purchaseDate,
     ...remaining(),
-    creator: creator._id
+    creator: creator._id,
   };
 };
 
 const seedAll = () =>
   withDbConnection(async () => {
-    const dogSeed = randomDog(10);
-    const userSeed = randomUser(10);
-    const attendances = randomAttendance(20);
+    const dogSeed = randomDog(numberOfDogs);
+    const userSeed = randomUser(numberOfUsers);
+    const attendances = randomAttendance(numberOfAttendances);
 
     await createSeeds(User, userSeed);
     await createSeeds(Dog, dogSeed);
@@ -143,6 +146,7 @@ const seedAll = () =>
     const admins = await User.find({ roll: "admin" });
     const passTypes = await PassType.find();
     const dogs = await Dog.find();
+    const breeds = await Breed.find();
 
     let passSeed = [];
     let attendanceSeed = [];
@@ -151,9 +155,10 @@ const seedAll = () =>
       const randomPassType = passTypes[_.random(passTypes.length - 1)];
       const randomStaff = staff[_.random(staff.length - 1)];
       const randomOwner = owners[_.random(owners.length - 1)];
-      await Dog.findOneAndUpdate({ _id: dog._id }, { owner: randomOwner, creator: randomStaff });
-      createPass(dog, randomPassType, randomStaff).then(pass => (passSeed = [...passSeed, pass]));
-      createPass(dog, randomPassType, randomStaff).then(pass => (passSeed = [...passSeed, pass]));
+      const randomBreed = breeds[_.random(breeds.length - 1)];
+      await Dog.findOneAndUpdate({ _id: dog._id }, { owner: randomOwner, creator: randomStaff, breed: randomBreed });
+      createPass(dog, randomPassType, randomStaff).then((pass) => (passSeed = [...passSeed, pass]));
+      createPass(dog, randomPassType, randomStaff).then((pass) => (passSeed = [...passSeed, pass]));
     }
     for (let s of staff) {
       const randomAdmin = admins[_.random(admins.length - 1)];

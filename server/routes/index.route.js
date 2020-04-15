@@ -16,8 +16,8 @@ router.use(
   isLoggedIn(),
   crudGenerator(Dog, "chip", "name", {
     createProtectFields: [],
-    populateFields: [],
-    extraFieldsCreate: req => ({ creator: req.user._id })
+    populateFields: ["breed", "owner", "creator"],
+    extraFieldsCreate: (req) => ({ creator: req.user._id }),
   })
 );
 
@@ -29,7 +29,7 @@ router.use(
   crudGenerator(Pass, "_id", "_id", {
     createProtectFields: [],
     populateFields: ["dog", "passType", "creator"],
-    extraFieldsCreate: req => ({ creator: req.user._id })
+    extraFieldsCreate: (req) => ({ creator: req.user._id }),
   })
 );
 
@@ -39,7 +39,7 @@ router.use(
   crudGenerator(Attendance, "_id", "_id", {
     createProtectFields: [],
     populateFields: ["dog", "creator"],
-    extraFieldsCreate: req => ({ creator: req.user._id })
+    extraFieldsCreate: (req) => ({ creator: req.user._id }),
   })
 );
 
