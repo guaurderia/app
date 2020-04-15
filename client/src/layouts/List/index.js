@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
+import { getData } from "../../redux/actions";
 import { Link, useParams, useLocation } from "react-router-dom";
 import { DogListContainer, LinkStyle } from "./style";
 import _ from "lodash";
@@ -17,16 +18,18 @@ const DogList = ({ list }) => {
     }
   };
 
-  return (
-    <DogListContainer className="list-group list-group-flush">
-      <DogItem dog={list[0]} {...{ urlParams }} />
-    </DogListContainer>
-  );
+  return <DogListContainer className="list-group list-group-flush">{createList()}</DogListContainer>;
 };
 const mapStateToProps = (state) => {
   return {
-    list: state.dog.data,
+    list: state.dog.list,
   };
 };
 
-export default connect(mapStateToProps)(DogList);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    getActiveAttendance: () => dispatch(getData(`/attendance/show/?confirmed=false`, "attendance", "active")),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(DogList);

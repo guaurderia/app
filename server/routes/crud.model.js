@@ -17,7 +17,7 @@ const crudGenerator = (
   const router = express.Router();
 
   const allFields = Object.keys(Model.schema.paths);
-  const createFields = _.without(allFields, ...["_id", "__v", "createdAt", "updatedAt", ...createProtectFields]);
+  const createFields = _.without(allFields, ...["__v", "createdAt", "updatedAt", ...createProtectFields]);
   const dataCompiler = (req, obj) => ({ ..._.pick(obj, createFields), ...extraFieldsCreate(req) });
   const dataPicker = (pick, obj) => _.pick(obj, pick);
 
@@ -51,7 +51,6 @@ const crudGenerator = (
 
   router.get("/show/all", async (req, res) => {
     const objs = await Model.find().populate(populateFields);
-    console.log(objs);
     return res.json(objs);
   });
 
@@ -63,20 +62,17 @@ const crudGenerator = (
       res.json(data);
     } else {
       data = await Model.find(query);
-      if (data.length > 0) {
-        const response = data.map((obj) => dataCompiler(req, obj));
-        res.json(response);
-      } else {
-        res.status(422).json(`This ${Model.modelName} doesn't exist`);
-      }
+      const response = data.map((obj) => dataCompiler(req, obj));
+      res.json(response);
     }
   });
 
-  router.post("/update/:id", isLoggedIn("user"), async (req, res) => {
-    const { id } = req.params;
+  router.post("/update/?", isLoggedIn("user"), async (req, res) => {
+    const query = req.query;
     const data = dataCompiler(req, req.body);
-    await Model.findByIdAndUpdate(id, data);
-    const updatedObj = await Model.findById(id);
+    await Model.findOneAndUpdate(query, data);
+    const updatedObj = await Model.find(query);
+    console.log("UPDATED OBJ", updatedObj, query);
     res.json(updatedObj);
   });
 

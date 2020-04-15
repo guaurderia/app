@@ -1,70 +1,105 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 import { DogItemContentGrid, LinkStyle } from "./style";
 import Grid from "@material-ui/core/Grid";
 import { connect } from "react-redux";
-import { postData } from "../../redux/actions";
+import { getData, postData } from "../../redux/actions";
+import _ from "lodash";
 
-const calculateTime = () => {
-  let timeLeft = {
-    days: Math.floor(1000 * 60 * 60 * 24),
-    hours: Math.floor((1000 * 60 * 60) % 24),
-    minutes: Math.floor((1000 / 60) % 60),
-    seconds: Math.floor(1000 % 60),
-  };
-  return timeLeft;
-};
-
-const DogItem = ({ dog, urlParams, postStart, postUpdate, attendanceList }) => {
-  const [time, setTime] = useState(0);
-  const [attendance, setAttendance] = useState(null);
+const DogItem = ({ dog, urlParams, postStart, postUpdate, getActiveAttendance, activeAttendance }) => {
+  const [attendance, setAttendance] = useState(_.head(activeAttendance));
   const [button, setButton] = useState("start");
+  const [timer, setTimer] = useState({ time: activeTime(attendance), active: false });
 
   useEffect(() => {
-    console.log("ATT LIST", attendanceList);
-    getAttendanceId();
-  }, [attendanceList]);
+    getActiveAttendance(dog._id);
+    if (button === "end") setTimer({ ...timer, active: true });
+  }, []);
 
-  console.log("TOP", attendance);
-
-  const getAttendanceId = () => {
-    if (attendanceList) {
-      console.log("ATT LIST IN GET", attendanceList);
-      const [foundAttedance] = attendanceList.filter((att) => {
-        return att.dog.toString() === dog._id.toString();
-      });
-      if (foundAttedance) {
-        setButton("end");
-        setAttendance(foundAttedance);
-        if (foundAttedance.endTime) setButton("confirm");
+  useEffect(() => {
+    if (_.head(activeAttendance)) {
+      const [dogActiveAttendance] = activeAttendance.filter((att) => att.dog.toString() === dog._id.toString());
+      if (dogActiveAttendance) {
+        setAttendance(dogActiveAttendance);
+        if (dogActiveAttendance.endTime) {
+          setButton("confirm");
+          setTimer({ time: activeTime(dogActiveAttendance), active: false });
+        } else {
+          setButton("end");
+          setTimer({ ...timer, active: true });
+        }
       }
+    }
+  }, [activeAttendance]);
+
+  useEffect(() => {
+    let interval = null;
+    const active = activeTime(attendance);
+    if (timer.active) {
+      interval = setInterval(() => {
+        console.log("TIMER TIME IN INTERVAL", timer.time);
+        setTimer({ ...timer, time: active + 1 });
+      }, 1000);
+    } else if (!timer.active) {
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval);
+  }, [timer]);
+
+  function activeTime(attendance) {
+    const startTime = attendance?.startTime ? Math.floor(new Date(attendance.startTime).getTime() / 1000) : undefined;
+    const endTime = Math.floor((new Date(attendance?.endTime).getTime() || Date.now()) / 1000);
+    console.log("ACTIVE TIME", startTime, endTime);
+    return endTime - startTime || 0;
+  }
+
+  const handleClick = () => {
+    switch (button) {
+      case "start":
+        const start = { dog: dog._id, startTime: new Date().toJSON(), confirmed: false };
+        postStart(start);
+        setAttendance(start);
+        setButton("end");
+        setTimer({ ...timer, active: true });
+        break;
+      case "end":
+        const end = { ...attendance, endTime: new Date().toJSON() };
+        postUpdate(end);
+        setAttendance(end);
+        setButton("confirm");
+        setTimer({ ...timer, active: false });
+        break;
+      case "confirm":
+        const confirmed = { ...attendance, confirmed: true };
+        postUpdate(confirmed);
+        setAttendance({});
+        setButton("start");
+        setTimer({ ...timer, time: 0 });
+        break;
     }
   };
 
-  const handleTimer = () => {
-    switch (button) {
-      case "start":
-        postStart({ dog, startTime: Date.now() });
-        break;
-      case "end":
-        postUpdate({ ...attendance, endTime: Date.now() });
-      case "confirm":
-        postUpdate({ ...attendance, confirm: true });
-    }
-    console.log("ATT AFTER BUTT", attendance);
+  const ShowTime = ({ time }) => {
+    const getTime = _.get(attendance, time);
+    if (getTime) {
+      const timeFormat = getTime.slice(11, 16);
+      return <div>{timeFormat}</div>;
+    } else return <></>;
   };
 
   const active = () => (urlParams === dog._id ? "active" : "");
   return (
     <LinkStyle className={`list-group-item ${active()}`} key={dog._id} to={`/dogs/show/${dog._id}`}>
       <DogItemContentGrid container>
-        <Grid item xs={8}>
+        <Grid item xs={7}>
           {dog.name}
         </Grid>
         <Grid item xs={2}>
-          <button onClick={(e) => handleTimer()}>{button}</button>
+          <button onClick={handleClick}>{button}</button>
         </Grid>
-        <Grid item xs={2}>
-          <div>{}</div>
+        <Grid item xs={3} style={{ display: "flex", justifyContent: "space-around" }}>
+          <ShowTime time="startTime" />
+          <ShowTime time="endTime" />
+          {timer.time > 0 && <div>{timer.time}</div>}
         </Grid>
       </DogItemContentGrid>
     </LinkStyle>
@@ -73,15 +108,16 @@ const DogItem = ({ dog, urlParams, postStart, postUpdate, attendanceList }) => {
 
 const mapStateToProps = (state) => {
   return {
-    attendanceList: state.attendance.data,
-    awaitingServer: state.attendance.loading,
+    activeAttendance: state.attendance.active,
+    loading: state.attendance.loading,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
     postStart: (obj) => dispatch(postData("/attendance/create", "attendance", obj)),
-    postUpdate: (obj) => dispatch(postData(`/attendance/update/${obj._id}`, "attendance", obj)),
+    postUpdate: (obj) => dispatch(postData(`/attendance/update/?dog=${obj.dog}&confirmed=false`, "attendance", obj)),
+    getActiveAttendance: () => dispatch(getData(`/attendance/show/?confirmed=false`, "attendance", "active")),
   };
 };
 

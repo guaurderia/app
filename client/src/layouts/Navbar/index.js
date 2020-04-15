@@ -37,7 +37,7 @@ const Navbar = ({ user, logout }) => {
   );
 };
 
-const mapStateToProps = (state) => ({ user: state.user.data });
+const mapStateToProps = (state) => ({ user: state.user.me });
 const mapDispatchToProps = (dispatch) => ({ logout: () => dispatch(getData("/auth/logout", "user")) });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Navbar);
