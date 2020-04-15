@@ -34,8 +34,9 @@ const crudGenerator = (
         return res.status(409).json(`${uniqueIndex} ${Object.values(unique)} already exists in ${Model.modelName} db`);
       } else {
         try {
-          const created = await Model.create(data);
-          return res.json(created);
+          await Model.create(data);
+          const list = await Model.find().populate(populateFields);
+          return res.json(list);
         } catch (err) {
           if (err.name == "ValidationError") {
             const keys = Object.keys(err.errors);
@@ -71,9 +72,8 @@ const crudGenerator = (
     const query = req.query;
     const data = dataCompiler(req, req.body);
     await Model.findOneAndUpdate(query, data);
-    const updatedObj = await Model.find(query);
-    console.log("UPDATED OBJ", updatedObj, query);
-    res.json(updatedObj);
+    const list = await Model.find().populate(populateFields);
+    res.json(list);
   });
 
   router.get(

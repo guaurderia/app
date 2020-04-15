@@ -5,17 +5,13 @@ import { connect } from "react-redux";
 import { getData, postData } from "../../redux/actions";
 import _ from "lodash";
 
-const DogItem = ({ dog, urlParams, postStart, postUpdate, getActiveAttendance, activeAttendance }) => {
+const DogItem = ({ dog, urlParams, postStart, postUpdate, getAttendance, getActiveAttendance, activeAttendance }) => {
   const [attendance, setAttendance] = useState(_.head(activeAttendance));
   const [button, setButton] = useState("start");
   const [timer, setTimer] = useState({ time: activeTime(attendance), active: false });
 
   useEffect(() => {
-    try {
-      getActiveAttendance(dog._id);
-    } catch (err) {
-      console.log("ERROR GETTING ACTIVE ATTENDANCE", err);
-    }
+    getActiveAttendance(dog._id);
     if (button === "end") setTimer({ ...timer, active: true });
   }, []);
 
@@ -51,7 +47,6 @@ const DogItem = ({ dog, urlParams, postStart, postUpdate, getActiveAttendance, a
   function activeTime(attendance) {
     const startTime = attendance?.startTime ? Math.floor(new Date(attendance.startTime).getTime() / 1000) : undefined;
     const endTime = Math.floor((new Date(attendance?.endTime).getTime() || Date.now()) / 1000);
-    console.log("ACTIVE TIME", startTime, endTime);
     return endTime - startTime || 0;
   }
 
@@ -118,9 +113,10 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    postStart: (obj) => dispatch(postData("/attendance/create", "attendance", obj)),
-    postUpdate: (obj) => dispatch(postData(`/attendance/update/?dog=${obj.dog}&confirmed=false`, "attendance", obj)),
+    postStart: (obj) => dispatch(postData("/attendance/create", "attendance", obj, "list")),
+    postUpdate: (obj) => dispatch(postData(`/attendance/update/?dog=${obj.dog}&confirmed=false`, "attendance", obj, "list")),
     getActiveAttendance: () => dispatch(getData(`/attendance/show/?confirmed=false`, "attendance", "active")),
+    getAttendance: () => dispatch(getData(`/attendance/show/all`, "attendance", "list")),
   };
 };
 

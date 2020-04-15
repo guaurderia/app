@@ -8,7 +8,7 @@ import { GridContainer, DogsContainer } from "./style";
 import _ from "lodash";
 import Sidebar from "../../layouts/Sidebar";
 
-const DogsPage = ({ user, loading, getUser, getDogs, getAttendances, list }) => {
+const DogsPage = ({ user, getUser, getDogs, getAttendances, dogList }) => {
   const [selected, setSelected] = useState({});
 
   useEffect(() => {
@@ -17,10 +17,10 @@ const DogsPage = ({ user, loading, getUser, getDogs, getAttendances, list }) => 
     getAttendances();
   }, []);
 
-  if (loading) {
+  if (!user) {
     return <div>Loading...</div>;
   }
-  if (user && list) {
+  if (user && dogList) {
     return (
       <DogsContainer>
         <Switch>
@@ -42,7 +42,11 @@ const DogsPage = ({ user, loading, getUser, getDogs, getAttendances, list }) => 
 };
 
 const mapStateToProps = (state) => {
-  return { user: state.user.me, loading: state.user.loading, list: state.dog.list };
+  return {
+    user: state.user.me,
+    dogList: state.dog.list,
+    attendanceList: state.attendance.list,
+  };
 };
 
 const mapDispatchToProps = (dispatch) => {

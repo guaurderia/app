@@ -33,7 +33,7 @@ export const dogSexDisplay = (dog, language) => {
     { value: dog.fixed, label: label("fixed", language) },
   ];
   if (dog.fixed) {
-    return basic;
+    return { title: "sex", content: basic };
   } else if (dog.heat.had) {
     return { title: "sex", content: [...basic, { value: formatedDate, label: label("last_heat", language) }] };
   } else {
@@ -61,20 +61,41 @@ export const dogOwnerDisplay = (dog, language) => {
 };
 
 export const dogAttendanceDisplay = (attendance, language) => {
-  const attendanceList = attendance.map((att) => {
-    const subtitle = new Date(att.startTime).toDateString();
-    const startTime = att.startTime.slice(11, 16);
-    const endTime = att.endTime.slice(11, 16);
-    const totalMin = Math.floor((new Date(att.endTime).getTime() - new Date(att.startTime).getTime()) / 1000 / 60);
-    const totalHours = totalMin / 60;
-    return {
-      title: subtitle,
-      content: [
-        { value: startTime, label: label("arrival", language) },
-        { value: endTime, label: label("exit", language) },
-        { value: `${totalHours}:${totalMin}`, label: label("time", language) },
-      ],
-    };
-  });
-  return { title: "attendance", content: attendanceList };
+  if (attendance.length) {
+    const attendanceList = attendance.map((att) => {
+      const subtitle = new Date(att.startTime).toDateString();
+      const startTime = att.startTime.slice(11, 16);
+      const endTime = att.endTime?.slice(11, 16);
+      console.log("START TIME IN DISPLAY", startTime);
+      const totalMin = () => {
+        if (endTime) {
+          return (
+            0 +
+            Math.floor((new Date(att.endTime).getTime() - new Date(att.startTime).getTime()) / 1000 / 60)
+              .toString()
+              .substr(-2)
+          );
+        } else return new Date(Date.now()).getMinutes();
+      };
+      const totalHours = () => {
+        if (totalMin()) {
+          return (
+            0 +
+            Math.floor(totalMin() / 60)
+              .toString()
+              .substr(-2)
+          );
+        } else return new Date(Date.now()).getHours();
+      };
+      return {
+        title: subtitle,
+        content: [
+          { value: startTime, label: label("arrival", language) },
+          { value: endTime, label: label("exit", language) },
+          { value: `${totalHours()}:${totalMin()}`, label: label("time", language) },
+        ],
+      };
+    });
+    return { title: "attendance", content: attendanceList };
+  } else return [];
 };

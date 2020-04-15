@@ -7,13 +7,20 @@ import _ from "lodash";
 import { Link, useParams } from "react-router-dom";
 import { dogGeneralDisplay, dogSexDisplay, dogMedicalDisplay, dogOwnerDisplay, dogAttendanceDisplay } from "./utils/cardData";
 
-const Sidebar = ({ dogList, attendanceList }) => {
+const Sidebar = ({ dogList, attendanceList, activeAttendance }) => {
   const { id } = useParams();
-  const attendanceSubtitle = (attendance) => new Date(attendance.startTime);
-  if (dogList && attendanceList) {
-    const [dog] = dogList.filter((d) => d._id.toString() === id);
-    const attendance = attendanceList.filter((att) => att.dog._id.toString() === id);
-    console.log("ATT SIDEBAR", attendance, attendanceList);
+  const [dog, setDog] = useState();
+  const [attendance, setAttendance] = useState();
+
+  console.log("ATTLIST IN SIDEBAR", attendanceList);
+
+  useEffect(() => {
+    if (dogList) setDog(_.head(dogList.filter((d) => d._id.toString() === id)));
+    if (attendanceList) setAttendance(attendanceList.filter((att) => att.dog._id.toString() === id));
+  }, [dogList, attendanceList, id, activeAttendance]);
+
+  if (dog && attendance) {
+    console.log("SIDEBAR BEFORE RETURN", dog, attendance);
     return (
       <SidebarStyle>
         <Card display={dogGeneralDisplay(dog, "spanish")} />
@@ -33,6 +40,7 @@ const mapStateToProps = (state) => {
   return {
     dogList: state.dog.list,
     attendanceList: state.attendance.list,
+    activeAttendance: state.attendance.active,
   };
 };
 
