@@ -17,23 +17,27 @@ const DogItem = ({ dog, urlParams, postStart, postUpdate, getActiveAttendance, a
 
   useEffect(() => {
     if (_.head(activeAttendance)) {
-      const [dbAttendance] = activeAttendance;
-      setAttendance(dbAttendance);
-      if (dbAttendance.endTime) {
-        setButton("confirm");
-        setTimer({ time: activeTime(dbAttendance), active: false });
-      } else {
-        setButton("end");
-        setTimer({ ...timer, active: true });
+      const [dogActiveAttendance] = activeAttendance.filter((att) => att.dog.toString() === dog._id.toString());
+      if (dogActiveAttendance) {
+        setAttendance(dogActiveAttendance);
+        if (dogActiveAttendance.endTime) {
+          setButton("confirm");
+          setTimer({ time: activeTime(dogActiveAttendance), active: false });
+        } else {
+          setButton("end");
+          setTimer({ ...timer, active: true });
+        }
       }
     }
   }, [activeAttendance]);
 
   useEffect(() => {
     let interval = null;
+    const active = activeTime(attendance);
     if (timer.active) {
       interval = setInterval(() => {
-        setTimer({ ...timer, time: timer.time + 1 });
+        console.log("TIMER TIME IN INTERVAL", timer.time);
+        setTimer({ ...timer, time: active + 1 });
       }, 1000);
     } else if (!timer.active) {
       clearInterval(interval);
@@ -95,7 +99,7 @@ const DogItem = ({ dog, urlParams, postStart, postUpdate, getActiveAttendance, a
         <Grid item xs={3} style={{ display: "flex", justifyContent: "space-around" }}>
           <ShowTime time="startTime" />
           <ShowTime time="endTime" />
-          <div>{timer.time}</div>
+          {timer.time > 0 && <div>{timer.time}</div>}
         </Grid>
       </DogItemContentGrid>
     </LinkStyle>
@@ -104,7 +108,7 @@ const DogItem = ({ dog, urlParams, postStart, postUpdate, getActiveAttendance, a
 
 const mapStateToProps = (state) => {
   return {
-    activeAttendance: state.attendance.selected,
+    activeAttendance: state.attendance.active,
     loading: state.attendance.loading,
   };
 };
@@ -113,7 +117,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     postStart: (obj) => dispatch(postData("/attendance/create", "attendance", obj)),
     postUpdate: (obj) => dispatch(postData(`/attendance/update/?dog=${obj.dog}&confirmed=false`, "attendance", obj)),
-    getActiveAttendance: (dogId) => dispatch(getData(`/attendance/show/?dog=${dogId}&confirmed=false`, "attendance", "selected")),
+    getActiveAttendance: () => dispatch(getData(`/attendance/show/?confirmed=false`, "attendance", "active")),
   };
 };
 

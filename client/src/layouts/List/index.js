@@ -6,12 +6,8 @@ import { DogListContainer, LinkStyle } from "./style";
 import _ from "lodash";
 import DogItem from "../../components/Item";
 
-const DogList = ({ list, getActiveAttendance }) => {
+const DogList = ({ list }) => {
   const urlParams = _.last(useLocation().pathname.split("/"));
-
-  useEffect(() => {
-    getActiveAttendance();
-  });
 
   const createList = () => {
     if (list) {
@@ -22,11 +18,7 @@ const DogList = ({ list, getActiveAttendance }) => {
     }
   };
 
-  return (
-    <DogListContainer className="list-group list-group-flush">
-      <DogItem dog={list[0]} {...{ urlParams }} />
-    </DogListContainer>
-  );
+  return <DogListContainer className="list-group list-group-flush">{createList()}</DogListContainer>;
 };
 const mapStateToProps = (state) => {
   return {
