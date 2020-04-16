@@ -6,10 +6,16 @@ export const DogItemContentGrid = styled(Grid)`
   color: red;
 `;
 
-export const LinkStyle = styled(Link)`
+export const ItemStyle = styled(Link)`
   &.active {
     background: #f7f7f7;
     color: black;
     border-color: #e5e5e5;
+  }
+  &.active-attendance {
+    background: rgb(120, 200, 0, 0.2);
+  }
+  &.ended-attendance {
+    background: rgb(255, 233, 0, 0.2);
   }
 `;

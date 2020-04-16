@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { DogItemContentGrid, LinkStyle } from "./style";
+import { DogItemContentGrid, ItemStyle } from "./style";
 import Grid from "@material-ui/core/Grid";
 import { connect } from "react-redux";
 import { getData, postData } from "../../redux/actions";
@@ -63,9 +63,11 @@ const DogItem = ({ dog, urlParams, postStart, postUpdate, activeAttendance }) =>
     else return <></>;
   };
 
-  const active = () => (urlParams === dog._id ? "active" : "");
+  const selected = () => (urlParams === dog._id ? "active" : "");
+  const active = () => (timer.active ? "active-attendance" : "");
+  const ended = () => (button === "confirm" ? "ended-attendance" : "");
   return (
-    <LinkStyle className={`list-group-item ${active()}`} key={dog._id} to={`/dogs/show/${dog._id}`}>
+    <ItemStyle className={`list-group-item ${selected()} ${active()} ${ended()}`} key={dog._id} to={`/dogs/show/${dog._id}`}>
       <DogItemContentGrid container>
         <Grid item xs={7}>
           {dog.name}
@@ -79,7 +81,7 @@ const DogItem = ({ dog, urlParams, postStart, postUpdate, activeAttendance }) =>
           {timer && <ShowTime time={timer} />}
         </Grid>
       </DogItemContentGrid>
-    </LinkStyle>
+    </ItemStyle>
   );
 };
 
