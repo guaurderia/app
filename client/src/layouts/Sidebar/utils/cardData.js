@@ -1,7 +1,7 @@
 import labels from "../../../services/Language/labels.json";
 import _ from "lodash";
 import { DateTime, Duration } from "luxon";
-import { activeTime, formatTime } from "../../../services/Time";
+import { activeTime, formatTime, formatDate } from "../../../services/Time";
 
 export const cardDataFilter = (element) => {
   const table = Object.keys(element).map((key, i) => {
@@ -29,7 +29,7 @@ export const dogGeneralDisplay = (dog, language) => {
 };
 
 export const dogSexDisplay = (dog, language) => {
-  const formatedDate = _.reverse(dog.heat.date.slice(0, 10).split("-")).join("/");
+  const date = formatDate(dog.heat.date);
   const basic = [
     { value: dog.sex.label.spanish, label: label("gender", language) },
     { value: dog.fixed, label: label("fixed", language) },
@@ -37,7 +37,7 @@ export const dogSexDisplay = (dog, language) => {
   if (dog.fixed) {
     return { title: "sex", content: basic };
   } else if (dog.heat.had) {
-    return { title: "sex", content: [...basic, { value: formatedDate, label: label("last_heat", language) }] };
+    return { title: "sex", content: [...basic, { value: date, label: label("last_heat", language) }] };
   } else {
     return { title: "sex", content: [...basic, { value: "TODO", label: label("last_heat", language) }] };
   }
@@ -65,7 +65,7 @@ export const dogOwnerDisplay = (dog, language) => {
 export const dogAttendanceDisplay = (attendance, language) => {
   if (attendance.length) {
     const attendanceList = attendance.map((att) => {
-      const subtitle = new Date(att.startTime).toDateString();
+      const subtitle = formatDate(att.startTime);
       const startTimeDisplay = formatTime(att.startTime);
       const endTimeDisplay = formatTime(att.endTime);
       const totalTime = activeTime(att.startTime, att.endTime);
@@ -81,4 +81,50 @@ export const dogAttendanceDisplay = (attendance, language) => {
     });
     return { title: "attendance", content: attendanceList };
   } else return [];
+};
+
+export const dogPassDisplay = (passes, active, language) => {
+  let title;
+  if (passes.length) {
+    const filteredPasses = passes.filter((pass) => {
+      if (active) {
+        title = "active passes";
+        return pass.count > 0 || DateTime.fromISO(pass.expires) > DateTime.local();
+      } else {
+        console.log("EXPIRED", DateTime.fromISO(pass.expires) < DateTime.local());
+        title = "expired passes";
+        return pass.count === 0 || DateTime.fromISO(pass.expires) < DateTime.local();
+      }
+    });
+    console.log("FILTERED PASSES", filteredPasses);
+    const passesList = filteredPasses.map((pass) => {
+      const subtitle = pass.passType.name;
+      const type = pass.passType.type;
+      console.log("PASSTYPE", type);
+      const hours = pass.passType.hours;
+      if (type === "day") {
+        const remainingCount = pass.count;
+        const totalCount = pass.passType.duration;
+        return {
+          title: subtitle,
+          content: [
+            { value: `${remainingCount}/${totalCount}`, label: label("used", language) },
+            { value: hours, label: label("hours", language) },
+          ],
+        };
+      }
+      if (type === "month") {
+        const starts = formatDate(pass.starts);
+        const expires = formatDate(pass.expires);
+        return {
+          title: subtitle,
+          content: [
+            { value: starts, label: label("starts", language) },
+            { value: expires, label: label("expires", language) },
+          ],
+        };
+      }
+    });
+    return { title, content: passesList };
+  }
 };

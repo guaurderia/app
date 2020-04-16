@@ -44,4 +44,5 @@ export const rootReducer = combineReducers({
   dog: crudReducer(reducer, "dog"),
   user: crudReducer(reducer, "user"),
   attendance: crudReducer(reducer, "attendance"),
+  pass: crudReducer(reducer, "pass"),
 });

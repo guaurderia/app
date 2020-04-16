@@ -11,3 +11,9 @@ export const activeTime = (start, end = null) => {
   const endTime = end ? DateTime.fromISO(end) : DateTime.local();
   return endTime.diff(startTime).toISO();
 };
+
+export const formatDate = (date, language) => {
+  const format = DateTime.fromISO(date).setLocale(language).toLocaleString(DateTime.DATE_FULL);
+  if (format.includes("Invalid")) return undefined;
+  else return format;
+};

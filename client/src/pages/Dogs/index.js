@@ -8,7 +8,7 @@ import { GridContainer, DogsContainer } from "./style";
 import _ from "lodash";
 import Sidebar from "../../layouts/Sidebar";
 
-const DogsPage = ({ user, activeAttendanceList, getUser, getDogs, getAttendances, getActiveAttendances, dogList }) => {
+const DogsPage = ({ getUser, getDogs, getAttendances, getActiveAttendances, getPasses, dogList, user, activeAttendanceList }) => {
   const [selected, setSelected] = useState({});
 
   useEffect(() => {
@@ -16,6 +16,7 @@ const DogsPage = ({ user, activeAttendanceList, getUser, getDogs, getAttendances
     getDogs();
     getAttendances();
     getActiveAttendances();
+    getPasses();
   }, []);
 
   useEffect(() => {
@@ -65,6 +66,7 @@ const mapDispatchToProps = (dispatch) => {
     getDogs: () => dispatch(getData("/dog/show/all", "dog", "list")),
     getAttendances: () => dispatch(getData("/attendance/show/all", "attendance", "list")),
     getActiveAttendances: () => dispatch(getData(`/attendance/show/?confirmed=false`, "attendance", "active")),
+    getPasses: () => dispatch(getData("pass/show/all", "pass", "list")),
   };
 };
 
