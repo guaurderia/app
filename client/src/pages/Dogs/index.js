@@ -8,19 +8,28 @@ import { GridContainer, DogsContainer } from "./style";
 import _ from "lodash";
 import Sidebar from "../../layouts/Sidebar";
 
-const DogsPage = ({ user, getUser, getDogs, getAttendances, dogList }) => {
+const DogsPage = ({ user, activeAttendanceList, getUser, getDogs, getAttendances, getActiveAttendances, dogList }) => {
   const [selected, setSelected] = useState({});
 
   useEffect(() => {
     getUser();
     getDogs();
     getAttendances();
+    getActiveAttendances();
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      getAttendances();
+      getActiveAttendances();
+    }, 60000);
+    return () => clearInterval(interval);
   }, []);
 
   if (!user) {
     return <div>Loading...</div>;
   }
-  if (user && dogList) {
+  if (user && dogList && activeAttendanceList) {
     return (
       <DogsContainer>
         <Switch>
@@ -46,6 +55,7 @@ const mapStateToProps = (state) => {
     user: state.user.me,
     dogList: state.dog.list,
     attendanceList: state.attendance.list,
+    activeAttendanceList: state.attendance.active,
   };
 };
 
@@ -54,6 +64,7 @@ const mapDispatchToProps = (dispatch) => {
     getUser: () => dispatch(getData("/user/show/?me", "user", "me")),
     getDogs: () => dispatch(getData("/dog/show/all", "dog", "list")),
     getAttendances: () => dispatch(getData("/attendance/show/all", "attendance", "list")),
+    getActiveAttendances: () => dispatch(getData(`/attendance/show/?confirmed=false`, "attendance", "active")),
   };
 };
 

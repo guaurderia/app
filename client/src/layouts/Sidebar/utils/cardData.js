@@ -1,5 +1,7 @@
-import labels from "../../../utils/labels.json";
+import labels from "../../../services/Language/labels.json";
 import _ from "lodash";
+import { DateTime, Duration } from "luxon";
+import { activeTime, formatTime } from "../../../services/Time";
 
 export const cardDataFilter = (element) => {
   const table = Object.keys(element).map((key, i) => {
@@ -64,35 +66,16 @@ export const dogAttendanceDisplay = (attendance, language) => {
   if (attendance.length) {
     const attendanceList = attendance.map((att) => {
       const subtitle = new Date(att.startTime).toDateString();
-      const startTime = att.startTime.slice(11, 16);
-      const endTime = att.endTime?.slice(11, 16);
-      console.log("START TIME IN DISPLAY", startTime);
-      const totalMin = () => {
-        if (endTime) {
-          return (
-            0 +
-            Math.floor((new Date(att.endTime).getTime() - new Date(att.startTime).getTime()) / 1000 / 60)
-              .toString()
-              .substr(-2)
-          );
-        } else return new Date(Date.now()).getMinutes();
-      };
-      const totalHours = () => {
-        if (totalMin()) {
-          return (
-            0 +
-            Math.floor(totalMin() / 60)
-              .toString()
-              .substr(-2)
-          );
-        } else return new Date(Date.now()).getHours();
-      };
+      const startTimeDisplay = formatTime(att.startTime);
+      const endTimeDisplay = formatTime(att.endTime);
+      const totalTime = activeTime(att.startTime, att.endTime);
+      const totalTimeDisplay = Duration.fromISO(totalTime).toFormat("hh:mm");
       return {
         title: subtitle,
         content: [
-          { value: startTime, label: label("arrival", language) },
-          { value: endTime, label: label("exit", language) },
-          { value: `${totalHours()}:${totalMin()}`, label: label("time", language) },
+          { value: startTimeDisplay, label: label("arrival", language) },
+          { value: endTimeDisplay, label: label("exit", language) },
+          { value: totalTimeDisplay, label: label("time", language) },
         ],
       };
     });

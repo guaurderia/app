@@ -24,6 +24,7 @@
     "bootstrap": "^3.4.1",
     "hookrouter": "^1.2.3",
     "lodash": "^4.17.15",
+    "luxon": "^1.23.0",
     "parcel": "^1.12.4",
     "prop-types": "^15.7.2",
     "react": "^16.13.0",

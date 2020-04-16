@@ -62,9 +62,8 @@ const crudGenerator = (
       data = await Model.findById(req.user._id);
       res.json(data);
     } else {
-      data = await Model.find(query);
-      const response = data.map((obj) => dataCompiler(req, obj));
-      res.json(response);
+      data = await Model.find(query).populate(populateFields);
+      res.json(data);
     }
   });
 
