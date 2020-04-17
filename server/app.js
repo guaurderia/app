@@ -9,7 +9,6 @@ const path = require("path");
 const cors = require("cors");
 const session = require("express-session");
 const MongoStore = require("connect-mongo")(session);
-const dbUrl = process.env.DBURL ? process.env.DBURL : "mongodb://localhost/test";
 
 require("./config/db.config");
 
