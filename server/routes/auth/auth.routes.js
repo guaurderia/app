@@ -20,7 +20,7 @@ router.post("/signup", isLoggedIn("admin"), signupFormValidation(), async (req, 
     } catch (err) {
       if (err.name == "ValidationError") {
         const keys = Object.keys(err.errors);
-        return res.status(422).json(keys.map(key => err.errors[key].message));
+        return res.status(422).json(keys.map((key) => err.errors[key].message));
       } else {
         console.error(err);
         return res.status(500).json(err);
@@ -29,8 +29,13 @@ router.post("/signup", isLoggedIn("admin"), signupFormValidation(), async (req, 
   }
 });
 
+router.get("/show/me", isLoggedIn(), async (req, res) => {
+  const data = await User.findById(req.user._id);
+  res.json(data);
+});
+
 router.post("/login", isLoggedOut(), passport.authenticate("local"), async (req, res) => {
-  console.log("REQ BODY", req.body);
+  console.log("REQ USER", req.user);
   res.json(req.user);
 });
 

@@ -1,7 +1,8 @@
 import { combineReducers } from "redux";
 
 const initialState = {
-  loading: false,
+  loading: true,
+  error: "",
 };
 
 export const reducer = (state = initialState, action) => {
@@ -10,20 +11,18 @@ export const reducer = (state = initialState, action) => {
     case `REQUEST_${name}`:
       return {
         ...state,
-        loading: true,
       };
     case `SUCCESS_${name}`:
       return {
         ...state,
         loading: false,
         [action.key]: action.data,
-        error: "",
       };
     case `FAILURE_${name}`:
       return {
         ...state,
         loading: false,
-        error: action.data,
+        error: action.error,
       };
     default:
       return state;

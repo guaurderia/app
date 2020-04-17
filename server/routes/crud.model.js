@@ -23,7 +23,6 @@ const crudGenerator = (
 
   router.post(
     "/create",
-    isLoggedIn("user"),
     asyncController(async (req, res) => {
       // NOTE: For security reasons, only allow input certain fields
       const data = dataCompiler(req, req.body);
@@ -57,6 +56,7 @@ const crudGenerator = (
 
   router.get("/show/?", async (req, res) => {
     const query = req.query;
+    console.log("QUERY", query);
     let data;
     if (_.has(query, "me")) {
       data = await Model.findById(req.user._id);
@@ -67,7 +67,7 @@ const crudGenerator = (
     }
   });
 
-  router.post("/update/?", isLoggedIn("user"), async (req, res) => {
+  router.post("/update/?", async (req, res) => {
     const query = req.query;
     const data = dataCompiler(req, req.body);
     await Model.findOneAndUpdate(query, data);
@@ -77,7 +77,6 @@ const crudGenerator = (
 
   router.get(
     "/delete/:id",
-    isLoggedIn("user"),
     asyncController(async (req, res, next) => {
       const { id } = req.params;
       const obj = await Model.findByIdAndRemove(id);

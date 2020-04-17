@@ -1,7 +1,8 @@
-import labels from "../../../services/Language/labels.json";
+import labels from "../../Language/labels.json";
 import _ from "lodash";
 import { DateTime, Duration } from "luxon";
-import { activeTime, formatTime, formatDate } from "../../../services/Time";
+import { activeTime, formatTime, formatDate } from "../Time";
+import { getPass } from "../../Logic/Pass";
 
 export const cardDataFilter = (element) => {
   const table = Object.keys(element).map((key, i) => {
@@ -84,47 +85,31 @@ export const dogAttendanceDisplay = (attendance, language) => {
 };
 
 export const dogPassDisplay = (passes, active, language) => {
-  let title;
-  if (passes.length) {
-    const filteredPasses = passes.filter((pass) => {
-      if (active) {
-        title = "active passes";
-        return pass.count > 0 || DateTime.fromISO(pass.expires) > DateTime.local();
-      } else {
-        console.log("EXPIRED", DateTime.fromISO(pass.expires) < DateTime.local());
-        title = "expired passes";
-        return pass.count === 0 || DateTime.fromISO(pass.expires) < DateTime.local();
-      }
-    });
-    console.log("FILTERED PASSES", filteredPasses);
-    const passesList = filteredPasses.map((pass) => {
-      const subtitle = pass.passType.name;
-      const type = pass.passType.type;
-      console.log("PASSTYPE", type);
-      const hours = pass.passType.hours;
-      if (type === "day") {
-        const remainingCount = pass.count;
-        const totalCount = pass.passType.duration;
+  const title = active ? "active passes" : "expired passes";
+  if (passes) {
+    const passesList = getPass(passes, active);
+    const parsedPassesList = passesList.map((pass) => {
+      if (pass.type === "day") {
         return {
-          title: subtitle,
+          title: pass.name,
           content: [
-            { value: `${remainingCount}/${totalCount}`, label: label("used", language) },
-            { value: hours, label: label("hours", language) },
+            { value: `${pass.remainingCount}/${pass.totalCount}`, label: label("used", language) },
+            { value: pass.hours, label: label("hours", language) },
+            { value: pass.type, label: label("type", language) },
           ],
         };
       }
-      if (type === "month") {
-        const starts = formatDate(pass.starts);
-        const expires = formatDate(pass.expires);
+      if (pass.type === "month") {
         return {
-          title: subtitle,
+          title: pass.name,
           content: [
-            { value: starts, label: label("starts", language) },
-            { value: expires, label: label("expires", language) },
+            { value: pass.starts, label: label("starts", language) },
+            { value: pass.expires, label: label("expires", language) },
+            { value: pass.type, label: label("type", language) },
           ],
         };
       }
     });
-    return { title, content: passesList };
+    return { title, content: parsedPassesList };
   }
 };

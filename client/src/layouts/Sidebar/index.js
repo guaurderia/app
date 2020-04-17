@@ -5,15 +5,13 @@ import { Card } from "../../components/Card";
 import Button from "@material-ui/core/Button";
 import _ from "lodash";
 import { Link, useParams } from "react-router-dom";
-import { dogGeneralDisplay, dogSexDisplay, dogMedicalDisplay, dogOwnerDisplay, dogAttendanceDisplay, dogPassDisplay } from "./utils/cardData";
+import { dogGeneralDisplay, dogSexDisplay, dogMedicalDisplay, dogOwnerDisplay, dogAttendanceDisplay, dogPassDisplay } from "../../services/Format/Dog";
 
 const Sidebar = ({ dogList, attendanceList, activeAttendance, passList }) => {
   const { id } = useParams();
   const [dog, setDog] = useState();
   const [attendance, setAttendance] = useState();
   const [pass, setPass] = useState();
-
-  console.log("ATTLIST IN SIDEBAR", attendanceList);
 
   useEffect(() => {
     if (dogList) setDog(_.head(dogList.filter((d) => d._id.toString() === id)));
@@ -22,7 +20,6 @@ const Sidebar = ({ dogList, attendanceList, activeAttendance, passList }) => {
   }, [dogList, attendanceList, id, activeAttendance, passList]);
 
   if (dog && attendance && pass) {
-    console.log("SIDEBAR BEFORE RETURN", dog, attendance);
     return (
       <SidebarStyle>
         <Card display={dogGeneralDisplay(dog, "es")} />

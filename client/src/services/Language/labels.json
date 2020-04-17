@@ -22,5 +22,6 @@
   { "value": "used", "label": { "es": "usado", "en": "used" } },
   { "value": "hours", "label": { "es": "horas", "en": "hours" } },
   { "value": "starts", "label": { "es": "comienza", "en": "starts" } },
-  { "value": "expires", "label": { "es": "caduca", "en": "expires" } }
+  { "value": "expires", "label": { "es": "caduca", "en": "expires" } },
+  { "value": "type", "label": { "es": "tipo", "en": "type" } }
 ]
