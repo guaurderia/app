@@ -87,29 +87,41 @@ export const dogAttendanceDisplay = (attendance, language) => {
 export const dogPassDisplay = (passes, active, language) => {
   const title = active ? "active passes" : "expired passes";
   if (passes) {
-    const passesList = getPass(passes, active);
-    const parsedPassesList = passesList.map((pass) => {
-      if (pass.type === "day") {
-        return {
-          title: pass.name,
-          content: [
-            { value: `${pass.remainingCount}/${pass.totalCount}`, label: label("used", language) },
-            { value: pass.hours, label: label("hours", language) },
-            { value: pass.type, label: label("type", language) },
-          ],
-        };
-      }
-      if (pass.type === "month") {
-        return {
-          title: pass.name,
-          content: [
-            { value: pass.starts, label: label("starts", language) },
-            { value: pass.expires, label: label("expires", language) },
-            { value: pass.type, label: label("type", language) },
-          ],
-        };
-      }
-    });
-    return { title, content: parsedPassesList };
+    const activePasses = getPass(passes, active);
+    console.log("PASSES LIST", activePasses, "PASSES", passes);
+    if (activePasses) {
+      const parsedPassesList = activePasses.map((pass) => {
+        if (pass.type === "day") {
+          return {
+            title: pass.name,
+            content: [
+              { value: `${pass.remainingCount}/${pass.totalCount}`, label: label("used", language) },
+              { value: pass.hours, label: label("hours", language) },
+              { value: pass.type, label: label("type", language) },
+            ],
+          };
+        }
+        if (pass.type === "month") {
+          return {
+            title: pass.name,
+            content: [
+              { value: pass.starts, label: label("starts", language) },
+              { value: pass.expires, label: label("expires", language) },
+              { value: pass.type, label: label("type", language) },
+            ],
+          };
+        }
+        if (pass.type === "one") {
+          return {
+            title: pass.name,
+            content: [
+              { value: pass.hours, label: label("hours", language) },
+              { value: pass.type, label: label("type", language) },
+            ],
+          };
+        }
+      });
+      return { title, content: parsedPassesList };
+    }
   }
 };

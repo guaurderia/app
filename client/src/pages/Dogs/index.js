@@ -8,8 +8,9 @@ import { GridContainer, DogsContainer } from "./style";
 import _ from "lodash";
 import Sidebar from "../../layouts/Sidebar";
 
-const DogsPage = withRouter(({ getUser, getDogs, getAttendances, getActiveAttendances, getPasses, dogList, user, passList, attendanceList }) => {
+const DogsPage = withRouter(({ getUser, getDogs, getAttendances, getActiveAttendances, getPasses, dogList, user, passList, attendanceList, activeAttendanceList }) => {
   const [selected, setSelected] = useState({});
+  const contentLoaded = dogList && attendanceList && passList && activeAttendanceList;
 
   useEffect(() => {
     getUser();
@@ -29,7 +30,7 @@ const DogsPage = withRouter(({ getUser, getDogs, getAttendances, getActiveAttend
 
   if (!user.loading) {
     if (user?.me?.roll === "admin" || user?.me?.roll === "staff") {
-      if (dogList && attendanceList && passList) {
+      if (contentLoaded) {
         return (
           <DogsContainer>
             <Switch>

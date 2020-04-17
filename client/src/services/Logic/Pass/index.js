@@ -11,6 +11,7 @@ export const getPass = (passes, active) => {
         return pass.count === 0 || DateTime.fromISO(pass.expires) < DateTime.local();
       }
     });
+    console.log("FILTERED PASSES", filteredPasses);
     const passesList = filteredPasses.map((pass) => {
       const name = pass.passType.name;
       const type = pass.passType.type;
@@ -33,6 +34,13 @@ export const getPass = (passes, active) => {
           name,
           starts,
           expires,
+          hours,
+          type,
+        };
+      }
+      if (type === "one") {
+        return {
+          name,
           hours,
           type,
         };

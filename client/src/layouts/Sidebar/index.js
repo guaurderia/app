@@ -14,9 +14,9 @@ const Sidebar = ({ dogList, attendanceList, activeAttendance, passList }) => {
   const [pass, setPass] = useState();
 
   useEffect(() => {
-    if (dogList) setDog(_.head(dogList.filter((d) => d._id.toString() === id)));
-    if (attendanceList) setAttendance(attendanceList.filter((att) => att.dog._id.toString() === id));
-    if (passList) setPass(passList.filter((pass) => pass.dog._id.toString() === id));
+    setDog(_.head(dogList.filter((d) => d._id.toString() === id)));
+    setAttendance(attendanceList.filter((att) => att.dog._id.toString() === id));
+    setPass(passList.filter((pass) => pass.dog._id.toString() === id));
   }, [dogList, attendanceList, id, activeAttendance, passList]);
 
   if (dog && attendance && pass) {
