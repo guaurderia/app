@@ -14,7 +14,7 @@ require("./config/db.config");
 
 const app = express();
 
-var whitelist = [process.env.CLIENT_URL];
+var whitelist = [process.env.CLIENT_URL, process.env.SERVER_URL];
 var corsOptions = {
   origin: function (origin, callback) {
     if (whitelist.indexOf(origin) !== -1) {
