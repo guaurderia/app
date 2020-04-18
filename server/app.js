@@ -14,17 +14,15 @@ require("./config/db.config");
 
 const app = express();
 
-const whitelist = [process.env.CLIENT_URL];
-const corsOptions = {
+var whitelist = [process.env.CLIENT_URL];
+var corsOptions = {
   origin: function (origin, callback) {
-    if (!origin) return callback(null, true);
     if (whitelist.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
       callback(new Error("Not allowed by CORS"));
     }
   },
-  credentials: true,
 };
 
 // Middleware Setup
