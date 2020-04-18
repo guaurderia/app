@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const api = axios.create({ baseURL: "http://localhost:3000", withCredentials: true });
+export const api = axios.create({ baseURL: process.env.SERVER_URL, withCredentials: true });
 
 export const getData = (url, name, key) => (dispatch) => {
   dispatch({ type: `REQUEST_${name.toUpperCase()}`, name });
