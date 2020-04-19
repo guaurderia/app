@@ -88,7 +88,6 @@ export const dogPassDisplay = (passes, active, language) => {
   const title = active ? "active passes" : "expired passes";
   if (passes) {
     const activePasses = getPass(passes, active);
-    console.log("PASSES LIST", activePasses, "PASSES", passes);
     if (activePasses) {
       const parsedPassesList = activePasses.map((pass) => {
         if (pass.type === "day") {

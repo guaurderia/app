@@ -4,7 +4,7 @@
     "type": "month",
     "duration": 1,
     "hours": 12,
-    "price": 390,
+    "price": 295,
     "overtime-rate": 10
   },
   {
@@ -20,7 +20,7 @@
     "type": "day",
     "duration": 10,
     "hours": 12,
-    "price": 100,
+    "price": 160,
     "overtime-rate": 10
   },
   {
@@ -28,7 +28,7 @@
     "type": "day",
     "duration": 10,
     "hours": 6,
-    "price": 50,
+    "price": 110,
     "overtime-rate": 10
   },
   {
@@ -36,7 +36,7 @@
     "type": "one",
     "duration": 1,
     "hours": 12,
-    "price": 30,
+    "price": 20,
     "overtime-rate": 10
   },
   {
@@ -44,7 +44,7 @@
     "type": "one",
     "duration": 1,
     "hours": 6,
-    "price": 20,
+    "price": 15,
     "overtime-rate": 10
   }
 ]

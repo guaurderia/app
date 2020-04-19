@@ -12,10 +12,8 @@ const DogItem = ({ dog, urlParams, postStart, postUpdate, activeAttendance, pass
   const [attendance, setAttendance] = useState();
   const [button, setButton] = useState("start");
   const [timer, setTimer] = useState({ active: false });
-  const [owed, setOwed] = useState(0);
+  const [owed, setOwed] = useState();
   const [activePasses, setActivePasses] = useState();
-
-  console.log("PASS", activePasses);
 
   useEffect(() => {
     const [foundActiveAttendance] = activeAttendance.filter((att) => att.dog._id === dog._id);
@@ -25,11 +23,6 @@ const DogItem = ({ dog, urlParams, postStart, postUpdate, activeAttendance, pass
       const endTime = dogActiveAttendance.endTime;
 
       setAttendance(dogActiveAttendance);
-      setActivePasses(() => {
-        const dogPasses = passList.filter((pass) => pass.dog._id.toString() === dog._id);
-        const active = getPass(dogPasses, true);
-        return { active, selected: null };
-      });
 
       if (endTime) {
         setButton("confirm");
@@ -39,6 +32,15 @@ const DogItem = ({ dog, urlParams, postStart, postUpdate, activeAttendance, pass
         setTimer({ time: activeTime(startTime), active: true });
       }
     }
+  }, []);
+
+  useEffect(() => {
+    setActivePasses(() => {
+      const dogPasses = passList.filter((pass) => pass.dog._id.toString() === dog._id);
+      const active = getPass(dogPasses, true);
+      return { active, selected: _.head(active) };
+    });
+    console.log("ACTIVE PASSES", activePasses);
   }, []);
 
   useEffect(() => {
@@ -67,6 +69,7 @@ const DogItem = ({ dog, urlParams, postStart, postUpdate, activeAttendance, pass
         setAttendance({});
         setButton("start");
         setTimer({ active: false });
+        setOwed();
         break;
     }
   };
@@ -80,8 +83,8 @@ const DogItem = ({ dog, urlParams, postStart, postUpdate, activeAttendance, pass
   const handlePassSelection = (pass) => useCallback(() => setActivePasses({ ...activePasses, selected: pass }), []);
 
   const ShowPasses = () => {
-    if (activePasses?.length) {
-      return activePasses.map((pass, i) => {
+    if (activePasses?.active.length) {
+      return activePasses.active.map((pass, i) => {
         if (pass.type === "day") {
           return (
             <div key={i} onClick={handlePassSelection(pass)}>
@@ -106,16 +109,19 @@ const DogItem = ({ dog, urlParams, postStart, postUpdate, activeAttendance, pass
   return (
     <ItemStyle className={`list-group-item ${selected()} ${active()} ${ended()}`} key={dog._id} to={`/dogs/show/${dog._id}`}>
       <DogItemContentGrid container>
-        <Grid item xs={7}>
+        <Grid item xs={8}>
           {dog.name}
         </Grid>
-        <Grid>
+        <Grid item xs={4}>
+          <button onClick={handleClick}>{button}</button>
+        </Grid>
+        <Grid item xs={6}>
           <ShowPasses />
         </Grid>
         <Grid item xs={2}>
-          <button onClick={handleClick}>{button}</button>
+          {owed && owed.amount}
         </Grid>
-        <Grid item xs={3} style={{ display: "flex", justifyContent: "space-around" }}>
+        <Grid item xs={4} style={{ display: "flex", justifyContent: "space-around" }}>
           {attendance?.startTime && <ShowTime time={attendance.startTime} />}
           {attendance?.endTime && <ShowTime time={attendance?.endTime} />}
           {timer && <ShowTime time={timer.time} />}

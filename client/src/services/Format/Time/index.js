@@ -1,7 +1,7 @@
 import { DateTime } from "luxon";
 
-export const formatTime = (time) => {
-  const format = DateTime.fromISO(time).toLocaleString({ hour: "2-digit", minute: "2-digit", hour12: false });
+export const formatTime = (time, from = "fromISO") => {
+  const format = DateTime[from](time).toLocaleString({ hour: "2-digit", minute: "2-digit", hour12: false });
   if (format.includes("Invalid")) return undefined;
   else return format;
 };

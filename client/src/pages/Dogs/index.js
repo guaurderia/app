@@ -39,10 +39,10 @@ const DogsPage = withRouter(({ getUser, getDogs, getAttendances, getActiveAttend
               </Route>
               <Route path="/dogs">
                 <GridContainer>
-                  <DogList {...{ selected, setSelected }} />
                   <Route path="/dogs/show/:id">
                     <Sidebar />
                   </Route>
+                  <DogList {...{ selected, setSelected }} />
                 </GridContainer>
               </Route>
             </Switch>
