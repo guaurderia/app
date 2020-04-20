@@ -24,7 +24,7 @@ const crudGenerator = (
   router.post(
     "/create",
     asyncController(async (req, res) => {
-      // NOTE: For security reasons, only allow input certain fields
+      console.log("REQ BODY IN CREATE", req.body);
       const data = dataCompiler(req, req.body);
       const unique = dataPicker(uniqueIndex, req.body);
       const exists = await Model.findOne({ unique });
@@ -33,6 +33,7 @@ const crudGenerator = (
         return res.status(409).json(`${uniqueIndex} ${Object.values(unique)} already exists in ${Model.modelName} db`);
       } else {
         try {
+          console.log("DATA IN CREATE", data);
           await Model.create(data);
           const list = await Model.find().populate(populateFields);
           return res.json(list);
@@ -56,13 +57,13 @@ const crudGenerator = (
 
   router.get("/show/?", async (req, res) => {
     const query = req.query;
-    console.log("QUERY", query);
     let data;
     if (_.has(query, "me")) {
       data = await Model.findById(req.user._id);
       res.json(data);
     } else {
       data = await Model.find(query).populate(populateFields);
+      console.log("DATA RETURN SHOW", data, query);
       res.json(data);
     }
   });
@@ -70,7 +71,6 @@ const crudGenerator = (
   router.post("/update/?", async (req, res) => {
     const query = req.query;
     const data = dataCompiler(req, req.body);
-    console.log("UPDATE DATA", data);
     await Model.findOneAndUpdate(query, data);
     const list = await Model.find().populate(populateFields);
     res.json(list);

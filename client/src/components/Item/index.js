@@ -2,22 +2,20 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import { DogItemContentGrid, ItemStyle, PassElement } from "./style";
 import Grid from "@material-ui/core/Grid";
 import { connect } from "react-redux";
-import { getData, postData } from "../../redux/actions";
+import { getData, postData, setData } from "../../redux/actions";
 import _ from "lodash";
 import { DateTime } from "luxon";
 import { formatTime, activeTime } from "../../services/Format/Time";
-import { getPass, isValidPass } from "../../services/Logic/Pass";
+import { getPass, isValidPass, createDayPass } from "../../services/Logic/Pass";
 import ErrorMessage from "../Error";
 
-const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, postPassUpdate, activeAttendance, passList }) => {
+const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, postPassUpdate, activeAttendance, passList, setPassList }) => {
   const [attendance, setAttendance] = useState();
   const [button, setButton] = useState("start");
   const [timer, setTimer] = useState({ active: false });
   const [activePasses, setActivePasses] = useState();
   const [selectedPass, setSelectedPass] = useState();
   const [error, setError] = useState();
-
-  console.log("ACTIVE PASSES AT TOP", activePasses?.selected);
 
   useEffect(() => {
     const [foundActiveAttendance] = activeAttendance.filter((att) => att.dog._id === dog._id);
@@ -46,12 +44,11 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
       const active = getPass(dogPasses, true);
       if (attendance) {
         const validPasses = isValidPass(attendance, active);
-        const selectedIsValid = validPasses.some((pass) => {
-          console.log("SELECTED IS VALID INSIDE", selectedPass?.id === pass.id, selectedPass, pass);
+        const selectedIsValid = validPasses?.some((pass) => {
           return selectedPass?.id === pass.id;
         });
-        console.log("SELECTED IS VALID OUTSIDE", selectedIsValid, selectedPass);
         if (!selectedIsValid) setSelectedPass();
+        console.log("VALID PASSES", validPasses, dog.name);
         return validPasses;
       } else {
         setSelectedPass();
@@ -104,12 +101,15 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
       if (attendance) setSelectedPass(pass);
     });
 
+  const handlePassCreation = () => {
+    createDayPass(dog, attendance).then((res) => setPassList(res.data));
+  };
+
   function checkOut(pass) {
     if (pass) {
       const { id } = pass;
-      if (pass.type === "day") {
+      if (pass.type === "day" || pass.type === "one") {
         const updatedPass = { id, count: pass.remainingCount - 1 };
-        console.log("ACTIVE PASS IN CHECKOUT", activePasses);
         postPassUpdate(updatedPass);
       }
     }
@@ -118,8 +118,9 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
   const ShowPasses = () => {
     let selected = "";
     if (activePasses?.length) {
+      console.log("SHOW PASSES IF", activePasses.length, dog.name, activePasses);
       return activePasses.map((pass, i) => {
-        if (pass.type === "day") {
+        if (pass.type === "day" || pass.type === "one") {
           selected = pass.id === selectedPass?.id ? "selected" : "";
           return (
             <PassElement key={i} onClick={handlePassSelection(pass)} className={selected}>
@@ -136,6 +137,9 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
           );
         }
       });
+    } else if (attendance?.endTime) {
+      console.log("SHOW PASSES ELSE");
+      return <PassElement onClick={handlePassCreation}>Crea un pase de día</PassElement>;
     }
     return <></>;
   };
@@ -179,6 +183,7 @@ const mapDispatchToProps = (dispatch) => {
     postAttendanceUpdate: (obj) => dispatch(postData(`/attendance/update/?dog=${obj.dog}&confirmed=false`, "attendance", obj, "list")),
     postPassUpdate: (obj) => dispatch(postData(`/pass/update/?_id=${obj.id}`, "pass", obj, "list")),
     getAttendance: () => dispatch(getData(`/attendance/show/all`, "attendance", "list")),
+    setPassList: (obj) => dispatch(setData("pass", obj, "list")),
   };
 };
 

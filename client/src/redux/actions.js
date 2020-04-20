@@ -29,6 +29,6 @@ export const postData = (url, name, obj, key = "selected") => (dispatch) => {
     });
 };
 
-export const setUser = (user) => (dispatch) => {
-  dispatch({ type: `SUCCESS_USER`, name: "user", data: user, key: "me" });
+export const setData = (name, obj, key) => (dispatch) => {
+  dispatch({ type: `SUCCESS_${name.toUpperCase()}`, name, data: obj, key });
 };

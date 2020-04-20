@@ -57,12 +57,19 @@ export const isValidPass = (attendance, passes = null) => {
   }
 };
 
-export const createDayPass = async (dog, hours) => {
-  const passType = await api.get(`/pass/show/?duration=1&hours=${hours}`);
+export const createDayPass = async (dog, attendance) => {
+  const timeISO = activeTime(attendance.startTime, attendance.endTime);
+  const totalHours = Duration.fromISO(timeISO).as("hours");
+  const passHours = totalHours < 6 ? 6 : 12;
+
+  const {
+    data: [passType],
+  } = await api.get(`/passType/show/?type=one&hours=${passHours}`);
   const pass = {
     dog: dog._id,
     passType: passType._id,
     purchased: DateTime.local(),
+    count: 1,
   };
-  api.post(`/pass/create`, pass);
+  return await api.post(`/pass/create`, pass);
 };
