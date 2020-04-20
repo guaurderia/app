@@ -5,18 +5,30 @@ import { Card } from "../../components/Card";
 import Button from "@material-ui/core/Button";
 import _ from "lodash";
 import { Link, useParams } from "react-router-dom";
-import { dogGeneralDisplay, dogSexDisplay, dogMedicalDisplay, dogOwnerDisplay } from "./utils/cardData";
+import { dogGeneralDisplay, dogSexDisplay, dogMedicalDisplay, dogOwnerDisplay, dogAttendanceDisplay, dogPassDisplay } from "../../services/Format/Dog";
 
-const Sidebar = ({ list }) => {
+const Sidebar = ({ dogList, attendanceList, activeAttendance, passList }) => {
   const { id } = useParams();
-  if (list) {
-    const [dog] = list.filter((d) => d._id.toString() === id);
+  const [dog, setDog] = useState();
+  const [attendance, setAttendance] = useState();
+  const [pass, setPass] = useState();
+
+  useEffect(() => {
+    setDog(_.head(dogList.filter((d) => d._id.toString() === id)));
+    setAttendance(attendanceList.filter((att) => att.dog._id.toString() === id));
+    setPass(passList.filter((pass) => pass.dog._id.toString() === id));
+  }, [dogList, attendanceList, id, activeAttendance, passList]);
+
+  if (dog && attendance && pass) {
     return (
       <SidebarStyle>
-        <Card title="General" content={dogGeneralDisplay(dog, "spanish")} />
-        <Card title="Sexo" content={dogSexDisplay(dog, "spanish")} />
-        <Card title="Veterinaria" content={dogMedicalDisplay(dog, "spanish")} />
-        <Card title="Dueño" content={dogOwnerDisplay(dog, "spanish")} />
+        <Card display={dogGeneralDisplay(dog, "es")} />
+        <Card display={dogSexDisplay(dog, "es")} />
+        <Card display={dogMedicalDisplay(dog, "es")} />
+        <Card display={dogOwnerDisplay(dog, "es")} />
+        <Card display={dogAttendanceDisplay(attendance, "es")} />
+        <Card display={dogPassDisplay(pass, true, "es")} />
+        <Card display={dogPassDisplay(pass, false, "es")} />
         <Button variant="contained">
           <Link to={`/dogs/edit/${dog._id}`}>Editar</Link>
         </Button>
@@ -26,7 +38,12 @@ const Sidebar = ({ list }) => {
 };
 
 const mapStateToProps = (state) => {
-  return { list: state.dog.list };
+  return {
+    dogList: state.dog.list,
+    attendanceList: state.attendance.list,
+    activeAttendance: state.attendance.active,
+    passList: state.pass.list,
+  };
 };
 
 export default connect(mapStateToProps)(Sidebar);

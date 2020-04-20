@@ -9,13 +9,13 @@ passport.serializeUser((user, cb) => {
 });
 
 passport.deserializeUser((id, cb) => {
-  console.log("DESERIALIZE USER");
+  console.log("DESERIALIZE USER", id);
   User.findById(id)
-    .then(user => cb(null, user))
-    .catch(e => cb(e));
+    .then((user) => cb(null, user))
+    .catch((e) => cb(e));
 });
 
-module.exports = app => {
+module.exports = (app) => {
   app.use(passport.initialize());
   app.use(passport.session());
 };

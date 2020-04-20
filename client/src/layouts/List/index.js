@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { getData } from "../../redux/actions";
 import { Link, useParams, useLocation } from "react-router-dom";
-import { DogListContainer, LinkStyle } from "./style";
+import { DogListContainer } from "./style";
 import _ from "lodash";
 import DogItem from "../../components/Item";
 

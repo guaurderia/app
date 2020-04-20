@@ -1,14 +1,14 @@
 [
   {
-    "name": "Mensual Jornada Completa",
+    "name": "jornada completa mensual",
     "type": "month",
     "duration": 1,
     "hours": 12,
-    "price": 390,
+    "price": 295,
     "overtime-rate": 10
   },
   {
-    "name": "Mensual Media Jornada",
+    "name": "jornada media mensual",
     "type": "month",
     "duration": 1,
     "hours": 6,
@@ -16,19 +16,35 @@
     "overtime-rate": 10
   },
   {
-    "name": "Dia Completo",
+    "name": "jornada completa dia",
     "type": "day",
     "duration": 10,
     "hours": 12,
-    "price": 100,
+    "price": 160,
     "overtime-rate": 10
   },
   {
-    "name": "Dia Medio",
+    "name": "jornada media dia",
     "type": "day",
     "duration": 10,
     "hours": 6,
-    "price": 50,
+    "price": 110,
+    "overtime-rate": 10
+  },
+  {
+    "name": "jornada completa suelto",
+    "type": "one",
+    "duration": 1,
+    "hours": 12,
+    "price": 20,
+    "overtime-rate": 10
+  },
+  {
+    "name": "jornada media suelto",
+    "type": "one",
+    "duration": 1,
+    "hours": 6,
+    "price": 15,
     "overtime-rate": 10
   }
 ]

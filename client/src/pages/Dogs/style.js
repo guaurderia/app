@@ -24,10 +24,10 @@ export const GridContainer = ({ children }) => {
   return (
     <div className={classes.root}>
       <Grid container spacing={2}>
-        <Grid item xs={7}>
+        <Grid item xs={3}>
           {children[0]}
         </Grid>
-        <Grid item xs={5}>
+        <Grid item xs={9}>
           {children[1]}
         </Grid>
       </Grid>
