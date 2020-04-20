@@ -7,7 +7,7 @@ import _ from "lodash";
 import { Link, useParams } from "react-router-dom";
 import { dogGeneralDisplay, dogSexDisplay, dogMedicalDisplay, dogOwnerDisplay, dogAttendanceDisplay, dogPassDisplay } from "../../services/Format/Dog";
 
-const Sidebar = ({ dogList, attendanceList, activeAttendance, passList }) => {
+const Sidebar = ({ dogList, attendanceList, activeAttendance, passList, language }) => {
   const { id } = useParams();
   const [dog, setDog] = useState();
   const [attendance, setAttendance] = useState();
@@ -22,13 +22,13 @@ const Sidebar = ({ dogList, attendanceList, activeAttendance, passList }) => {
   if (dog && attendance && pass) {
     return (
       <SidebarStyle>
-        <Card display={dogGeneralDisplay(dog, "es")} />
-        <Card display={dogSexDisplay(dog, "es")} />
-        <Card display={dogMedicalDisplay(dog, "es")} />
-        <Card display={dogOwnerDisplay(dog, "es")} />
-        <Card display={dogAttendanceDisplay(attendance, "es")} />
-        <Card display={dogPassDisplay(pass, true, "es")} />
-        <Card display={dogPassDisplay(pass, false, "es")} />
+        <Card display={dogGeneralDisplay(dog, language)} />
+        <Card display={dogSexDisplay(dog, language)} />
+        <Card display={dogMedicalDisplay(dog, language)} />
+        <Card display={dogOwnerDisplay(dog, language)} />
+        <Card display={dogAttendanceDisplay(attendance, language)} />
+        <Card display={dogPassDisplay(pass, true, language)} />
+        <Card display={dogPassDisplay(pass, false, language)} />
         <Button variant="contained">
           <Link to={`/dogs/edit/${dog._id}`}>Editar</Link>
         </Button>
@@ -43,6 +43,7 @@ const mapStateToProps = (state) => {
     attendanceList: state.attendance.list,
     activeAttendance: state.attendance.active,
     passList: state.pass.list,
+    language: state.language.set,
   };
 };
 

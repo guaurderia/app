@@ -1,9 +1,10 @@
 import styled from "styled-components";
 
 const Form = styled.form`
+  margin: 20px 70px;
   > div {
     width: 100%;
-    margin-bottom: 10px;
+    margin: 10px;
   }
 `;
 

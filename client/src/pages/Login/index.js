@@ -2,10 +2,10 @@ import React from "react";
 import { withRouter, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { connect } from "react-redux";
-import { postData, setUser } from "../../redux/actions";
+import { postData, setData } from "../../redux/actions";
 import { api } from "../../redux/actions";
 
-const LoginPage = withRouter(({ history, login, setUser, user }) => {
+const LoginPage = withRouter(({ history, setUser }) => {
   const { register, handleSubmit } = useForm();
 
   const onSubmit = (data) => {
@@ -51,7 +51,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     login: (obj) => dispatch(postData("/auth/login", "user", obj, "me")),
     getUser: () => dispatch(getData("/auth/show/me", "user", "me")),
-    setUser: (user) => dispatch(setUser(user)),
+    setUser: (user) => dispatch(setData("user", user, "me")),
   };
 };
 

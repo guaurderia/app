@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Route, Switch, Redirect, withRouter, history } from "react-router-dom";
+import { Route, Switch, Redirect, withRouter } from "react-router-dom";
 import { connect } from "react-redux";
-import { getData, setUser } from "../../redux/actions";
-import DogForm from "../../layouts/Form";
+import { getData, setData } from "../../redux/actions";
+import DogForm from "../../layouts/Form/dogForm";
 import DogList from "../../layouts/List";
 import { GridContainer, DogsContainer } from "./style";
 import _ from "lodash";
 import Sidebar from "../../layouts/Sidebar";
 
-const DogsPage = withRouter(({ getUser, getDogs, getAttendances, getActiveAttendances, getPasses, dogList, user, passList, attendanceList, activeAttendanceList }) => {
+const DogsPage = withRouter(({ getUser, getDogs, getAttendances, getActiveAttendances, getPasses, dogList, user, passList, attendanceList, activeAttendanceList, setLanguage }) => {
   const [selected, setSelected] = useState({});
   const contentLoaded = dogList && attendanceList && passList && activeAttendanceList;
 
@@ -18,6 +18,7 @@ const DogsPage = withRouter(({ getUser, getDogs, getAttendances, getActiveAttend
     getPasses();
     getAttendances();
     getActiveAttendances();
+    setLanguage("en");
   }, []);
 
   useEffect(() => {
@@ -25,7 +26,10 @@ const DogsPage = withRouter(({ getUser, getDogs, getAttendances, getActiveAttend
       getAttendances();
       getActiveAttendances();
     }, 60000);
-    return () => clearInterval(interval);
+    return () => {
+      console.log("CLEAR INTERVAL");
+      clearInterval(interval);
+    };
   }, [user]);
 
   if (!user.loading) {
@@ -70,6 +74,7 @@ const mapDispatchToProps = (dispatch) => {
     getAttendances: () => dispatch(getData("/attendance/show/all", "attendance", "list")),
     getActiveAttendances: () => dispatch(getData(`/attendance/show/?confirmed=false`, "attendance", "active")),
     getPasses: () => dispatch(getData("pass/show/all", "pass", "list")),
+    setLanguage: (language) => dispatch(setData("language", language, "set")),
   };
 };
 
