@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "parcel index.html",
+    "build": "parcel build index.html",
     "travis:start": "parcel index.html &"
   },
   "repository": {
@@ -24,8 +25,8 @@
     "bootstrap": "^3.4.1",
     "hookrouter": "^1.2.3",
     "lodash": "^4.17.15",
+    "luxon": "^1.23.0",
     "parcel": "^1.12.4",
-    "prop-types": "^15.7.2",
     "react": "^16.13.0",
     "react-datepicker": "^2.14.0",
     "react-dom": "^16.13.0",
@@ -33,6 +34,7 @@
     "react-redux": "^7.2.0",
     "react-router-dom": "^5.1.2",
     "react-select": "^3.1.0",
+    "react-timer-hook": "^2.0.2",
     "redux": "^4.0.5",
     "redux-devtools-extension": "^2.13.8",
     "redux-logger": "^3.0.6",
@@ -41,6 +43,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.8.7",
-    "@babel/plugin-transform-runtime": "^7.8.3"
+    "@babel/plugin-transform-runtime": "^7.8.3",
+    "babel-preset-env": "^1.7.0"
   }
 }

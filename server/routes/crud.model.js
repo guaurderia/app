@@ -17,15 +17,14 @@ const crudGenerator = (
   const router = express.Router();
 
   const allFields = Object.keys(Model.schema.paths);
-  const createFields = _.without(allFields, ...["_id", "__v", "createdAt", "updatedAt", ...createProtectFields]);
+  const createFields = _.without(allFields, ...["__v", "createdAt", "updatedAt", ...createProtectFields]);
   const dataCompiler = (req, obj) => ({ ..._.pick(obj, createFields), ...extraFieldsCreate(req) });
   const dataPicker = (pick, obj) => _.pick(obj, pick);
 
   router.post(
     "/create",
-    isLoggedIn("user"),
     asyncController(async (req, res) => {
-      // NOTE: For security reasons, only allow input certain fields
+      console.log("REQ BODY IN CREATE", req.body);
       const data = dataCompiler(req, req.body);
       const unique = dataPicker(uniqueIndex, req.body);
       const exists = await Model.findOne({ unique });
@@ -34,8 +33,10 @@ const crudGenerator = (
         return res.status(409).json(`${uniqueIndex} ${Object.values(unique)} already exists in ${Model.modelName} db`);
       } else {
         try {
-          const created = await Model.create(data);
-          return res.json(created);
+          console.log("DATA IN CREATE", data);
+          await Model.create(data);
+          const list = await Model.find().populate(populateFields);
+          return res.json(list);
         } catch (err) {
           if (err.name == "ValidationError") {
             const keys = Object.keys(err.errors);
@@ -62,6 +63,7 @@ const crudGenerator = (
       data = await Model.findById(req.user._id);
       res.json(data);
     } else {
+<<<<<<< HEAD
       data = await Model.find(query);
       if (data.length > 0) {
         const response = data.map((obj) => dataCompiler(req, obj));
@@ -69,20 +71,24 @@ const crudGenerator = (
       } else {
         res.status(422).json(`This ${Model.modelName} doesn't exist`);
       }
+=======
+      data = await Model.find(query).populate(populateFields);
+      console.log("DATA RETURN SHOW", data, query);
+      res.json(data);
+>>>>>>> 3a38678c63fd2a514d6ad53182916cd79d259485
     }
   });
 
-  router.post("/update/:id", isLoggedIn("user"), async (req, res) => {
-    const { id } = req.params;
+  router.post("/update/?", async (req, res) => {
+    const query = req.query;
     const data = dataCompiler(req, req.body);
-    await Model.findByIdAndUpdate(id, data);
-    const updatedObj = await Model.findById(id);
-    res.json(updatedObj);
+    await Model.findOneAndUpdate(query, data);
+    const list = await Model.find().populate(populateFields);
+    res.json(list);
   });
 
   router.get(
     "/delete/:id",
-    isLoggedIn("user"),
     asyncController(async (req, res, next) => {
       const { id } = req.params;
       const obj = await Model.findByIdAndRemove(id);
