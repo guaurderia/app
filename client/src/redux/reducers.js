@@ -1,12 +1,7 @@
 import { combineReducers } from "redux";
 
 const initialState = {
-<<<<<<< HEAD
-  loading: false,
-  data: "",
-=======
   loading: true,
->>>>>>> 3a38678c63fd2a514d6ad53182916cd79d259485
   error: "",
 };
 
