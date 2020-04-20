@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { DogItemContentGrid, ItemStyle } from "./style";
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import { DogItemContentGrid, ItemStyle, PassElement } from "./style";
 import Grid from "@material-ui/core/Grid";
 import { connect } from "react-redux";
 import { getData, postData } from "../../redux/actions";
@@ -13,6 +13,8 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
   const [button, setButton] = useState("start");
   const [timer, setTimer] = useState({ active: false });
   const [activePasses, setActivePasses] = useState();
+
+  console.log("ACTIVE PASSES AT TOP", activePasses?.selected);
 
   useEffect(() => {
     const [foundActiveAttendance] = activeAttendance.filter((att) => att.dog._id === dog._id);
@@ -41,9 +43,9 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
       const active = getPass(dogPasses, true);
       if (attendance) {
         const validPass = isValidPass(attendance, active);
-        return { valid: validPass, selected: _.head(validPass) };
+        return { valid: validPass, ...activePasses };
       } else {
-        return { valid: active, selected: _.head(active) };
+        return { valid: active };
       }
     });
   }, [attendance, passList]);
@@ -66,11 +68,11 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
         break;
       case "confirm":
         const confirmed = { ...attendance, dog: dog._id, confirmed: true };
+        checkOut(activePasses.selected);
         postAttendanceUpdate(confirmed);
         setAttendance({});
         setButton("start");
         setTimer({ active: false });
-        checkOut(activePasses.selected);
         break;
     }
   };
@@ -88,27 +90,33 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
       const { id } = pass;
       if (pass.type === "day") {
         const updatedPass = { id, count: pass.remainingCount - 1 };
+        console.log("ACTIVE PASS IN CHECKOUT", activePasses);
+        setActivePasses({ ...activePasses, selected: { ...activePasses.selected, remainingCount: activePasses.selected.remainingCount - 1 } });
         postPassUpdate(updatedPass);
       }
     }
   }
 
   const ShowPasses = () => {
+    let selected = "";
     if (activePasses?.valid?.length) {
       return activePasses.valid.map((pass, i) => {
         if (pass.type === "day") {
+          selected = activePasses.selected === pass ? "selected" : "";
           return (
-            <div key={i} onClick={handlePassSelection(pass)}>
+            <PassElement key={i} onClick={handlePassSelection(pass)} className={selected}>
               {pass.name} {pass.remainingCount}
-            </div>
+            </PassElement>
           );
         }
-        if (pass.type === "month")
+        if (pass.type === "month") {
+          selected = activePasses.selected === pass ? "selected" : "";
           return (
-            <div key={i} onClick={handlePassSelection(pass)}>
+            <PassElement key={i} onClick={handlePassSelection(pass)} className={selected}>
               {pass.name} {pass.expires}
-            </div>
+            </PassElement>
           );
+        }
       });
     }
     return <></>;

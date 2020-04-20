@@ -19,3 +19,9 @@ export const ItemStyle = styled(Link)`
     background: rgb(255, 233, 0, 0.2);
   }
 `;
+
+export const PassElement = styled.div`
+  &.selected {
+    border: 1px solid red;
+  }
+`;
