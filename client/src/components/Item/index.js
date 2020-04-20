@@ -7,6 +7,7 @@ import _ from "lodash";
 import { DateTime } from "luxon";
 import { formatTime, activeTime } from "../../services/Format/Time";
 import { getPass, isValidPass } from "../../services/Logic/Pass";
+import ErrorMessage from "../Error";
 
 const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, postPassUpdate, activeAttendance, passList }) => {
   const [attendance, setAttendance] = useState();
@@ -14,6 +15,7 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
   const [timer, setTimer] = useState({ active: false });
   const [activePasses, setActivePasses] = useState();
   const [selectedPass, setSelectedPass] = useState();
+  const [error, setError] = useState();
 
   console.log("ACTIVE PASSES AT TOP", activePasses?.selected);
 
@@ -44,11 +46,15 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
       const active = getPass(dogPasses, true);
       if (attendance) {
         const validPasses = isValidPass(attendance, active);
-        console.log("VALID PASSES", validPasses, active);
-        const selectedIsValid = validPasses.some((pass) => selectedPass === pass);
-        if (!selectedIsValid) setSelectedPass(_.head(validPasses));
+        const selectedIsValid = validPasses.some((pass) => {
+          console.log("SELECTED IS VALID INSIDE", selectedPass?.id === pass.id, selectedPass, pass);
+          return selectedPass?.id === pass.id;
+        });
+        console.log("SELECTED IS VALID OUTSIDE", selectedIsValid, selectedPass);
+        if (!selectedIsValid) setSelectedPass();
         return validPasses;
       } else {
+        setSelectedPass();
         return active;
       }
     });
@@ -71,12 +77,18 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
         setTimer({ ...timer, active: false });
         break;
       case "confirm":
-        const confirmed = { ...attendance, dog: dog._id, confirmed: true };
-        postAttendanceUpdate(confirmed);
-        setAttendance({});
-        setButton("start");
-        setTimer({ active: false });
-        checkOut(selectedPass);
+        if (selectedPass) {
+          const confirmed = { ...attendance, dog: dog._id, confirmed: true };
+          postAttendanceUpdate(confirmed);
+          setAttendance({});
+          setButton("start");
+          setTimer({ active: false });
+          checkOut(selectedPass);
+          setSelectedPass();
+          setError();
+        } else {
+          setError("Tienes que selectionar un bono");
+        }
         break;
     }
   };
@@ -87,7 +99,10 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
     else return <></>;
   };
 
-  const handlePassSelection = (pass) => useCallback(() => setSelectedPass(pass));
+  const handlePassSelection = (pass) =>
+    useCallback(() => {
+      if (attendance) setSelectedPass(pass);
+    });
 
   function checkOut(pass) {
     if (pass) {
@@ -105,7 +120,7 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
     if (activePasses?.length) {
       return activePasses.map((pass, i) => {
         if (pass.type === "day") {
-          selected = pass === selectedPass ? "selected" : "";
+          selected = pass.id === selectedPass?.id ? "selected" : "";
           return (
             <PassElement key={i} onClick={handlePassSelection(pass)} className={selected}>
               {pass.name} {pass.remainingCount}
@@ -113,7 +128,7 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
           );
         }
         if (pass.type === "month") {
-          selected = pass === selectedPass ? "selected" : "";
+          selected = pass.id === selectedPass?.id ? "selected" : "";
           return (
             <PassElement key={i} onClick={handlePassSelection(pass)} className={selected}>
               {pass.name} {pass.expires}
@@ -136,6 +151,7 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
         </Grid>
         <Grid item xs={4}>
           <button onClick={handleClick}>{button}</button>
+          {error && <ErrorMessage msg={error} />}
         </Grid>
         <Grid item xs={6}>
           <ShowPasses />
