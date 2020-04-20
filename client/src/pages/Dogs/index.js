@@ -65,17 +65,11 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-<<<<<<< HEAD
-    getUser: () => dispatch(getData("/user/show/me", "user")),
-    getDogs: () => dispatch(getData("/dog/show/all", "dog")),
-    getAttendances: () => dispatch(getData("/attendance/show/all", "attendance")),
-=======
     getUser: () => dispatch(getData("/auth/show/me", "user", "me")),
     getDogs: () => dispatch(getData("/dog/show/all", "dog", "list")),
     getAttendances: () => dispatch(getData("/attendance/show/all", "attendance", "list")),
     getActiveAttendances: () => dispatch(getData(`/attendance/show/?confirmed=false`, "attendance", "active")),
     getPasses: () => dispatch(getData("pass/show/all", "pass", "list")),
->>>>>>> 3a38678c63fd2a514d6ad53182916cd79d259485
   };
 };
 

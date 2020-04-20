@@ -153,16 +153,6 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
         <Grid item xs={8}>
           {dog.name}
         </Grid>
-<<<<<<< HEAD
-        <Grid item xs={2}>
-          <button onClick={(e) => handleTimer()}>{button}</button>
-        </Grid>
-        <Grid item xs={2}>
-          <div>{}</div>
-        </Grid>
-      </DogItemContentGrid>
-    </LinkStyle>
-=======
         <Grid item xs={4}>
           <button onClick={handleClick}>{button}</button>
           {error && <ErrorMessage msg={error} />}
@@ -177,34 +167,23 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
         </Grid>
       </DogItemContentGrid>
     </ItemStyle>
->>>>>>> 3a38678c63fd2a514d6ad53182916cd79d259485
   );
 };
 
 const mapStateToProps = (state) => {
   return {
-<<<<<<< HEAD
-    attendanceList: state.attendance.data,
-    awaitingServer: state.attendance.loading,
-=======
     activeAttendance: state.attendance.active,
     passList: state.pass.list,
->>>>>>> 3a38678c63fd2a514d6ad53182916cd79d259485
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-<<<<<<< HEAD
-    postStart: (obj) => dispatch(postData("/attendance/create", "attendance", obj)),
-    postUpdate: (obj) => dispatch(postData(`/attendance/update/${obj._id}`, "attendance", obj)),
-=======
     postAttendanceCreate: (obj) => dispatch(postData("/attendance/create", "attendance", obj, "list")),
     postAttendanceUpdate: (obj) => dispatch(postData(`/attendance/update/?dog=${obj.dog}&confirmed=false`, "attendance", obj, "list")),
     postPassUpdate: (obj) => dispatch(postData(`/pass/update/?_id=${obj.id}`, "pass", obj, "list")),
     getAttendance: () => dispatch(getData(`/attendance/show/all`, "attendance", "list")),
     setPassList: (obj) => dispatch(setData("pass", obj, "list")),
->>>>>>> 3a38678c63fd2a514d6ad53182916cd79d259485
   };
 };
 
