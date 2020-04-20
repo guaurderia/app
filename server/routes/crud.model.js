@@ -70,6 +70,7 @@ const crudGenerator = (
   router.post("/update/?", async (req, res) => {
     const query = req.query;
     const data = dataCompiler(req, req.body);
+    console.log("UPDATE DATA", data);
     await Model.findOneAndUpdate(query, data);
     const list = await Model.find().populate(populateFields);
     res.json(list);

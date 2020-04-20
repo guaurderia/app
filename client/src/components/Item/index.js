@@ -6,13 +6,12 @@ import { getData, postData } from "../../redux/actions";
 import _ from "lodash";
 import { DateTime } from "luxon";
 import { formatTime, activeTime } from "../../services/Format/Time";
-import { getPass, checkOut } from "../../services/Logic/Pass";
+import { getPass, isValidPass } from "../../services/Logic/Pass";
 
-const DogItem = ({ dog, urlParams, postStart, postUpdate, activeAttendance, passList }) => {
+const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, postPassUpdate, activeAttendance, passList }) => {
   const [attendance, setAttendance] = useState();
   const [button, setButton] = useState("start");
   const [timer, setTimer] = useState({ active: false });
-  const [owed, setOwed] = useState();
   const [activePasses, setActivePasses] = useState();
 
   useEffect(() => {
@@ -31,6 +30,8 @@ const DogItem = ({ dog, urlParams, postStart, postUpdate, activeAttendance, pass
         setButton("end");
         setTimer({ time: activeTime(startTime), active: true });
       }
+    } else {
+      setAttendance(null);
     }
   }, []);
 
@@ -38,38 +39,38 @@ const DogItem = ({ dog, urlParams, postStart, postUpdate, activeAttendance, pass
     setActivePasses(() => {
       const dogPasses = passList.filter((pass) => pass.dog._id.toString() === dog._id);
       const active = getPass(dogPasses, true);
-      return { active, selected: _.head(active) };
+      if (attendance) {
+        const validPass = isValidPass(attendance, active);
+        return { valid: validPass, selected: _.head(validPass) };
+      } else {
+        return { valid: active, selected: _.head(active) };
+      }
     });
-    console.log("ACTIVE PASSES", activePasses);
-  }, []);
-
-  useEffect(() => {
-    if (attendance) setOwed(checkOut(attendance, activePasses?.selected));
-  }, [activePasses]);
+  }, [attendance, passList]);
 
   const handleClick = () => {
     switch (button) {
       case "start":
         const start = { dog: dog._id, startTime: DateTime.local().toJSON(), confirmed: false };
-        postStart(start);
+        postAttendanceCreate(start);
         setAttendance(start);
         setButton("end");
         setTimer({ ...timer, active: true });
         break;
       case "end":
         const end = { ...attendance, dog: dog._id, endTime: DateTime.local().toJSON() };
-        postUpdate(end);
+        postAttendanceUpdate(end);
         setAttendance(end);
         setButton("confirm");
         setTimer({ ...timer, active: false });
         break;
       case "confirm":
         const confirmed = { ...attendance, dog: dog._id, confirmed: true };
-        postUpdate(confirmed);
+        postAttendanceUpdate(confirmed);
         setAttendance({});
         setButton("start");
         setTimer({ active: false });
-        setOwed();
+        checkOut(activePasses.selected);
         break;
     }
   };
@@ -82,9 +83,19 @@ const DogItem = ({ dog, urlParams, postStart, postUpdate, activeAttendance, pass
 
   const handlePassSelection = (pass) => useCallback(() => setActivePasses({ ...activePasses, selected: pass }), []);
 
+  function checkOut(pass) {
+    if (pass) {
+      const { id } = pass;
+      if (pass.type === "day") {
+        const updatedPass = { id, count: pass.remainingCount - 1 };
+        postPassUpdate(updatedPass);
+      }
+    }
+  }
+
   const ShowPasses = () => {
-    if (activePasses?.active.length) {
-      return activePasses.active.map((pass, i) => {
+    if (activePasses?.valid?.length) {
+      return activePasses.valid.map((pass, i) => {
         if (pass.type === "day") {
           return (
             <div key={i} onClick={handlePassSelection(pass)}>
@@ -118,9 +129,6 @@ const DogItem = ({ dog, urlParams, postStart, postUpdate, activeAttendance, pass
         <Grid item xs={6}>
           <ShowPasses />
         </Grid>
-        <Grid item xs={2}>
-          {owed && owed.amount}
-        </Grid>
         <Grid item xs={4} style={{ display: "flex", justifyContent: "space-around" }}>
           {attendance?.startTime && <ShowTime time={attendance.startTime} />}
           {attendance?.endTime && <ShowTime time={attendance?.endTime} />}
@@ -140,8 +148,9 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    postStart: (obj) => dispatch(postData("/attendance/create", "attendance", obj, "list")),
-    postUpdate: (obj) => dispatch(postData(`/attendance/update/?dog=${obj.dog}&confirmed=false`, "attendance", obj, "list")),
+    postAttendanceCreate: (obj) => dispatch(postData("/attendance/create", "attendance", obj, "list")),
+    postAttendanceUpdate: (obj) => dispatch(postData(`/attendance/update/?dog=${obj.dog}&confirmed=false`, "attendance", obj, "list")),
+    postPassUpdate: (obj) => dispatch(postData(`/pass/update/?_id=${obj.id}`, "pass", obj, "list")),
     getAttendance: () => dispatch(getData(`/attendance/show/all`, "attendance", "list")),
   };
 };

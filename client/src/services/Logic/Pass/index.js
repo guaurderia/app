@@ -1,6 +1,7 @@
 import { DateTime, Duration } from "luxon";
 import { formatDate, activeTime, formatTime } from "../../Format/Time";
 import _ from "lodash";
+import { api } from "../../../redux/actions";
 
 export const getPass = (passes, active) => {
   if (passes?.length) {
@@ -11,58 +12,57 @@ export const getPass = (passes, active) => {
         return pass.count === 0 || DateTime.fromISO(pass.expires) < DateTime.local();
       }
     });
-    console.log("PASSES IN GET PASS", passes, filteredPasses);
     const passesList = filteredPasses.map((pass) => {
+      const id = pass._id;
       const name = pass.passType.name;
       const type = pass.passType.type;
       const hours = pass.passType.hours;
       const overTimeRate = pass.passType["overtime-rate"];
+      const basic = { id, name, overTimeRate, type, hours };
       if (type === "day") {
         const remainingCount = pass.count;
         const totalCount = pass.passType.duration;
         return {
-          name,
+          ...basic,
           totalCount,
           remainingCount,
-          hours,
-          type,
-          overTimeRate,
         };
       }
       if (type === "month") {
         const starts = formatDate(pass.starts);
         const expires = formatDate(pass.expires);
         return {
-          name,
+          ...basic,
           starts,
           expires,
-          hours,
-          type,
-          overTimeRate,
         };
       }
       if (type === "one") {
-        return {
-          name,
-          hours,
-          type,
-          overTimeRate,
-        };
+        return basic;
       }
     });
     return passesList;
   }
 };
 
-export const checkOut = (attendance, pass = null) => {
+export const isValidPass = (attendance, passes = null) => {
   const timeISO = activeTime(attendance.startTime, attendance.endTime);
   const totalMinutes = Duration.fromISO(timeISO).as("minutes");
 
-  if (pass) {
-    if (pass?.type === "day") pass.count--;
-    const overTime = totalMinutes - pass.hours * 60;
-    const overtTimeFormat = formatTime(overTime * 60 * 1000, "fromMillis");
-    const owed = overTime > 0 ? _.round(overTime * (pass.overTimeRate / 60), 2) : 0;
-    return { amount: owed, time: overtTimeFormat };
+  if (passes?.length) {
+    return passes.filter((pass) => {
+      const inTime = totalMinutes - pass.hours * 60 > 0 ? false : true;
+      return inTime;
+    });
   }
+};
+
+export const createDayPass = async (dog, hours) => {
+  const passType = await api.get(`/pass/show/?duration=1&hours=${hours}`);
+  const pass = {
+    dog: dog._id,
+    passType: passType._id,
+    purchased: DateTime.local(),
+  };
+  api.post(`/pass/create`, pass);
 };
