@@ -63,19 +63,9 @@ const crudGenerator = (
       data = await Model.findById(req.user._id);
       res.json(data);
     } else {
-<<<<<<< HEAD
-      data = await Model.find(query);
-      if (data.length > 0) {
-        const response = data.map((obj) => dataCompiler(req, obj));
-        res.json(response);
-      } else {
-        res.status(422).json(`This ${Model.modelName} doesn't exist`);
-      }
-=======
       data = await Model.find(query).populate(populateFields);
       console.log("DATA RETURN SHOW", data, query);
       res.json(data);
->>>>>>> 3a38678c63fd2a514d6ad53182916cd79d259485
     }
   });
 
