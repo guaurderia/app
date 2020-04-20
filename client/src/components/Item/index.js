@@ -13,6 +13,7 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
   const [button, setButton] = useState("start");
   const [timer, setTimer] = useState({ active: false });
   const [activePasses, setActivePasses] = useState();
+  const [selectedPass, setSelectedPass] = useState();
 
   console.log("ACTIVE PASSES AT TOP", activePasses?.selected);
 
@@ -42,10 +43,13 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
       const dogPasses = passList.filter((pass) => pass.dog._id.toString() === dog._id);
       const active = getPass(dogPasses, true);
       if (attendance) {
-        const validPass = isValidPass(attendance, active);
-        return { valid: validPass, ...activePasses };
+        const validPasses = isValidPass(attendance, active);
+        console.log("VALID PASSES", validPasses, active);
+        const selectedIsValid = validPasses.some((pass) => selectedPass === pass);
+        if (!selectedIsValid) setSelectedPass(_.head(validPasses));
+        return validPasses;
       } else {
-        return { valid: active };
+        return active;
       }
     });
   }, [attendance, passList]);
@@ -68,11 +72,11 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
         break;
       case "confirm":
         const confirmed = { ...attendance, dog: dog._id, confirmed: true };
-        checkOut(activePasses.selected);
         postAttendanceUpdate(confirmed);
         setAttendance({});
         setButton("start");
         setTimer({ active: false });
+        checkOut(selectedPass);
         break;
     }
   };
@@ -83,7 +87,7 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
     else return <></>;
   };
 
-  const handlePassSelection = (pass) => useCallback(() => setActivePasses({ ...activePasses, selected: pass }), []);
+  const handlePassSelection = (pass) => useCallback(() => setSelectedPass(pass));
 
   function checkOut(pass) {
     if (pass) {
@@ -91,7 +95,6 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
       if (pass.type === "day") {
         const updatedPass = { id, count: pass.remainingCount - 1 };
         console.log("ACTIVE PASS IN CHECKOUT", activePasses);
-        setActivePasses({ ...activePasses, selected: { ...activePasses.selected, remainingCount: activePasses.selected.remainingCount - 1 } });
         postPassUpdate(updatedPass);
       }
     }
@@ -99,10 +102,10 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
 
   const ShowPasses = () => {
     let selected = "";
-    if (activePasses?.valid?.length) {
-      return activePasses.valid.map((pass, i) => {
+    if (activePasses?.length) {
+      return activePasses.map((pass, i) => {
         if (pass.type === "day") {
-          selected = activePasses.selected === pass ? "selected" : "";
+          selected = pass === selectedPass ? "selected" : "";
           return (
             <PassElement key={i} onClick={handlePassSelection(pass)} className={selected}>
               {pass.name} {pass.remainingCount}
@@ -110,7 +113,7 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
           );
         }
         if (pass.type === "month") {
-          selected = activePasses.selected === pass ? "selected" : "";
+          selected = pass === selectedPass ? "selected" : "";
           return (
             <PassElement key={i} onClick={handlePassSelection(pass)} className={selected}>
               {pass.name} {pass.expires}
