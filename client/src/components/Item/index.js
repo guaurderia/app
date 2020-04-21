@@ -150,7 +150,7 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
   return (
     <ItemStyle className={`list-group-item ${selected()} ${active()} ${ended()}`} key={dog._id} to={`/dogs/show/${dog._id}`}>
       <DogItemContentGrid container>
-        <Grid item xs={8}>
+        <Grid item xs={7}>
           {dog.name}
         </Grid>
         <Grid item xs={4}>
