@@ -16,7 +16,7 @@ router.use(
   isLoggedIn("staff"),
   crudGenerator(Dog, "chip", "name", {
     createProtectFields: [],
-    populateFields: ["breed", "owner", "creator"],
+    populateFields: ["owner", "creator"],
     extraFieldsCreate: (req) => ({ creator: req.user._id }),
   })
 );

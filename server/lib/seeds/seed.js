@@ -9,6 +9,7 @@ const Breed = require("../../models/Breed.model");
 const passTypeSeed = require("./passType.seed");
 const _ = require("lodash");
 const faker = require("faker");
+const axios = require("axios");
 
 //-----------
 
@@ -36,6 +37,27 @@ const randomDate = (start, end, startHour, endHour) => {
   return date;
 };
 
+const getBreedList = () => {
+  return axios
+    .get("https://api.thedogapi.com/v1/breeds")
+    .then((res) => {
+      const data = res.data.map((breed) => ({
+        name: breed.name,
+        temperament: breed.temperament && breed.temperament.split(", "),
+        "bred-for": breed["bred_for"] && breed["bred_for"].split(", "),
+        "height-cm": breed.height.metric.split(/\D+/),
+        "weight-kg": breed.weight.metric.split(/\D+/),
+        "life-expentancy": breed["life_span"].split(/\D+/).slice(0, 2),
+        wikipedia: breed["wikipedia_url"],
+        origin: breed.origin,
+      }));
+      return data;
+    })
+    .catch((error) => {
+      console.log(error.message);
+    });
+};
+
 // Randomizers
 
 const randomAttendance = (number) => {
@@ -61,7 +83,7 @@ const randomDog = (number) => {
     let switcher1 = i % 2 === 0;
     let switcher4 = i % 5 === 0;
     const name = faker.name.firstName();
-    const sex = { value: switcher1 ? "male" : "female", label: { spanish: switcher1 ? "Macho" : "Hembra" } };
+    const gender = { value: switcher1 ? "male" : "female", label: { spanish: switcher1 ? "Macho" : "Hembra" } };
     const vaccines = [
       { value: "rabies", label: { spanish: "Antirábica" } },
       { value: "parvovirus", label: { spanish: "Parvovirus" } },
@@ -77,7 +99,7 @@ const randomDog = (number) => {
       { value: "agressive", label: { spanish: "Agresivo" } },
     ];
     const scan = faker.random.number() * 300;
-    dogs = [...dogs, { name, sex, vaccines, fixed, heat, chip, character, scan }];
+    dogs = [...dogs, { name, gender, vaccines, fixed, heat, chip, character, scan }];
   }
   return dogs;
 };
@@ -146,7 +168,7 @@ const seedAll = () =>
     const admins = await User.find({ roll: "admin" });
     const passTypes = await PassType.find();
     const dogs = await Dog.find();
-    const breeds = await Breed.find();
+    const breeds = await getBreedList();
 
     let passSeed = [];
     let attendanceSeed = [];

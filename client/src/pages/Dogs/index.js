@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Route, Switch, Redirect, withRouter, history } from "react-router-dom";
 import { connect } from "react-redux";
-import { getData, setUser } from "../../redux/actions";
-import DogForm from "../../layouts/Form";
+import { getData, setData, getBreed } from "../../redux/actions";
+import FormLayout from "../../layouts/Forms";
 import DogList from "../../layouts/List";
 import { GridContainer, DogsContainer } from "./style";
 import _ from "lodash";
 import Sidebar from "../../layouts/Sidebar";
 
-const DogsPage = withRouter(({ getUser, getDogs, getAttendances, getActiveAttendances, getPasses, dogList, user, passList, attendanceList, activeAttendanceList }) => {
+const DogsPage = withRouter(({ getUser, getDogs, getAttendances, getActiveAttendances, getPasses, getBreeds, setLanguage, dogList, user, passList, attendanceList, activeAttendanceList }) => {
   const [selected, setSelected] = useState({});
   const contentLoaded = dogList && attendanceList && passList && activeAttendanceList;
 
@@ -16,8 +16,10 @@ const DogsPage = withRouter(({ getUser, getDogs, getAttendances, getActiveAttend
     getUser();
     getDogs();
     getPasses();
+    getBreeds();
     getAttendances();
     getActiveAttendances();
+    setLanguage("es");
   }, []);
 
   useEffect(() => {
@@ -35,7 +37,7 @@ const DogsPage = withRouter(({ getUser, getDogs, getAttendances, getActiveAttend
           <DogsContainer>
             <Switch>
               <Route path="/dogs/form/:type">
-                <DogForm />
+                <FormLayout />
               </Route>
               <Route path="/dogs">
                 <GridContainer>
@@ -67,9 +69,11 @@ const mapDispatchToProps = (dispatch) => {
   return {
     getUser: () => dispatch(getData("/auth/show/me", "user", "me")),
     getDogs: () => dispatch(getData("/dog/show/all", "dog", "list")),
+    getBreeds: () => dispatch(getBreed()),
     getAttendances: () => dispatch(getData("/attendance/show/all", "attendance", "list")),
     getActiveAttendances: () => dispatch(getData(`/attendance/show/?confirmed=false`, "attendance", "active")),
     getPasses: () => dispatch(getData("pass/show/all", "pass", "list")),
+    setLanguage: (language) => dispatch(setData("language", language, "set")),
   };
 };
 

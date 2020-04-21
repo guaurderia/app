@@ -5,6 +5,8 @@
   { "value": "email", "label": { "es": "correo electrónico", "en": "email" } },
   { "value": "breed", "label": { "es": "raza", "en": "breed" } },
   { "value": "gender", "label": { "es": "sexo", "en": "gender" } },
+  { "value": "male", "label": { "es": "macho", "en": "male" } },
+  { "value": "female", "label": { "es": "hembra", "en": "female" } },
   { "value": "vaccines", "label": { "es": "vacunas", "en": "vaccines" } },
   { "value": "fixed", "label": { "es": "castrado", "en": "fixed" } },
   { "value": "heat", "label": { "es": "celo", "en": "heat" } },
