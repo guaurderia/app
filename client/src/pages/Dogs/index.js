@@ -8,9 +8,9 @@ import { GridContainer, DogsContainer } from "./style";
 import _ from "lodash";
 import Sidebar from "../../layouts/Sidebar";
 
-const DogsPage = withRouter(({ getUser, getDogs, getAttendances, getActiveAttendances, getPasses, getBreeds, setLanguage, dogList, user, passList, attendanceList, activeAttendanceList }) => {
+const DogsPage = withRouter(({ getUser, getDogs, getAttendances, getActiveAttendances, getPasses, getBreeds, setLanguage, dogList, user, passList, attendanceList, activeAttendanceList, breedList }) => {
   const [selected, setSelected] = useState({});
-  const contentLoaded = dogList && attendanceList && passList && activeAttendanceList;
+  const contentLoaded = dogList && attendanceList && passList && activeAttendanceList && breedList;
 
   useEffect(() => {
     getUser();
@@ -62,6 +62,7 @@ const mapStateToProps = (state) => {
     attendanceList: state.attendance.list,
     activeAttendanceList: state.attendance.active,
     passList: state.pass.list,
+    breedList: state.breed.list,
   };
 };
 

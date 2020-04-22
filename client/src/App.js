@@ -7,10 +7,12 @@ import Footer from "./layouts/Footer";
 import DogsPage from "./pages/Dogs";
 import LoginPage from "./pages/Login";
 import HomePage from "./pages/Home";
+import GlobalStyle from "./theme/globalStyle";
 
 const App = () => {
   return (
     <Provider store={store}>
+      <GlobalStyle />
       <Router>
         <Navbar />
         <Switch>
