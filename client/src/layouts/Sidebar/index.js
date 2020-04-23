@@ -22,8 +22,8 @@ const Sidebar = ({ dogList, attendanceList, activeAttendance, passList, language
   if (dog && attendance && pass) {
     return (
       <SidebarStyle>
-        {/* <Card display={dogGeneralDisplay(dog, language)} /> */}
-        {/* <Card display={dogGenderDisplay(dog, language)} /> */}
+        <Card display={dogGeneralDisplay(dog, language)} />
+        <Card display={dogGenderDisplay(dog, language)} />
         <Card display={dogMedicalDisplay(dog, language)} />
         <Card display={dogOwnerDisplay(dog, language)} />
         <Card display={dogAttendanceDisplay(attendance, language)} />

@@ -1,8 +1,8 @@
 import React from "react";
-import { setLabel } from "../../../services/Language";
+import InputStyle from "./style";
 
 const TextField = ({ name, register, language, defaultValue = null, type = "text" }) => {
-  return <input type={type} className="form-control" name={name} ref={register} />;
+  return <InputStyle type={type} name={name} ref={register} />;
 };
 
 export default TextField;

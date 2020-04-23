@@ -83,21 +83,12 @@ const randomDog = (number) => {
     let switcher1 = i % 2 === 0;
     let switcher4 = i % 5 === 0;
     const name = faker.name.firstName();
-    const gender = { value: switcher1 ? "male" : "female", label: { spanish: switcher1 ? "Macho" : "Hembra" } };
-    const vaccines = [
-      { value: "rabies", label: { spanish: "Antirábica" } },
-      { value: "parvovirus", label: { spanish: "Parvovirus" } },
-      { value: "hepatitis", label: { spanish: "Hepatitis" } },
-      { value: "distemper", label: { spanish: "Moquillo" } },
-    ];
+    const gender = switcher1 ? "male" : "female";
+    const vaccines = { vaccinated: true, list: ["rabies", "parvovirus", "hepatitis", "distemper"] };
     const fixed = switcher4;
     const heat = { had: switcher1, date: faker.date.past() };
     const chip = faker.random.uuid();
-    const character = [
-      { value: "shy", label: { spanish: "Tímido" } },
-      { value: "hiperactive", label: { spanish: "Hiperactivo" } },
-      { value: "agressive", label: { spanish: "Agresivo" } },
-    ];
+    const character = ["shy", "hiperactive", "agressive"];
     const scan = faker.random.number() * 300;
     dogs = [...dogs, { name, gender, vaccines, fixed, heat, chip, character, scan }];
   }

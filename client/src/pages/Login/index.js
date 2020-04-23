@@ -1,26 +1,20 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { withRouter, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { connect } from "react-redux";
 import { postData, setUser } from "../../redux/actions";
-import { api } from "../../redux/actions";
 
 const LoginPage = withRouter(({ history, login, setUser, user }) => {
   const { register, handleSubmit } = useForm();
 
+  useEffect(() => {
+    if (user) history.push("/dogs");
+  }, [user]);
+
   const onSubmit = (data) => {
-    api
-      .post("/auth/login", data)
-      .then((res) => {
-        setUser(res.data);
-        if (res.data.roll === "admin" || res.data.roll === "staff") {
-          history.push("/dogs");
-        } else history.push("/dogs");
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+    login(data);
   };
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="form-group">
@@ -51,7 +45,6 @@ const mapDispatchToProps = (dispatch) => {
   return {
     login: (obj) => dispatch(postData("/auth/login", "user", obj, "me")),
     getUser: () => dispatch(getData("/auth/show/me", "user", "me")),
-    setUser: (user) => dispatch(setUser(user)),
   };
 };
 

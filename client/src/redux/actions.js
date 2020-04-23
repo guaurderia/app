@@ -42,6 +42,7 @@ export const getBreed = () => (dispatch) => {
     .get("https://api.thedogapi.com/v1/breeds")
     .then((res) => {
       const data = res.data.map((breed) => ({
+        id: breed.id,
         name: breed.name,
         temperament: breed.temperament && breed.temperament.split(", "),
         "bred-for": breed["bred_for"] && breed["bred_for"].split(", "),
