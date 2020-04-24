@@ -5,7 +5,7 @@ import { Card } from "../../components/Card";
 import Button from "@material-ui/core/Button";
 import _ from "lodash";
 import { Link, useParams } from "react-router-dom";
-import { dogGeneralDisplay, dogGenderDisplay, dogMedicalDisplay, dogOwnerDisplay, dogAttendanceDisplay, dogPassDisplay } from "../../services/Format/Dog";
+import { dogGeneralDisplay, dogSexDisplay, dogMedicalDisplay, dogOwnerDisplay, dogAttendanceDisplay, dogPassDisplay } from "../../services/Format/Dog";
 
 const Sidebar = ({ dogList, attendanceList, activeAttendance, passList, language }) => {
   const { id } = useParams();
@@ -23,15 +23,12 @@ const Sidebar = ({ dogList, attendanceList, activeAttendance, passList, language
     return (
       <SidebarStyle>
         <Card display={dogGeneralDisplay(dog, language)} />
-        <Card display={dogGenderDisplay(dog, language)} />
+        <Card display={dogSexDisplay(dog, language)} />
         <Card display={dogMedicalDisplay(dog, language)} />
         <Card display={dogOwnerDisplay(dog, language)} />
         <Card display={dogAttendanceDisplay(attendance, language)} />
         <Card display={dogPassDisplay(pass, true, language)} />
         <Card display={dogPassDisplay(pass, false, language)} />
-        <Button variant="contained">
-          <Link to={`/dogs/edit/${dog._id}`}>Editar</Link>
-        </Button>
       </SidebarStyle>
     );
   } else return <div>Loading...</div>;

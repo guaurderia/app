@@ -4,7 +4,7 @@
   { "value": "phone_number", "label": { "es": "número de teléfono", "en": "phone number" } },
   { "value": "email", "label": { "es": "correo electrónico", "en": "email" } },
   { "value": "breed", "label": { "es": "raza", "en": "breed" } },
-  { "value": "gender", "label": { "es": "sexo", "en": "gender" } },
+  { "value": "sex", "label": { "es": "sexo", "en": "sex" } },
   { "value": "male", "label": { "es": "macho", "en": "male" } },
   { "value": "female", "label": { "es": "hembra", "en": "female" } },
   { "value": "vaccines", "label": { "es": "vacunas", "en": "vaccines" } },

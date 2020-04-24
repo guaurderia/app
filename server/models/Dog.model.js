@@ -5,7 +5,7 @@ const dogSchema = new Schema(
   {
     name: { type: String, required: true },
     breed: { type: Object },
-    gender: { type: Object, required: true },
+    sex: { type: Object, required: true },
     vaccines: Object,
     fixed: { type: Boolean, required: true },
     heat: { had: { type: Boolean }, date: { type: Date } },
