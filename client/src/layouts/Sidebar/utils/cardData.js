@@ -21,7 +21,7 @@ export const dogGeneralDisplay = (dog, language) => [
 export const dogSexDisplay = (dog, language) => {
   const formatedDate = _.reverse(dog.heat.date.slice(0, 10).split("-")).join("/");
   const basic = [
-    { value: dog.sex.label.spanish, label: label("gender", language) },
+    { value: dog.sex.label.spanish, label: label("sex", language) },
     { value: dog.fixed, label: label("fixed", language) },
   ];
   if (dog.fixed) {

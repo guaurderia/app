@@ -26,9 +26,9 @@ import { translate } from "../../../services/Language";
 const DogForm = withRouter(({ history, postDogCreate, breedList, language }) => {
   const { handleSubmit, watch, control, setValue, reset } = useForm();
   const form = watch();
-  const perroa = form.gender === "male" ? "perro" : form.gender === "female" ? "perra" : "perr@";
-  const castradoa = form.gender === "male" ? "castrado" : form.gender === "female" ? "castrada" : "castrad@";
-  const vacunadoa = form.gender === "male" ? "vacunado" : form.gender === "female" ? "vacunada" : "vacunad@";
+  const perroa = form.sex === "male" ? "perro" : form.sex === "female" ? "perra" : "perr@";
+  const castradoa = form.sex === "male" ? "castrado" : form.sex === "female" ? "castrada" : "castrad@";
+  const vacunadoa = form.sex === "male" ? "vacunado" : form.sex === "female" ? "vacunada" : "vacunad@";
 
   const MenuProps = {
     PaperProps: {
@@ -39,7 +39,7 @@ const DogForm = withRouter(({ history, postDogCreate, breedList, language }) => 
   };
 
   console.log("FORM", form);
-  const handleGender = (gender) => (form.gender === gender ? "contained" : "");
+  const handlesex = (sex) => (form.sex === sex ? "contained" : "");
   const handleToggle = (state) => (state ? "contained" : "");
 
   const onSubmit = (obj) => {
@@ -53,10 +53,10 @@ const DogForm = withRouter(({ history, postDogCreate, breedList, language }) => 
       <ThemeProvider theme={FormTheme}>
         <FormLabel component="legend">¿Es macho o hembra?</FormLabel>
         <ButtonGroup size="small" aria-label="small outlined button group">
-          <Controller as={Button} variant={handleGender("male")} name="gender" control={control} onClick={() => setValue("gender", "male")}>
+          <Controller as={Button} variant={handlesex("male")} name="sex" control={control} onClick={() => setValue("sex", "male")}>
             Macho
           </Controller>
-          <Controller as={Button} variant={handleGender("female")} name="gender" control={control} onClick={() => setValue("gender", "female")}>
+          <Controller as={Button} variant={handlesex("female")} name="sex" control={control} onClick={() => setValue("sex", "female")}>
             Hembra
           </Controller>
         </ButtonGroup>
@@ -94,7 +94,7 @@ const DogForm = withRouter(({ history, postDogCreate, breedList, language }) => 
             No
           </Controller>
         </ButtonGroup>
-        {!form.fixed && form.gender === "female" && (
+        {!form.fixed && form.sex === "female" && (
           <>
             <FormLabel component="legend">¿Ha tenido su primer celo?</FormLabel>
             <ButtonGroup size="small" aria-label="small outlined button group">
@@ -137,7 +137,7 @@ const DogForm = withRouter(({ history, postDogCreate, breedList, language }) => 
         <Controller
           as={
             <Select>
-              {character(form.gender).map((character, i) => {
+              {character(form.sex).map((character, i) => {
                 return (
                   <MenuItem key={i} value={character.value}>
                     {character.label}

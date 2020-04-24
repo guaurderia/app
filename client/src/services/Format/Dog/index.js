@@ -14,7 +14,7 @@ export const cardDataFilter = (element) => {
 };
 
 export const dogGeneralDisplay = (dog, language) => {
-  const character = dog.character.map((trait) => translate(trait, language, dog.gender));
+  const character = dog.character.map((trait) => translate(trait, language, dog.sex));
   return {
     title: "general",
     content: [
@@ -25,18 +25,18 @@ export const dogGeneralDisplay = (dog, language) => {
   };
 };
 
-export const dogGenderDisplay = (dog, language) => {
+export const dogSexDisplay = (dog, language) => {
   const date = formatDate(dog.heat?.date);
   const basic = [
-    { value: translate(dog.gender, language), label: translate("gender", language) },
-    { value: dog.fixed, label: translate("fixed", language, dog.gender) },
+    { value: translate(dog.sex, language), label: translate("sex", language) },
+    { value: dog.fixed, label: translate("fixed", language, dog.sex) },
   ];
   if (dog.fixed) {
-    return { title: "gender", content: basic };
+    return { title: "sex", content: basic };
   } else if (dog.heat.had) {
-    return { title: "gender", content: [...basic, { value: date, label: translate("last_heat", language) }] };
+    return { title: "sex", content: [...basic, { value: date, label: translate("last_heat", language) }] };
   } else {
-    return { title: "gender", content: [...basic, { value: "TODO", label: translate("last_heat", language) }] };
+    return { title: "sex", content: [...basic, { value: "TODO", label: translate("last_heat", language) }] };
   }
 };
 
@@ -45,7 +45,7 @@ export const dogMedicalDisplay = (dog, language) => {
   if (vaccineList) {
     return { title: "medical", content: [{ value: vaccineList.join(", "), label: translate("vaccines", language) }] };
   } else {
-    return { title: "medical", content: [{ value: dog.vaccines.vaccinated, label: translate("vaccinated", language, dog.gender) }] };
+    return { title: "medical", content: [{ value: dog.vaccines.vaccinated, label: translate("vaccinated", language, dog.sex) }] };
   }
 };
 

@@ -4,7 +4,7 @@
   { "value": "phone_number", "label": { "spanish": "número de teléfono", "english": "phone number" } },
   { "value": "email", "label": { "spanish": "correo electrónico", "english": "email" } },
   { "value": "breed", "label": { "spanish": "raza", "english": "breed" } },
-  { "value": "gender", "label": { "spanish": "sexo", "english": "gender" } },
+  { "value": "sex", "label": { "spanish": "sexo", "english": "sex" } },
   { "value": "vaccines", "label": { "spanish": "vacunas", "english": "vaccines" } },
   { "value": "fixed", "label": { "spanish": "castrado", "english": "fixed" } },
   { "value": "heat", "label": { "spanish": "celo", "english": "heat" } },

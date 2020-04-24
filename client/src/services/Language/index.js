@@ -1,7 +1,7 @@
 import labels from "./labels.json";
 
-export const translate = (value, language, gender = null) => {
+export const translate = (value, language, sex = null) => {
   const [phrase] = labels.filter((l) => l.value === value);
-  if (gender) return phrase.label[language][gender];
+  if (sex) return phrase.label[language][sex];
   else return phrase.label[language];
 };
