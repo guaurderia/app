@@ -1,8 +1,8 @@
-import labels from "../../Language/labels.json";
 import _ from "lodash";
 import { DateTime, Duration } from "luxon";
 import { activeTime, formatTime, formatDate } from "../Time";
 import { getPass } from "../../Logic/Pass";
+import { translate } from "../../Language";
 
 export const cardDataFilter = (element) => {
   const table = Object.keys(element).map((key, i) => {
@@ -13,54 +13,56 @@ export const cardDataFilter = (element) => {
   return table;
 };
 
-const label = (value, language) => {
-  const [filter] = labels.filter((l) => l.value === value);
-  return filter.label[language];
-};
-
 export const dogGeneralDisplay = (dog, language) => {
+  const character = dog.character.map((trait) => translate(trait, language, dog.gender));
   return {
     title: "general",
     content: [
-      { value: dog.name, label: label("name", language) },
-      { value: dog.character.map((e) => e.label[language]).join(", "), label: label("character", language) },
-      { value: dog.chip, label: label("chip", language) },
+      { value: dog.name, label: translate("name", language) },
+      { value: character.join(", "), label: translate("character", language) },
+      { value: dog.chip, label: translate("chip", language) },
     ],
   };
 };
 
-export const dogSexDisplay = (dog, language) => {
-  const date = formatDate(dog.heat.date);
+export const dogGenderDisplay = (dog, language) => {
+  const date = formatDate(dog.heat?.date);
   const basic = [
-    { value: dog.sex.label.spanish, label: label("gender", language) },
-    { value: dog.fixed, label: label("fixed", language) },
+    { value: translate(dog.gender, language), label: translate("gender", language) },
+    { value: dog.fixed, label: translate("fixed", language, dog.gender) },
   ];
   if (dog.fixed) {
-    return { title: "sex", content: basic };
+    return { title: "gender", content: basic };
   } else if (dog.heat.had) {
-    return { title: "sex", content: [...basic, { value: date, label: label("last_heat", language) }] };
+    return { title: "gender", content: [...basic, { value: date, label: translate("last_heat", language) }] };
   } else {
-    return { title: "sex", content: [...basic, { value: "TODO", label: label("last_heat", language) }] };
+    return { title: "gender", content: [...basic, { value: "TODO", label: translate("last_heat", language) }] };
   }
 };
 
 export const dogMedicalDisplay = (dog, language) => {
-  const vaccines = dog.vaccines.map((vac) => vac.label[language]);
-  return { title: "medical", content: [{ value: vaccines.join(", "), label: label("vaccines", language) }] };
+  const vaccineList = dog.vaccines.list?.map((vac) => translate(vac, language));
+  if (vaccineList) {
+    return { title: "medical", content: [{ value: vaccineList.join(", "), label: translate("vaccines", language) }] };
+  } else {
+    return { title: "medical", content: [{ value: dog.vaccines.vaccinated, label: translate("vaccinated", language, dog.gender) }] };
+  }
 };
 
 export const dogOwnerDisplay = (dog, language) => {
   const owner = dog.owner;
-  return {
-    title: "owner",
-    content: [
-      { value: owner.firstName, label: label("name", language) },
-      { value: owner.lastName, label: label("last_name", language) },
-      { value: owner.dni, label: label("pid", language) },
-      { value: owner.mainPhone, label: label("phone_number", language) },
-      { value: owner.username, label: label("email", language) },
-    ],
-  };
+  if (owner) {
+    return {
+      title: "owner",
+      content: [
+        { value: owner.firstName, label: translate("name", language) },
+        { value: owner.lastName, label: translate("last_name", language) },
+        { value: owner.dni, label: translate("pid", language) },
+        { value: owner.mainPhone, label: translate("phone_number", language) },
+        { value: owner.username, label: translate("email", language) },
+      ],
+    };
+  }
 };
 
 export const dogAttendanceDisplay = (attendance, language) => {
@@ -74,9 +76,9 @@ export const dogAttendanceDisplay = (attendance, language) => {
       return {
         title: subtitle,
         content: [
-          { value: startTimeDisplay, label: label("arrival", language) },
-          { value: endTimeDisplay, label: label("exit", language) },
-          { value: totalTimeDisplay, label: label("time", language) },
+          { value: startTimeDisplay, label: translate("arrival", language) },
+          { value: endTimeDisplay, label: translate("exit", language) },
+          { value: totalTimeDisplay, label: translate("time", language) },
         ],
       };
     });
@@ -94,9 +96,9 @@ export const dogPassDisplay = (passes, active, language) => {
           return {
             title: pass.name,
             content: [
-              { value: `${pass.remainingCount}/${pass.totalCount}`, label: label("used", language) },
-              { value: pass.hours, label: label("hours", language) },
-              { value: pass.type, label: label("type", language) },
+              { value: `${pass.remainingCount}/${pass.totalCount}`, label: translate("used", language) },
+              { value: pass.hours, label: translate("hours", language) },
+              { value: pass.type, label: translate("type", language) },
             ],
           };
         }
@@ -104,9 +106,9 @@ export const dogPassDisplay = (passes, active, language) => {
           return {
             title: pass.name,
             content: [
-              { value: pass.starts, label: label("starts", language) },
-              { value: pass.expires, label: label("expires", language) },
-              { value: pass.type, label: label("type", language) },
+              { value: pass.starts, label: translate("starts", language) },
+              { value: pass.expires, label: translate("expires", language) },
+              { value: pass.type, label: translate("type", language) },
             ],
           };
         }
@@ -114,8 +116,8 @@ export const dogPassDisplay = (passes, active, language) => {
           return {
             title: pass.name,
             content: [
-              { value: pass.hours, label: label("hours", language) },
-              { value: pass.type, label: label("type", language) },
+              { value: pass.hours, label: translate("hours", language) },
+              { value: pass.type, label: translate("type", language) },
             ],
           };
         }
@@ -123,4 +125,11 @@ export const dogPassDisplay = (passes, active, language) => {
       return { title, content: parsedPassesList };
     }
   }
+};
+
+export const breedSelector = (breedList) => {
+  return breedList.map((breed) => {
+    const list = { value: [breed, breed.id], label: breed.name };
+    return list;
+  });
 };

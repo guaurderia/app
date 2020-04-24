@@ -1,4 +1,5 @@
 import React from "react";
+import { setLabel } from "../../../services/Language";
 
 const CheckBox = ({ name, register, language, defaultValue = null }) => {
   return (

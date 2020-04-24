@@ -7,27 +7,34 @@ import Footer from "./layouts/Footer";
 import DogsPage from "./pages/Dogs";
 import LoginPage from "./pages/Login";
 import HomePage from "./pages/Home";
+import GlobalStyle from "./theme/globalStyle";
+import { setData } from "./redux/actions";
 
-const App = () => {
+const App = ({ user }) => {
   return (
-    <Provider store={store}>
-      <Router>
-        <Navbar />
-        <Switch>
-          <Route path="/home">
-            <HomePage />
-          </Route>
-          <Route path="/dogs">
-            <DogsPage />
-          </Route>
-          <Route path="/login">
-            <LoginPage />
-          </Route>
-        </Switch>
-        <Footer />
-      </Router>
-    </Provider>
+    <Router>
+      <GlobalStyle />
+      <Navbar />
+      <Switch>
+        <Route path="/home">
+          <HomePage />
+        </Route>
+        <Route path="/dogs">
+          <DogsPage />
+        </Route>
+        <Route path="/login">
+          <LoginPage />
+        </Route>
+      </Switch>
+      <Footer />
+    </Router>
   );
 };
 
-export default App;
+const mapStateToProps = (state) => {
+  return {
+    user: state.user.me,
+  };
+};
+
+export default connect(mapStateToProps)(App);

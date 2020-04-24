@@ -129,19 +129,14 @@ export const breed = [
   { value: "yorkshire terrier", label: "Yorkshire Terrier" },
 ];
 
-export const character = (sex) => [
-  { value: "shy", label: sex === "female" ? "Tímida" : "Tímido" },
+export const character = (gender) => [
+  { value: "shy", label: gender === "female" ? "Tímida" : "Tímido" },
   { value: "sociable", label: "Sociable" },
-  { value: "hiperactive", label: sex === "female" ? "Hiperactiva" : "Hiperactivo" },
-  { value: "calm", label: sex === "female" ? "Tranquila" : "Tranquilo" },
+  { value: "hiperactive", label: gender === "female" ? "Hiperactiva" : "Hiperactivo" },
+  { value: "calm", label: gender === "female" ? "Tranquila" : "Tranquilo" },
 ];
 
-export const vaccines = [
-  { value: "rabies", label: "Antirábica" },
-  { value: "parvovirus", label: "Parvovirus" },
-  { value: "hepatitis", label: "Hepatitis" },
-  { value: "distemper", label: "Moquillo" },
-];
+export const vaccines = ["rabies", "parvovirus", "hepatitis", "distemper"];
 
 export const blankForm = {
   vaccines: { rabies: false, parvovirus: false, hepatitis: false, distemper: false },

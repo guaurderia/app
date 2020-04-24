@@ -13,8 +13,9 @@ const Table = ({ label, value }) => {
 };
 
 export const Card = ({ display }) => {
+  console.log("CARD CONTENT", display);
   const [show, setShow] = useState(false);
-  if (display.title) {
+  if (display?.title) {
     const contentTable = display.content.map((label, i) => {
       if (_.has(label, "title")) {
         const subtitle = label.title;
