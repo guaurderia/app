@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const FormLabel = styled.label`
+export const FormLabelStyle = styled.label`
   font-family: Manrope, Roboto;
   font-weight: bold;
 `;

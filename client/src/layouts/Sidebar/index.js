@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { SidebarStyle } from "./style";
 import { Card } from "../../components/Card";
-import Button from "@material-ui/core/Button";
 import _ from "lodash";
 import { Link, useParams } from "react-router-dom";
 import { dogGeneralDisplay, dogSexDisplay, dogMedicalDisplay, dogOwnerDisplay, dogAttendanceDisplay, dogPassDisplay } from "../../services/Format/Dog";
+import Button from "../../components/Button";
 
 const Sidebar = ({ dogList, attendanceList, activeAttendance, passList, language }) => {
   const { id } = useParams();
@@ -21,15 +21,18 @@ const Sidebar = ({ dogList, attendanceList, activeAttendance, passList, language
 
   if (dog && attendance && pass) {
     return (
-      <SidebarStyle>
-        <Card display={dogGeneralDisplay(dog, language)} />
-        <Card display={dogSexDisplay(dog, language)} />
-        <Card display={dogMedicalDisplay(dog, language)} />
-        <Card display={dogOwnerDisplay(dog, language)} />
-        <Card display={dogAttendanceDisplay(attendance, language)} />
-        <Card display={dogPassDisplay(pass, true, language)} />
-        <Card display={dogPassDisplay(pass, false, language)} />
-      </SidebarStyle>
+      <>
+        <SidebarStyle>
+          <Card display={dogGeneralDisplay(dog, language)} />
+          <Card display={dogSexDisplay(dog, language)} />
+          <Card display={dogMedicalDisplay(dog, language)} />
+          <Card display={dogOwnerDisplay(dog, language)} />
+          <Card display={dogAttendanceDisplay(attendance, language)} />
+          <Card display={dogPassDisplay(pass, true, language)} />
+          <Card display={dogPassDisplay(pass, false, language)} />
+        </SidebarStyle>
+        <Button color="main" text="+ Añadir" link="/dogs/form/create" />
+      </>
     );
   } else return <div>Loading...</div>;
 };

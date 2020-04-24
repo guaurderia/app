@@ -1,40 +1,30 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import { Provider, connect } from "react-redux";
+import { Provider } from "react-redux";
 import store from "./redux/store";
 import Navbar from "./layouts/Navbar";
 import Footer from "./layouts/Footer";
 import DogsPage from "./pages/Dogs";
 import LoginPage from "./pages/Login";
-import HomePage from "./pages/Home";
 import GlobalStyle from "./theme/globalStyle";
-import { setData } from "./redux/actions";
 
-const App = ({ user }) => {
+const App = () => {
   return (
-    <Router>
+    <Provider store={store}>
       <GlobalStyle />
-      <Navbar />
-      <Switch>
-        <Route path="/home">
-          <HomePage />
-        </Route>
-        <Route path="/dogs">
-          <DogsPage />
-        </Route>
-        <Route path="/login">
-          <LoginPage />
-        </Route>
-      </Switch>
-      <Footer />
-    </Router>
+      <Router>
+        <Switch>
+          <Route path="/" exact>
+            <LoginPage />
+          </Route>
+          <Route path="/dogs">
+            <Navbar />
+            <DogsPage />
+          </Route>
+        </Switch>
+      </Router>
+    </Provider>
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    user: state.user.me,
-  };
-};
-
-export default connect(mapStateToProps)(App);
+export default App;
