@@ -2,26 +2,16 @@ import React from "react";
 import { connect } from "react-redux";
 import { NavLink, Link } from "react-router-dom";
 import { getData } from "../../redux/actions";
+import Logo from "../../theme/logo";
+import { NavbarContainer } from "./style";
 
 const Navbar = ({ user, logout }) => {
   return (
     <header>
-      <nav className="navbar navbar-expand-lg navbar-light">
-        <NavLink className="navbar-brand" to="/">
-          Guaurdería
-        </NavLink>
-        <div className="navbar-nav">
-          <NavLink className="nav-item nav-link" to="/dogs">
-            Perros
-          </NavLink>
-        </div>
-        <div className="navbar-nav">
-          {!user && (
-            <NavLink className="nav-item nav-link" to="/login">
-              Login
-            </NavLink>
-          )}
-        </div>
+      <NavbarContainer>
+        <Link to="/">
+          <Logo type="full" size="150px" />
+        </Link>
         <div className="navbar-nav">
           {user && (
             <NavLink className="nav-item nav-link" to="/" onClick={logout}>
@@ -29,10 +19,7 @@ const Navbar = ({ user, logout }) => {
             </NavLink>
           )}
         </div>
-        <button variant="contained">
-          <Link to="/dogs/form/create">Nuevo</Link>
-        </button>
-      </nav>
+      </NavbarContainer>
     </header>
   );
 };
