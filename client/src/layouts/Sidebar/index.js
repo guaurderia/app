@@ -29,9 +29,6 @@ const Sidebar = ({ dogList, attendanceList, activeAttendance, passList, language
         <Card display={dogAttendanceDisplay(attendance, language)} />
         <Card display={dogPassDisplay(pass, true, language)} />
         <Card display={dogPassDisplay(pass, false, language)} />
-        <Button variant="contained">
-          <Link to={`/dogs/edit/${dog._id}`}>Editar</Link>
-        </Button>
       </SidebarStyle>
     );
   } else return <div>Loading...</div>;

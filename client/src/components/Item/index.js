@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { DogItemContentGrid, ItemStyle, PassElement } from "./style";
+import { DogItemContentGrid, ItemStyle, PassElement, DogName, AttendanceButton, PassContainer, TimeContainer, OwnerName, DogBreedDisplay } from "./style";
 import Grid from "@material-ui/core/Grid";
 import { connect } from "react-redux";
 import { getData, postData, setData } from "../../redux/actions";
@@ -48,7 +48,6 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
           return selectedPass?.id === pass.id;
         });
         if (!selectedIsValid) setSelectedPass();
-        console.log("VALID PASSES", validPasses, dog.name);
         return validPasses;
       } else {
         setSelectedPass();
@@ -118,7 +117,6 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
   const ShowPasses = () => {
     let selected = "";
     if (activePasses?.length) {
-      console.log("SHOW PASSES IF", activePasses.length, dog.name, activePasses);
       return activePasses.map((pass, i) => {
         if (pass.type === "day" || pass.type === "one") {
           selected = pass.id === selectedPass?.id ? "selected" : "";
@@ -132,13 +130,12 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
           selected = pass.id === selectedPass?.id ? "selected" : "";
           return (
             <PassElement key={i} onClick={handlePassSelection(pass)} className={selected}>
-              {pass.name} {pass.expires}
+              {pass.name} (expira {pass.expires})
             </PassElement>
           );
         }
       });
     } else if (attendance?.endTime) {
-      console.log("SHOW PASSES ELSE");
       return <PassElement onClick={handlePassCreation}>Crea un pase de día</PassElement>;
     }
     return <></>;
@@ -150,21 +147,24 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
   return (
     <ItemStyle className={`list-group-item ${selected()} ${active()} ${ended()}`} key={dog._id} to={`/dogs/show/${dog._id}`}>
       <DogItemContentGrid container>
-        <Grid item xs={7}>
+        <DogName className="dog-name">
           {dog.name}
-        </Grid>
-        <Grid item xs={4}>
+          <OwnerName>{dog.owner && `${dog.owner.firstName} ${dog.owner.lastName}`}</OwnerName>
+        </DogName>
+        <DogBreedDisplay>{dog.breed?.name}</DogBreedDisplay>
+        <AttendanceButton>
           <button onClick={handleClick}>{button}</button>
           {error && <ErrorMessage msg={error} />}
-        </Grid>
-        <Grid item xs={6}>
+        </AttendanceButton>
+        <PassContainer>
           <ShowPasses />
-        </Grid>
-        <Grid item xs={4} style={{ display: "flex", justifyContent: "space-around" }}>
+        </PassContainer>
+        <TimeContainer item xs={2} style={{ display: "flex", justifyContent: "space-around" }}>
           {attendance?.startTime && <ShowTime time={attendance.startTime} />}
+        </TimeContainer>
+        <TimeContainer item xs={2}>
           {attendance?.endTime && <ShowTime time={attendance?.endTime} />}
-          {timer && <ShowTime time={timer.time} />}
-        </Grid>
+        </TimeContainer>
       </DogItemContentGrid>
     </ItemStyle>
   );

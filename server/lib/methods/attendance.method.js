@@ -4,7 +4,7 @@ require("../../models/PassType.model");
 require("../../models/Dog.model");
 const { withDbConnection } = require("../../config/withDbConnection");
 
-const getTotalMinutes = attendance => (attendance.endTime.getTime() - attendance.startTime.getTime()) / 1000 / 60;
+const getTotalMinutes = (attendance) => (attendance.endTime.getTime() - attendance.startTime.getTime()) / 1000 / 60;
 
 const getPass = async (active, dog, type) => {
   const passes = await Pass.find({ dog: dog._id })
@@ -16,11 +16,11 @@ const getPass = async (active, dog, type) => {
   let result;
   if (passes.length > 0) {
     if (type === "month") {
-      result = passes.filter(pass => (active ? activeMonth : !activeMonth));
+      result = passes.filter((pass) => (active ? activeMonth : !activeMonth));
     } else if (type === "day") {
-      result = passes.filter(pass => (active ? activeDay : !activeDay));
+      result = passes.filter((pass) => (active ? activeDay : !activeDay));
     } else if (type === "all") {
-      result = passes.filter(pass => (active ? activeMonth || activeDay : !activeMonth || !activeDay));
+      result = passes.filter((pass) => (active ? activeMonth || activeDay : !activeMonth || !activeDay));
     }
   } else {
     result = `No pass found for ${dog.name}`;
@@ -40,8 +40,6 @@ const usePass = (pass, attendance) => {
     console.log(`El horario del bono ${pass.passType.name} ha sido superado. Deberá abonar ${amountOwed}€.`);
   };
   let valid = false;
-  console.log("PASS", pass);
-  console.log("ATTENDANCE", attendance);
 
   if (monthPass && !isExpired()) {
     if (!isOvertime) {
@@ -66,11 +64,11 @@ const usePass = (pass, attendance) => {
   return valid;
 };
 
-const checkout = async attId => {
+const checkout = async (attId) => {
   const [attendance] = await Attendance.find({ _id: attId }).populate("dog");
   const passes = await getPass(false, attendance.dog, "all");
-  if (passes.length > 0) return passes.forEach(pass => usePass(pass, attendance));
+  if (passes.length > 0) return passes.forEach((pass) => usePass(pass, attendance));
   else return console.log(`${attendance.dog.name} no tiene ningún bono activo`);
 };
 
-withDbConnection(() => checkout("5e87249e941e9f31036ae0cd").then(e => console.log(e)));
+withDbConnection(() => checkout("5e87249e941e9f31036ae0cd").then((e) => console.log(e)));

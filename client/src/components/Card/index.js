@@ -13,7 +13,6 @@ const Table = ({ label, value }) => {
 };
 
 export const Card = ({ display }) => {
-  console.log("CARD CONTENT", display);
   const [show, setShow] = useState(false);
   if (display?.title) {
     const contentTable = display.content.map((label, i) => {
