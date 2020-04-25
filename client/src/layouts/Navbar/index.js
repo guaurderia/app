@@ -14,9 +14,9 @@ const Navbar = ({ user, logout }) => {
         </Link>
         <div className="navbar-nav">
           {user && (
-            <NavLink className="nav-item nav-link" to="/" onClick={logout}>
+            <Link className="nav-item nav-link" to="/" onClick={logout}>
               Logout
-            </NavLink>
+            </Link>
           )}
         </div>
       </NavbarContainer>
@@ -25,6 +25,10 @@ const Navbar = ({ user, logout }) => {
 };
 
 const mapStateToProps = (state) => ({ user: state.user.me });
-const mapDispatchToProps = (dispatch) => ({ logout: () => dispatch(getData("/auth/logout", "user", "me")) });
+const mapDispatchToProps = (dispatch) => {
+  return {
+    logout: () => dispatch(getData("/auth/logout", "user", "me")),
+  };
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(Navbar);
