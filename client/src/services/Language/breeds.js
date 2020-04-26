@@ -128,24 +128,3 @@ export const breed = [
   { value: "terrier norwich", label: "Terrier Norwich" },
   { value: "yorkshire terrier", label: "Yorkshire Terrier" },
 ];
-
-export const character = (sex) => [
-  { value: "shy", label: sex === "female" ? "Tímida" : "Tímido" },
-  { value: "sociable", label: "Sociable" },
-  { value: "hiperactive", label: sex === "female" ? "Hiperactiva" : "Hiperactivo" },
-  { value: "calm", label: sex === "female" ? "Tranquila" : "Tranquilo" },
-];
-
-export const vaccines = ["rabies", "parvovirus", "hepatitis", "distemper"];
-
-export const blankForm = {
-  vaccines: { rabies: false, parvovirus: false, hepatitis: false, distemper: false },
-  heat: { had: false, date: "" },
-  name: "",
-  breed: "",
-  sex: "",
-  fixed: false,
-  chip: "",
-  character: "",
-  scan: "",
-};
