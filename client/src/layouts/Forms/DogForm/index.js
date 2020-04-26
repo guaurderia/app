@@ -22,6 +22,7 @@ import LuxonUtils from "@date-io/luxon";
 import { DateTime } from "luxon";
 import { withRouter } from "react-router-dom";
 import { translate } from "../../../services/Language";
+import { FormControl } from "@material-ui/core";
 
 const DogForm = withRouter(({ history, postDogCreate, breedList, language }) => {
   const { handleSubmit, watch, control, setValue, reset } = useForm();
@@ -164,34 +165,40 @@ const DogForm = withRouter(({ history, postDogCreate, breedList, language }) => 
         {form.vaccines?.vaccinated && (
           <Controller
             as={
-              <>
+              <FormControl>
                 <FormLabel component="legend">¿Que vacunas tiene?</FormLabel>
-                {/* prettier-ignore */}
-                <Select 
-                  multiple 
-                  value={form.vaccines.list || []} 
-                  onChange={e => {
-                    const [vaccine] = e.target.value
-                    console.log("VACCINE CLICKED", vaccine)
-                    setValue("vaccines", {...form.vaccines, list: form.vaccines.list?.length ? [...form.vaccines.list, vaccine] : [vaccine]})}
-                    } 
-                  input={<Input />} 
+                <Select
+                  multiple
+                  value={form.vaccines.list || []}
+                  onChange={(e, child) => {
+                    const vaccine = child.props.value;
+                    const checked = form.vaccines.list?.indexOf(vaccine) > -1;
+                    if (checked) {
+                      const newList = _.pull(form.vaccines.list, vaccine);
+                      setValue("vaccines", { ...form.vaccines, list: newList });
+                    } else {
+                      setValue("vaccines", { ...form.vaccines, list: form.vaccines.list?.length ? [...form.vaccines.list, vaccine] : [vaccine] });
+                    }
+                  }}
                   renderValue={(selected) => {
-                    console.log("SELECTED", selected)
-                    return selected.join(", ")}} 
-                  MenuProps={MenuProps}>
+                    const translatedSelection = selected.map((s) => _.capitalize(translate(s, language)));
+                    return translatedSelection.join(", ");
+                  }}
+                  MenuProps={MenuProps}
+                >
                   {vaccines.map((vaccine, i) => (
                     <MenuItem key={i} value={vaccine}>
                       <Checkbox checked={form.vaccines.list?.indexOf(vaccine) > -1} />
-                      <ListItemText primary={translate(vaccine, language)} />
+                      <ListItemText primary={_.capitalize(translate(vaccine, language))} />
                     </MenuItem>
                   ))}
-                  </Select>
-              </>
+                </Select>
+              </FormControl>
             }
             name="vaccines"
             control={control}
             defaultValue={{ ...form.vaccines, list: [] }}
+            variant="outlined"
           />
         )}
         <Button variant="outlined" color="primary" type="submit">

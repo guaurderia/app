@@ -12,8 +12,6 @@ const DogsPage = ({ getUser, getDogs, getAttendances, getActiveAttendances, getP
   const [selected, setSelected] = useState({});
   const contentLoaded = dogList && attendanceList && passList && activeAttendanceList && breedList;
 
-  console.log("CONTENT LOADED", contentLoaded);
-
   useEffect(() => {
     getUser();
     getDogs();
