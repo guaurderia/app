@@ -29,7 +29,6 @@ const DogForm = withRouter(({ history, postDogCreate, breedList, language }) => 
   };
 
   const onSubmit = (obj, e) => {
-    console.log("OBJECT IN SUBMIT", e);
     postDogCreate(obj).then((res) => history.push("/dogs"));
   };
   return (

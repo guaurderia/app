@@ -7,9 +7,11 @@ import DogList from "../../layouts/List";
 import { GridContainer, DogsContainer } from "./style";
 import _ from "lodash";
 import Sidebar from "../../layouts/Sidebar";
+import Popover from "@material-ui/core/Popover";
 
 const DogsPage = ({ getUser, getDogs, getAttendances, getActiveAttendances, getPasses, getBreeds, setLanguage, dogList, user, passList, attendanceList, activeAttendanceList, breedList }) => {
   const [selected, setSelected] = useState({});
+  const [openForm, setOpenForm] = useState(false);
   const contentLoaded = dogList && attendanceList && passList && activeAttendanceList && breedList;
 
   useEffect(() => {
@@ -35,19 +37,17 @@ const DogsPage = ({ getUser, getDogs, getAttendances, getActiveAttendances, getP
       if (contentLoaded) {
         return (
           <DogsContainer>
-            <Switch>
-              <Route path="/dogs/form/:type">
-                <FormLayout />
-              </Route>
-              <Route path="/dogs">
-                <GridContainer>
-                  <Route path="/dogs/show/:id">
-                    <Sidebar />
-                  </Route>
-                  <DogList {...{ selected, setSelected }} />
-                </GridContainer>
-              </Route>
-            </Switch>
+            <Route path="/dogs">
+              <GridContainer>
+                <Route path="/dogs/show/:id">
+                  <Sidebar />
+                </Route>
+                <DogList {...{ selected, setSelected }} />
+              </GridContainer>
+            </Route>
+            <Route path="/dogs/create/:type">
+              <FormLayout />
+            </Route>
           </DogsContainer>
         );
       } else return <div>Loading data...</div>;
