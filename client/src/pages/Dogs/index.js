@@ -7,7 +7,6 @@ import DogList from "../../layouts/List";
 import { GridContainer, DogsContainer } from "./style";
 import _ from "lodash";
 import Sidebar from "../../layouts/Sidebar";
-import Popover from "@material-ui/core/Popover";
 
 const DogsPage = ({ getUser, getDogs, getAttendances, getActiveAttendances, getPasses, getBreeds, setLanguage, dogList, user, passList, attendanceList, activeAttendanceList, breedList }) => {
   const [selected, setSelected] = useState({});

@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { useForm, FormContext } from "react-hook-form";
+import { useForm, FormContext, useFormContext } from "react-hook-form";
 import { ThemeProvider } from "@material-ui/core/styles";
 import "react-datepicker/dist/react-datepicker.css";
 import _ from "lodash";
@@ -16,41 +16,29 @@ import FixedInput from "./components/fixed";
 import HeatInput from "./components/heat";
 import CharacterInput from "./components/character";
 import VaccineInput from "./components/vaccines";
-import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
 
-const DogForm = withRouter(({ history, postDogCreate, breedList, language }) => {
-  const methods = useForm();
+const DogForm = ({ postDogCreate, breedList, language }) => {
+  const methods = useFormContext();
   const form = methods.watch();
+  const { fixed, sex } = form;
 
   console.log("FORM", form);
 
-  const handleNext = (e) => {
-    history.push("dogs/create/owner");
-  };
-
-  const onSubmit = (obj, e) => {
-    postDogCreate(obj).then((res) => history.push("/dogs"));
-  };
   return (
-    <FormContext {...methods}>
-      <Form onSubmit={methods.handleSubmit(onSubmit)}>
-        <ThemeProvider theme={FormTheme}>
-          <SexInput />
-          <DogNameInput />
-          <BreedInput {...{ breedList }} />
-          <ChipInput />
-          <FixedInput />
-          <HeatInput />
-          <CharacterInput {...{ language }} />
-          <VaccineInput {...{ language }} />
-          <Button variant="contained" color="primary" size="large" endIcon={<ArrowForwardIosIcon />} onClick={handleNext}>
-            Siguiente
-          </Button>
-        </ThemeProvider>
-      </Form>
-    </FormContext>
+    <Form>
+      <ThemeProvider theme={FormTheme}>
+        <SexInput />
+        <DogNameInput />
+        <BreedInput {...{ breedList }} />
+        <ChipInput />
+        <FixedInput />
+        {!fixed && sex === "female" && <HeatInput />}
+        {sex && <CharacterInput {...{ language }} />}
+        <VaccineInput {...{ language }} />
+      </ThemeProvider>
+    </Form>
   );
-});
+};
 
 const mapStateToProps = (state) => {
   return {

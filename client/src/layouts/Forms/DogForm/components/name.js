@@ -7,12 +7,13 @@ import { inputStyle } from "../../style";
 const DogNameInput = () => {
   const { watch } = useFormContext();
   const sex = watch("sex");
+  const name = watch("name");
   const perroa = sex === "male" ? "perro" : sex === "female" ? "perra" : "perr@";
 
   return (
     <>
       <FormLabel component="legend">¿Como se llama tu {perroa}?</FormLabel>
-      <Controller as={TextField} name="name" defaultValue="" {...inputStyle} />
+      <Controller as={TextField} name="name" defaultValue={name || ""} {...inputStyle} />
     </>
   );
 };

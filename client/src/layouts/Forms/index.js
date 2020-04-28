@@ -1,24 +1,35 @@
 import React, { useState } from "react";
-import DogForm from "./DogForm";
-import OwnerForm from "./OwnerForm";
-import ClickAwayListener from "@material-ui/core/ClickAwayListener";
+import Paper from "@material-ui/core/Paper";
 import Popover from "@material-ui/core/Popover";
 import { withRouter } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
+import FormStepper from "./stepper";
+import { useForm, FormContext } from "react-hook-form";
 
 const usePopoverStyles = makeStyles({
   paper: {
     display: "flex",
     "& > *": {
-      margin: 20,
       width: 700,
     },
   },
 });
 
+const useBackgroundStyles = makeStyles({
+  root: {
+    background: "black",
+    width: "100vw",
+    height: "100vh",
+    position: "absolute",
+  },
+});
+
 const FormLayout = withRouter(({ history }) => {
+  const methods = useForm();
+  const form = methods.watch();
   const [open, setOpen] = useState(true);
-  const classes = usePopoverStyles();
+  const formClasses = usePopoverStyles();
+  const backgroundClasses = useBackgroundStyles();
 
   const handleClose = () => {
     setOpen(false);
@@ -27,8 +38,6 @@ const FormLayout = withRouter(({ history }) => {
 
   const popOverProps = {
     open: open,
-    anchorReference: "anchorPosition",
-    anchorPosition: { top: 200, left: 400 },
     anchorOrigin: {
       vertical: "center",
       horizontal: "center",
@@ -39,13 +48,21 @@ const FormLayout = withRouter(({ history }) => {
     },
     onClose: handleClose,
     transitionDuration: 100,
-    className: classes.paper,
+    classes: formClasses,
+  };
+
+  const backgroundProps = {
+    classes: backgroundClasses,
   };
 
   return (
-    <Popover {...popOverProps}>
-      <DogForm />
-    </Popover>
+    <Paper {...backgroundProps}>
+      <Popover {...popOverProps}>
+        <FormContext {...methods}>
+          <FormStepper />
+        </FormContext>
+      </Popover>
+    </Paper>
   );
 });
 

@@ -15,46 +15,44 @@ const HeatInput = () => {
   const fixed = watch("fixed");
   const handleToggle = (state) => (state ? selectedStyle : null);
 
-  if (!fixed && sex === "female")
-    return (
-      <>
-        <FormLabel component="legend">¿Ha tenido su primer celo?</FormLabel>
-        <ButtonGroup size="small" aria-label="small outlined button group">
-          <Controller as={Button} {...handleToggle(heat?.had)} name="heat" onClick={() => setValue("heat", { ...heat, had: true })} defaultValue={{ ...heat, had: false }}>
-            Si
-          </Controller>
-          <Controller as={Button} {...handleToggle(!heat?.had)} name="heat" onClick={() => setValue("heat", { ...heat, had: false })} defaultValue={{ ...heat, had: false }}>
-            No
-          </Controller>
-        </ButtonGroup>
-        {heat?.had && (
-          <>
-            <FormLabel component="legend">¿Cuando fué su último celo?</FormLabel>
-            <Controller
-              as={
-                <MuiPickersUtilsProvider utils={LuxonUtils}>
-                  <KeyboardDatePicker
-                    autoOk
-                    disableToolbar
-                    variant="inline"
-                    format="MM/dd/yyyy"
-                    margin="normal"
-                    onChange={(date, string) => setValue("heat", { ...heat, date: string })}
-                    value={heat?.date || DateTime.local()}
-                    KeyboardButtonProps={{
-                      "aria-label": "change date",
-                    }}
-                  />
-                </MuiPickersUtilsProvider>
-              }
-              name="heat"
-              defaultValue={{ ...heat, date: DateTime.local() }}
-            />
-          </>
-        )}
-      </>
-    );
-  else return <></>;
+  return (
+    <>
+      <FormLabel component="legend">¿Ha tenido su primer celo?</FormLabel>
+      <ButtonGroup size="small" aria-label="small outlined button group">
+        <Controller as={Button} {...handleToggle(heat?.had)} name="heat" onClick={() => setValue("heat", { ...heat, had: true })} defaultValue={{ ...heat, had: false }}>
+          Si
+        </Controller>
+        <Controller as={Button} {...handleToggle(!heat?.had)} name="heat" onClick={() => setValue("heat", { ...heat, had: false })} defaultValue={{ ...heat, had: false }}>
+          No
+        </Controller>
+      </ButtonGroup>
+      {heat?.had && (
+        <>
+          <FormLabel component="legend">¿Cuando fué su último celo?</FormLabel>
+          <Controller
+            as={
+              <MuiPickersUtilsProvider utils={LuxonUtils}>
+                <KeyboardDatePicker
+                  autoOk
+                  disableToolbar
+                  variant="inline"
+                  format="MM/dd/yyyy"
+                  margin="normal"
+                  onChange={(date, string) => setValue("heat", { ...heat, date: string })}
+                  value={heat?.date || DateTime.local()}
+                  KeyboardButtonProps={{
+                    "aria-label": "change date",
+                  }}
+                />
+              </MuiPickersUtilsProvider>
+            }
+            name="heat"
+            defaultValue={{ ...heat, date: DateTime.local() }}
+          />
+        </>
+      )}
+    </>
+  );
 };
 
 export default HeatInput;

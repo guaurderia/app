@@ -1,18 +1,11 @@
 import React from "react";
 import { connect } from "react-redux";
 import { Form } from "../style";
-import { useForm } from "react-hook-form";
-import TextField from "../../../components/Input/TextField";
+import { useForm, FormContext } from "react-hook-form";
+import OwnerFirstName from "./components/firstName";
 
-const OwnerForm = ({ language }) => {
-  const { register } = useForm();
-  return (
-    <Form>
-      <TextField name="firstName" {...{ register }} language={language} />
-      <TextField name="lastName" {...{ register }} language={language} />
-      <TextField name="email" type="email" {...{ register }} language={language} />
-    </Form>
-  );
+const OwnerForm = () => {
+  return <Form></Form>;
 };
 
 const mapStateToProps = (state) => {
