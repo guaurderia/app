@@ -26,7 +26,6 @@ const useBackgroundStyles = makeStyles({
 
 const FormLayout = withRouter(({ history }) => {
   const methods = useForm();
-  const form = methods.watch();
   const [open, setOpen] = useState(true);
   const formClasses = usePopoverStyles();
   const backgroundClasses = useBackgroundStyles();

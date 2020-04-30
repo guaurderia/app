@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 import { makeStyles } from "@material-ui/core/styles";
 import Stepper from "@material-ui/core/Stepper";
@@ -8,6 +8,9 @@ import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import DogForm from "./DogForm";
 import OwnerForm from "./OwnerForm";
+import { withRouter } from "react-router-dom";
+import { setData } from "../../redux/actions";
+import { connect } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -23,15 +26,15 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function getSteps() {
-  return ["Datos dela mascota", "Datos del dueño", "Añade un bono"];
+  return ["Mascota", "Dueño", "Bono"];
 }
 
-function getStepContent(step) {
+function getStepContent(step, content) {
   switch (step) {
     case 0:
-      return <DogForm />;
+      return <DogForm {...{ content }} />;
     case 1:
-      return <DogForm />;
+      return <OwnerForm {...{ content }} />;
     case 2:
       return "PassForm";
     default:
@@ -39,7 +42,7 @@ function getStepContent(step) {
   }
 }
 
-export default function FormStepper() {
+const FormStepper = withRouter(({ history, setForm }) => {
   const classes = useStyles();
   const { watch, reset } = useFormContext();
   const [activeStep, setActiveStep] = React.useState(0);
@@ -67,14 +70,17 @@ export default function FormStepper() {
       case 0:
         setFormCompiler({ dog: form });
         reset({});
+        history.replace("/dogs/create/owner");
         break;
       case 1:
         setFormCompiler({ ...formCompiler, owner: form });
         reset({});
+        history.replace("/dogs/create/pass");
         break;
       case 2:
         setFormCompiler({ ...formCompiler, pass: form });
         reset({});
+        history.replace("/dogs");
         break;
     }
 
@@ -87,9 +93,11 @@ export default function FormStepper() {
     switch (activeStep) {
       case 1:
         reset({ ...formCompiler.dog });
+        history.replace("/dogs/create/dog");
         break;
       case 2:
         reset({ ...formCompiler.owner });
+        history.replace("/dogs/create/owner");
     }
   };
 
@@ -138,7 +146,7 @@ export default function FormStepper() {
           </div>
         ) : (
           <div>
-            {getStepContent(activeStep)}
+            {getStepContent(activeStep, form)}
             <div>
               <Button disabled={activeStep === 0} onClick={handleBack} className={classes.button}>
                 Volver
@@ -158,4 +166,6 @@ export default function FormStepper() {
       </div>
     </div>
   );
-}
+});
+
+export default FormStepper;

@@ -10,7 +10,6 @@ import Sidebar from "../../layouts/Sidebar";
 
 const DogsPage = ({ getUser, getDogs, getAttendances, getActiveAttendances, getPasses, getBreeds, setLanguage, dogList, user, passList, attendanceList, activeAttendanceList, breedList }) => {
   const [selected, setSelected] = useState({});
-  const [openForm, setOpenForm] = useState(false);
   const contentLoaded = dogList && attendanceList && passList && activeAttendanceList && breedList;
 
   useEffect(() => {
@@ -44,7 +43,7 @@ const DogsPage = ({ getUser, getDogs, getAttendances, getActiveAttendances, getP
                 <DogList {...{ selected, setSelected }} />
               </GridContainer>
             </Route>
-            <Route path="/dogs/create/:type">
+            <Route path="/dogs/create">
               <FormLayout />
             </Route>
           </DogsContainer>

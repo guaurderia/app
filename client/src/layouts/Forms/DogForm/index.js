@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { useForm, FormContext, useFormContext } from "react-hook-form";
 import { ThemeProvider } from "@material-ui/core/styles";
@@ -17,10 +17,16 @@ import HeatInput from "./components/heat";
 import CharacterInput from "./components/character";
 import VaccineInput from "./components/vaccines";
 
-const DogForm = ({ postDogCreate, breedList, language }) => {
+const DogForm = ({ postDogCreate, breedList, language, content }) => {
   const methods = useFormContext();
   const form = methods.watch();
   const { fixed, sex } = form;
+  const { reset } = methods;
+
+  useEffect(() => {
+    console.log("RESET IN DOG FORM", content.dog);
+    if (content.dog) reset(content.dog);
+  }, []);
 
   console.log("FORM", form);
 

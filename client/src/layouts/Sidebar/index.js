@@ -31,7 +31,7 @@ const Sidebar = ({ dogList, attendanceList, activeAttendance, passList, language
           <Card display={dogPassDisplay(pass, true, language)} />
           <Card display={dogPassDisplay(pass, false, language)} />
         </SidebarStyle>
-        <Button color="main" text="+ Añadir" link="/dogs/create/dog" />
+        <Button color="main" text="+ Añadir" link="/dogs/create" />
       </>
     );
   } else return <div>Loading...</div>;
