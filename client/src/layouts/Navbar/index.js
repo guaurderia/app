@@ -1,5 +1,6 @@
-import React from "react";
+import React, { createRef } from "react";
 import { useStyles } from "./style";
+import { getData } from "../../redux/actions";
 import useScrollTrigger from "@material-ui/core/useScrollTrigger";
 import PropTypes from "prop-types";
 import AppBar from "@material-ui/core/AppBar";
@@ -15,7 +16,12 @@ import AccountCircle from "@material-ui/icons/AccountCircle";
 import MailIcon from "@material-ui/icons/Mail";
 import PetsIcon from "@material-ui/icons/Pets";
 import MoreIcon from "@material-ui/icons/MoreVert";
+import AddCircleIcon from "@material-ui/icons/AddCircle";
+import FormLayout from "../Forms";
 import logo from "../../../public/img/logo-full.jpg";
+import { Grid } from "@material-ui/core";
+import { useFormDisplaySetter, useFormAnchorSetter } from "../Forms/context";
+import { connect } from "react-redux";
 
 function ElevationScroll(props) {
   const { children } = props;
@@ -33,10 +39,12 @@ ElevationScroll.propTypes = {
   children: PropTypes.element.isRequired,
 };
 
-export default function PrimarySearchAppBar(props) {
+const Navbar = (props) => {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+  const setIsOpen = useFormDisplaySetter();
+  const setFormAnchor = useFormAnchorSetter();
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -58,11 +66,22 @@ export default function PrimarySearchAppBar(props) {
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
+  const handleFormOpen = (event) => {
+    setFormAnchor(event.currentTarget);
+    setIsOpen(true);
+  };
+
+  const handleLogout = () => {
+    props.logout();
+    window.location.reload(true);
+  };
+
+  const formPopover = <FormLayout {...{ anchorEl }} isOpen={isMenuOpen} />;
   const menuId = "primary-search-account-menu";
   const renderMenu = (
     <Menu anchorEl={anchorEl} anchorOrigin={{ vertical: "top", horizontal: "right" }} id={menuId} keepMounted transformOrigin={{ vertical: "top", horizontal: "right" }} open={isMenuOpen} onClose={handleMenuClose}>
       <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <MenuItem onClick={handleLogout}>Salir</MenuItem>
     </Menu>
   );
 
@@ -94,49 +113,67 @@ export default function PrimarySearchAppBar(props) {
 
   return (
     <div className={classes.grow}>
-      <ElevationScroll {...props}>
-        <AppBar position="fixed" color="inherit">
-          <Toolbar>
-            <Typography className={classes.title} variant="h6" noWrap>
-              <img src={logo} style={{ width: "150px" }} />
-            </Typography>
-            <div className={classes.search}>
-              <div className={classes.searchIcon}>
-                <SearchIcon />
+      <Grid container>
+        <ElevationScroll {...props}>
+          <AppBar position="fixed" color="inherit">
+            <Toolbar className={classes.toolbar}>
+              <Grid item xs={3}>
+                <Typography className={classes.title} variant="h6" noWrap>
+                  <img src={logo} style={{ width: "120px", marginBottom: "16px" }} />
+                </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <div className={classes.search}>
+                  <div className={classes.searchIcon}>
+                    <SearchIcon />
+                  </div>
+                  <InputBase
+                    placeholder="Search…"
+                    classes={{
+                      root: classes.inputRoot,
+                      input: classes.inputInput,
+                    }}
+                    inputProps={{ "aria-label": "search" }}
+                  />
+                </div>
+              </Grid>
+              <div className={classes.grow} />
+              <div className={classes.sectionDesktop}>
+                <IconButton color="inherit" onClick={handleFormOpen}>
+                  <AddCircleIcon />
+                </IconButton>
+                <IconButton aria-label="show 4 new mails" color="inherit">
+                  <Badge badgeContent={4} color="secondary">
+                    <MailIcon />
+                  </Badge>
+                </IconButton>
+                <IconButton aria-label="show 17 new notifications" color="inherit">
+                  <PetsIcon />
+                </IconButton>
+                <IconButton edge="end" aria-label="account of current user" aria-controls={menuId} aria-haspopup="true" onClick={handleProfileMenuOpen} color="inherit">
+                  <AccountCircle />
+                </IconButton>
               </div>
-              <InputBase
-                placeholder="Search…"
-                classes={{
-                  root: classes.inputRoot,
-                  input: classes.inputInput,
-                }}
-                inputProps={{ "aria-label": "search" }}
-              />
-            </div>
-            <div className={classes.grow} />
-            <div className={classes.sectionDesktop}>
-              <IconButton aria-label="show 4 new mails" color="inherit">
-                <Badge badgeContent={4} color="secondary">
-                  <MailIcon />
-                </Badge>
-              </IconButton>
-              <IconButton aria-label="show 17 new notifications" color="inherit">
-                <PetsIcon />
-              </IconButton>
-              <IconButton edge="end" aria-label="account of current user" aria-controls={menuId} aria-haspopup="true" onClick={handleProfileMenuOpen} color="inherit">
-                <AccountCircle />
-              </IconButton>
-            </div>
-            <div className={classes.sectionMobile}>
-              <IconButton aria-label="show more" aria-controls={mobileMenuId} aria-haspopup="true" onClick={handleMobileMenuOpen} color="inherit">
-                <MoreIcon />
-              </IconButton>
-            </div>
-          </Toolbar>
-        </AppBar>
-      </ElevationScroll>
+              <div className={classes.sectionMobile}>
+                <IconButton aria-label="show more" aria-controls={mobileMenuId} aria-haspopup="true" onClick={handleMobileMenuOpen} color="inherit">
+                  <MoreIcon />
+                </IconButton>
+              </div>
+            </Toolbar>
+          </AppBar>
+        </ElevationScroll>
+      </Grid>
       {renderMobileMenu}
       {renderMenu}
+      {formPopover}
     </div>
   );
-}
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    logout: () => dispatch(getData("/auth/logout", "logout", "me")),
+  };
+};
+
+export default connect(null, mapDispatchToProps)(Navbar);

@@ -33,6 +33,8 @@ router.use(
   })
 );
 
+router.use("/passtype", isLoggedIn("staff"), crudGenerator(PassType, "_id", "_id"));
+
 router.use(
   "/attendance",
   isLoggedIn("staff"),

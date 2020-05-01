@@ -10,29 +10,32 @@ export const useStyles = makeStyles((theme) => ({
   title: {
     display: "none",
     [theme.breakpoints.up("sm")]: {
-      display: "block",
+      display: "flex",
     },
   },
   search: {
     position: "relative",
+    flexGrow: 3,
     borderRadius: theme.shape.borderRadius,
     backgroundColor: "#eee",
-    marginRight: theme.spacing(2),
-    marginLeft: 0,
+    marginBottom: theme.spacing(1),
     width: "100%",
+    padding: theme.spacing(0.5, 1),
+    height: theme.spacing(5),
     [theme.breakpoints.up("sm")]: {
-      marginLeft: theme.spacing(3),
+      marginLeft: theme.spacing(0),
       width: "auto",
     },
   },
   searchIcon: {
-    padding: theme.spacing(0, 2),
+    padding: theme.spacing(0, 2, 1, 2),
     height: "100%",
+    width: "100%",
     position: "absolute",
     pointerEvents: "none",
     display: "flex",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "flex-end",
   },
   inputRoot: {
     color: "inherit",
@@ -58,5 +61,9 @@ export const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.up("md")]: {
       display: "none",
     },
+  },
+  toolbar: {
+    minHeight: 200,
+    paddingTop: theme.spacing(2),
   },
 }));

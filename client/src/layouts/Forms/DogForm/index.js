@@ -1,13 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useEffect, forwardRef } from "react";
 import { connect } from "react-redux";
-import { useForm, FormContext, useFormContext } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 import { ThemeProvider } from "@material-ui/core/styles";
 import "react-datepicker/dist/react-datepicker.css";
 import _ from "lodash";
-import Button from "@material-ui/core/Button";
 import { postData } from "../../../redux/actions";
 import Form, { FormTheme } from "../style";
-import { withRouter } from "react-router-dom";
 import SexInput from "./components/sex";
 import DogNameInput from "./components/name";
 import BreedInput from "./components/breed";
@@ -17,18 +15,15 @@ import HeatInput from "./components/heat";
 import CharacterInput from "./components/character";
 import VaccineInput from "./components/vaccines";
 
-const DogForm = ({ postDogCreate, breedList, language, content }) => {
+const DogForm = ({ breedList, language, formContent }) => {
   const methods = useFormContext();
-  const form = methods.watch();
-  const { fixed, sex } = form;
-  const { reset } = methods;
+  const { reset, watch } = methods;
+  const sex = watch("sex");
+  const fixed = watch("fixed");
 
   useEffect(() => {
-    console.log("RESET IN DOG FORM", content.dog);
-    if (content.dog) reset(content.dog);
+    reset(formContent.dog || {});
   }, []);
-
-  console.log("FORM", form);
 
   return (
     <Form>

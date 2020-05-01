@@ -1,17 +1,33 @@
-import React from "react";
-import { connect } from "react-redux";
-import { Form } from "../style";
-import { useForm, FormContext } from "react-hook-form";
+import React, { useEffect } from "react";
+import Form, { FormTheme } from "../style";
+import { ThemeProvider } from "@material-ui/core";
+import { useFormContext } from "react-hook-form";
 import OwnerFirstName from "./components/firstName";
+import OwnerLastName from "./components/lastName";
+import OwnerUsername from "./components/username";
+import OwnerMainPhone from "./components/mainPhone";
+import OwnerDni from "./components/dni";
 
-const OwnerForm = () => {
-  return <Form></Form>;
+const OwnerForm = ({ formContent }) => {
+  const methods = useFormContext();
+  const { watch, reset } = methods;
+  const form = watch();
+
+  useEffect(() => {
+    reset(formContent.owner || {});
+  }, []);
+
+  return (
+    <Form>
+      <ThemeProvider theme={FormTheme}>
+        <OwnerFirstName />
+        <OwnerLastName />
+        <OwnerUsername />
+        <OwnerMainPhone />
+        <OwnerDni />
+      </ThemeProvider>
+    </Form>
+  );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    language: state.language.set,
-  };
-};
-
-export default connect(mapStateToProps)(OwnerForm);
+export default OwnerForm;

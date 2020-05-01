@@ -8,9 +8,8 @@ import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import DogForm from "./DogForm";
 import OwnerForm from "./OwnerForm";
-import { withRouter } from "react-router-dom";
-import { setData } from "../../redux/actions";
-import { connect } from "react-redux";
+import { useFormDisplaySetter } from "./context";
+import PassForm from "./PassForm";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -29,29 +28,31 @@ function getSteps() {
   return ["Mascota", "Dueño", "Bono"];
 }
 
-function getStepContent(step, content) {
+function getStepContent(step, formContent) {
   switch (step) {
     case 0:
-      return <DogForm {...{ content }} />;
+      return <DogForm {...{ formContent }} />;
     case 1:
-      return <OwnerForm {...{ content }} />;
+      return <OwnerForm {...{ formContent }} />;
     case 2:
-      return "PassForm";
+      return <PassForm {...{ formContent }} />;
     default:
       return "Unknown step";
   }
 }
 
-const FormStepper = withRouter(({ history, setForm }) => {
+const FormStepper = () => {
   const classes = useStyles();
   const { watch, reset } = useFormContext();
   const [activeStep, setActiveStep] = React.useState(0);
   const [skipped, setSkipped] = React.useState(new Set());
   const [formCompiler, setFormCompiler] = React.useState({});
+  const setIsOpen = useFormDisplaySetter();
   const steps = getSteps();
   const form = watch();
 
-  console.log("FORM COMPILER", formCompiler, activeStep);
+  console.log("FORM COMPILER", formCompiler);
+
   const isStepOptional = (step) => {
     return step === 2;
   };
@@ -68,19 +69,13 @@ const FormStepper = withRouter(({ history, setForm }) => {
     }
     switch (activeStep) {
       case 0:
-        setFormCompiler({ dog: form });
-        reset({});
-        history.replace("/dogs/create/owner");
+        setFormCompiler({ ...formCompiler, dog: form });
         break;
       case 1:
         setFormCompiler({ ...formCompiler, owner: form });
-        reset({});
-        history.replace("/dogs/create/pass");
         break;
       case 2:
         setFormCompiler({ ...formCompiler, pass: form });
-        reset({});
-        history.replace("/dogs");
         break;
     }
 
@@ -89,16 +84,17 @@ const FormStepper = withRouter(({ history, setForm }) => {
   };
 
   const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-    switch (activeStep) {
-      case 1:
-        reset({ ...formCompiler.dog });
-        history.replace("/dogs/create/dog");
-        break;
-      case 2:
-        reset({ ...formCompiler.owner });
-        history.replace("/dogs/create/owner");
-    }
+    if (activeStep > 0) {
+      setActiveStep((prevActiveStep) => prevActiveStep - 1);
+      switch (activeStep) {
+        case 1:
+          setFormCompiler({ ...formCompiler, owner: form });
+          break;
+        case 2:
+          setFormCompiler({ ...formCompiler, pass: form });
+          break;
+      }
+    } else setIsOpen(false);
   };
 
   const handleSkip = () => {
@@ -146,9 +142,9 @@ const FormStepper = withRouter(({ history, setForm }) => {
           </div>
         ) : (
           <div>
-            {getStepContent(activeStep, form)}
+            {getStepContent(activeStep, formCompiler)}
             <div>
-              <Button disabled={activeStep === 0} onClick={handleBack} className={classes.button}>
+              <Button onClick={handleBack} className={classes.button}>
                 Volver
               </Button>
               {isStepOptional(activeStep) && (
@@ -156,9 +152,8 @@ const FormStepper = withRouter(({ history, setForm }) => {
                   Saltar
                 </Button>
               )}
-
               <Button variant="contained" color="primary" onClick={handleNext} className={classes.button}>
-                {activeStep === steps.length - 1 ? "Finish" : "Next"}
+                {activeStep === steps.length - 1 ? "Finalizar" : "Siguiente"}
               </Button>
             </div>
           </div>
@@ -166,6 +161,6 @@ const FormStepper = withRouter(({ history, setForm }) => {
       </div>
     </div>
   );
-});
+};
 
 export default FormStepper;

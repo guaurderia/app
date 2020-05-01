@@ -61,7 +61,6 @@ const crudGenerator = (
       res.json(data);
     } else {
       data = await Model.find(query).populate(populateFields);
-      console.log("DATA RETURN SHOW", data, query);
       res.json(data);
     }
   });
@@ -80,7 +79,6 @@ const crudGenerator = (
       const { id } = req.params;
       const obj = await Model.findByIdAndRemove(id);
       const name = Object.values(dataPicker(displayName, obj));
-      console.log(name);
       return res.json(`${name} has been deleted from ${Model.modelName} db`);
     })
   );

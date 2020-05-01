@@ -4,16 +4,16 @@ import TextField from "@material-ui/core/TextField";
 import { Controller, useFormContext } from "react-hook-form";
 import { inputStyle } from "../../style";
 
-const OwnerFirstName = () => {
+const OwnerMainPhone = () => {
   const { watch } = useFormContext();
-  const firstName = watch("firstName");
+  const mainPhone = watch("mainPhone");
 
   return (
     <>
-      <FormLabel component="legend">Nombre</FormLabel>
-      <Controller as={TextField} name="firstName" defaultValue={firstName || ""} {...inputStyle} />
+      <FormLabel component="legend">Teléfono de contacto</FormLabel>
+      <Controller as={TextField} type="tel" name="mainPhone" defaultValue={mainPhone || ""} {...inputStyle} />
     </>
   );
 };
 
-export default OwnerFirstName;
+export default OwnerMainPhone;

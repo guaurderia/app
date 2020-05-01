@@ -1,15 +1,16 @@
-import React from "./node_modules/react";
-import FormLabel from "./node_modules/@material-ui/core/FormLabel";
-import Select from "./node_modules/@material-ui/core/Select";
-import MenuItem from "./node_modules/@material-ui/core/MenuItem";
-import { useFormContext, Controller } from "./node_modules/react-hook-form";
-import _ from "./node_modules/lodash";
+import React from "react";
+import FormLabel from "@material-ui/core/FormLabel";
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
+import { useFormContext, Controller } from "react-hook-form";
+import _ from "lodash";
 import { translate } from "../../../../services/Language";
 import { inputStyle } from "../../style";
 
 const CharacterInput = ({ language }) => {
   const { watch } = useFormContext();
   const sex = watch("sex");
+  const character = watch("character");
 
   const characterList = ["shy", "sociable", "hiperactive", "agressive", "calm"];
 
@@ -30,7 +31,7 @@ const CharacterInput = ({ language }) => {
         }
         name="character"
         rules={{ required: true }}
-        defaultValue=""
+        defaultValue={character || ""}
         {...inputStyle}
       />
     </>

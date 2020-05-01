@@ -2,30 +2,35 @@ import React, { useState, useEffect } from "react";
 import { Route, Switch, Redirect, withRouter, history } from "react-router-dom";
 import { connect } from "react-redux";
 import { getData, setData, getBreed } from "../../redux/actions";
-import FormLayout from "../../layouts/Forms";
+import Navbar from "../../layouts/Navbar";
 import DogList from "../../layouts/List";
 import { GridContainer, DogsContainer } from "./style";
 import _ from "lodash";
 import Sidebar from "../../layouts/Sidebar";
+import FormDisplayContext from "../../layouts/Forms/context";
 
-const DogsPage = ({ getUser, getDogs, getAttendances, getActiveAttendances, getPasses, getBreeds, setLanguage, dogList, user, passList, attendanceList, activeAttendanceList, breedList }) => {
+const DogsPage = (props) => {
   const [selected, setSelected] = useState({});
-  const contentLoaded = dogList && attendanceList && passList && activeAttendanceList && breedList;
+  const [isOpen, setIsOpen] = useState(false);
+  const [anchor, setAnchor] = useState(null);
+  const contentLoaded = props.dogList && props.attendanceList && props.passList && props.activeAttendanceList && props.breedList && props.passTypeList;
+  const user = props.user;
 
   useEffect(() => {
-    getUser();
-    getDogs();
-    getPasses();
-    getBreeds();
-    getAttendances();
-    getActiveAttendances();
-    setLanguage("es");
+    props.getUser();
+    props.getDogs();
+    props.getPasses();
+    props.getPassTypes();
+    props.getBreeds();
+    props.getAttendances();
+    props.getActiveAttendances();
+    props.setLanguage("es");
   }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      getAttendances();
-      getActiveAttendances();
+      props.getAttendances();
+      props.getActiveAttendances();
     }, 60000);
     return () => clearInterval(interval);
   }, [user]);
@@ -35,17 +40,17 @@ const DogsPage = ({ getUser, getDogs, getAttendances, getActiveAttendances, getP
       if (contentLoaded) {
         return (
           <DogsContainer>
-            <Route path="/dogs">
-              <GridContainer>
-                <Route path="/dogs/show/:id">
-                  <Sidebar />
-                </Route>
-                <DogList {...{ selected, setSelected }} />
-              </GridContainer>
-            </Route>
-            <Route path="/dogs/create">
-              <FormLayout />
-            </Route>
+            <FormDisplayContext.Provider value={{ isOpen, setIsOpen, anchor, setAnchor }}>
+              <Route path="/dogs">
+                <Navbar />
+                <GridContainer>
+                  <Route path="/dogs/show/:id">
+                    <Sidebar />
+                  </Route>
+                  <DogList {...{ selected, setSelected }} />
+                </GridContainer>
+              </Route>
+            </FormDisplayContext.Provider>
           </DogsContainer>
         );
       } else return <div>Loading data...</div>;
@@ -60,6 +65,7 @@ const mapStateToProps = (state) => {
     attendanceList: state.attendance.list,
     activeAttendanceList: state.attendance.active,
     passList: state.pass.list,
+    passTypeList: state.passType.list,
     breedList: state.breed.list,
   };
 };
@@ -71,7 +77,8 @@ const mapDispatchToProps = (dispatch) => {
     getBreeds: () => dispatch(getBreed()),
     getAttendances: () => dispatch(getData("/attendance/show/all", "attendance", "list")),
     getActiveAttendances: () => dispatch(getData(`/attendance/show/?confirmed=false`, "attendance", "active")),
-    getPasses: () => dispatch(getData("pass/show/all", "pass", "list")),
+    getPasses: () => dispatch(getData("/pass/show/all", "pass", "list")),
+    getPassTypes: () => dispatch(getData("/passtype/show/all", "passType", "list")),
     setLanguage: (language) => dispatch(setData("language", language, "set")),
   };
 };
