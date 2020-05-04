@@ -80,7 +80,6 @@ const Navbar = (props) => {
   const menuId = "primary-search-account-menu";
   const renderMenu = (
     <Menu anchorEl={anchorEl} anchorOrigin={{ vertical: "top", horizontal: "right" }} id={menuId} keepMounted transformOrigin={{ vertical: "top", horizontal: "right" }} open={isMenuOpen} onClose={handleMenuClose}>
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
       <MenuItem onClick={handleLogout}>Salir</MenuItem>
     </Menu>
   );
@@ -88,25 +87,11 @@ const Navbar = (props) => {
   const mobileMenuId = "primary-search-account-menu-mobile";
   const renderMobileMenu = (
     <Menu anchorEl={mobileMoreAnchorEl} anchorOrigin={{ vertical: "top", horizontal: "right" }} id={mobileMenuId} keepMounted transformOrigin={{ vertical: "top", horizontal: "right" }} open={isMobileMenuOpen} onClose={handleMobileMenuClose}>
-      <MenuItem>
-        <IconButton aria-label="show 4 new mails" color="inherit">
-          <Badge badgeContent={4} color="secondary">
-            <MailIcon />
-          </Badge>
-        </IconButton>
-        <p>Messages</p>
-      </MenuItem>
-      <MenuItem>
-        <IconButton color="inherit">
-          <PetsIcon />
-        </IconButton>
-        <p>+ Cliente</p>
-      </MenuItem>
-      <MenuItem onClick={handleProfileMenuOpen}>
+      <MenuItem onClick={handleLogout}>
         <IconButton aria-label="account of current user" aria-controls="primary-search-account-menu" aria-haspopup="true" color="inherit">
           <AccountCircle />
         </IconButton>
-        <p>Profile</p>
+        <p>Salir</p>
       </MenuItem>
     </Menu>
   );
@@ -139,17 +124,6 @@ const Navbar = (props) => {
               </Grid>
               <div className={classes.grow} />
               <div className={classes.sectionDesktop}>
-                <IconButton color="inherit" onClick={handleFormOpen}>
-                  <AddCircleIcon />
-                </IconButton>
-                <IconButton aria-label="show 4 new mails" color="inherit">
-                  <Badge badgeContent={4} color="secondary">
-                    <MailIcon />
-                  </Badge>
-                </IconButton>
-                <IconButton aria-label="show 17 new notifications" color="inherit">
-                  <PetsIcon />
-                </IconButton>
                 <IconButton edge="end" aria-label="account of current user" aria-controls={menuId} aria-haspopup="true" onClick={handleProfileMenuOpen} color="inherit">
                   <AccountCircle />
                 </IconButton>
