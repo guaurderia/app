@@ -39,4 +39,15 @@ export const selectedStyle = {
   color: "primary",
 };
 
+export const StepperButtonContainer = styled.div`
+  display: flex;
+  justify-content: space-around;
+  margin: 15px 0;
+`;
+
+export const SpinnerContainer = styled.div`
+  display: flex;
+  align-content: center;
+`;
+
 export default Form;

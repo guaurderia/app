@@ -32,9 +32,9 @@ const crudGenerator = (
         return res.status(409).json(`${uniqueIndex} ${Object.values(unique)} already exists in ${Model.modelName} db`);
       } else {
         try {
-          await Model.create(data);
-          const list = await Model.find().populate(populateFields);
-          return res.json(list);
+          const newDocument = await Model.create(data);
+          console.log("NEW DOCUMENT", newDocument);
+          return res.json(newDocument);
         } catch (err) {
           if (err.name == "ValidationError") {
             const keys = Object.keys(err.errors);
@@ -69,8 +69,9 @@ const crudGenerator = (
     const query = req.query;
     const data = dataCompiler(req, req.body);
     await Model.findOneAndUpdate(query, data);
-    const list = await Model.find().populate(populateFields);
-    res.json(list);
+    const updated = await Model.find(query).populate(populateFields);
+    console.log("UPDATE", updated, "DATA", data);
+    res.json(updated);
   });
 
   router.get(

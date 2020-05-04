@@ -1,14 +1,19 @@
 import React, { useEffect } from "react";
+import { connect } from "react-redux";
+import { postData, setData } from "../../redux/actions";
 import { useFormContext } from "react-hook-form";
 import { makeStyles } from "@material-ui/core/styles";
+import { StepperButtonContainer, SpinnerContainer } from "./style";
+import { useFormDisplaySetter } from "./context";
+import { DateTime } from "luxon";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import DogForm from "./DogForm";
 import OwnerForm from "./OwnerForm";
-import { useFormDisplaySetter } from "./context";
 import PassForm from "./PassForm";
 
 const useStyles = makeStyles((theme) => ({
@@ -19,6 +24,7 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(1),
   },
   instructions: {
+    textAlign: "center",
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
   },
@@ -41,7 +47,7 @@ function getStepContent(step, formContent) {
   }
 }
 
-const FormStepper = () => {
+const FormStepper = (props) => {
   const classes = useStyles();
   const { watch, reset } = useFormContext();
   const [activeStep, setActiveStep] = React.useState(0);
@@ -50,8 +56,10 @@ const FormStepper = () => {
   const setIsOpen = useFormDisplaySetter();
   const steps = getSteps();
   const form = watch();
+  const newClientCreated = props.newDog && props.newOwner && props.newPass;
 
   console.log("FORM COMPILER", formCompiler);
+  console.log("TYPES OF", typeof skipped);
 
   const isStepOptional = (step) => {
     return step === 2;
@@ -76,6 +84,7 @@ const FormStepper = () => {
         break;
       case 2:
         setFormCompiler({ ...formCompiler, pass: form });
+        handleSubmit({ ...formCompiler, pass: form });
         break;
     }
 
@@ -99,8 +108,6 @@ const FormStepper = () => {
 
   const handleSkip = () => {
     if (!isStepOptional(activeStep)) {
-      // You probably want to guard against something like this,
-      // it should never occur unless someone's actively trying to break something.
       throw new Error("You can't skip a step that isn't optional.");
     }
 
@@ -114,6 +121,21 @@ const FormStepper = () => {
 
   const handleReset = () => {
     setActiveStep(0);
+    setFormCompiler({});
+    props.resetDog();
+    props.resetOwner();
+    props.resetPass();
+  };
+
+  const handleSubmit = async (form) => {
+    const dog = form.dog;
+    const owner = { ...form.owner, roll: "owner", password: "1234" };
+    const pass = { ...form.pass, purchased: DateTime.local(), passType: form.pass.passType._id };
+    const [newDog, newOwner, newPass] = await Promise.all([props.createDog(dog), props.createOwner(owner), props.createPass(pass)]);
+    const updatedDog = { ...newDog, owner: newOwner._id };
+    const updatedPass = { ...newPass, dog: newDog._id };
+    props.updateDog(updatedDog);
+    props.updatePass(updatedPass);
   };
 
   return (
@@ -135,15 +157,23 @@ const FormStepper = () => {
       <div>
         {activeStep === steps.length ? (
           <div>
-            <Typography className={classes.instructions}>Registro completado</Typography>
-            <Button onClick={handleReset} className={classes.button}>
-              Reset
-            </Button>
+            {newClientCreated ? (
+              <>
+                <Typography className={classes.instructions}>Registro completado</Typography>
+                <Button onClick={handleReset} className={classes.button}>
+                  Cerrar
+                </Button>
+              </>
+            ) : (
+              <SpinnerContainer>
+                <CircularProgress />
+              </SpinnerContainer>
+            )}
           </div>
         ) : (
           <div>
             {getStepContent(activeStep, formCompiler)}
-            <div>
+            <StepperButtonContainer>
               <Button onClick={handleBack} className={classes.button}>
                 Volver
               </Button>
@@ -155,7 +185,7 @@ const FormStepper = () => {
               <Button variant="contained" color="primary" onClick={handleNext} className={classes.button}>
                 {activeStep === steps.length - 1 ? "Finalizar" : "Siguiente"}
               </Button>
-            </div>
+            </StepperButtonContainer>
           </div>
         )}
       </div>
@@ -163,4 +193,25 @@ const FormStepper = () => {
   );
 };
 
-export default FormStepper;
+const mapStateToProps = (state) => {
+  return {
+    newDog: state.dog.new,
+    newOwner: state.user.new,
+    newPass: state.pass.new,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    createDog: (dog) => dispatch(postData("/dog/create", "dog", dog, "new")),
+    createOwner: (owner) => dispatch(postData("/user/create", "user", owner, "new")),
+    createPass: (pass) => dispatch(postData("/pass/create", "pass", pass, "new")),
+    updateDog: (dog) => dispatch(postData(`/dog/update/?_id=${dog._id}`, "dog", dog, "update")),
+    updatePass: (pass) => dispatch(postData(`/pass/update/?_id=${pass._id}`, "dog", pass, "update")),
+    resetDog: () => dispatch(setData("dog", "", "new")),
+    resetOwner: () => dispatch(setData("user", "", "new")),
+    resetPass: () => dispatch(setData("pass", "", "new")),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(FormStepper);

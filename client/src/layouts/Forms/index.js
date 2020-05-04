@@ -21,7 +21,10 @@ const FormLayout = withRouter(({ history }) => {
   const isOpen = useFormDisplay();
   const setIsOpen = useFormDisplaySetter();
   const anchorEl = useFormAnchor();
-  const { reset } = methods;
+  const { watch } = methods;
+  const form = watch();
+
+  console.log("FORM", form);
 
   const handleClose = () => {
     setIsOpen(false);

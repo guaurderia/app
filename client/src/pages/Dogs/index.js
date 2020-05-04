@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Route, Switch, Redirect, withRouter, history } from "react-router-dom";
+import { Route, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import { getData, setData, getBreed } from "../../redux/actions";
 import Navbar from "../../layouts/Navbar";
@@ -8,13 +8,16 @@ import { GridContainer, DogsContainer } from "./style";
 import _ from "lodash";
 import Sidebar from "../../layouts/Sidebar";
 import FormDisplayContext from "../../layouts/Forms/context";
+import Button from "@material-ui/core/Button";
+import { Link } from "@material-ui/core";
 
 const DogsPage = (props) => {
   const [selected, setSelected] = useState({});
   const [isOpen, setIsOpen] = useState(false);
   const [anchor, setAnchor] = useState(null);
-  const contentLoaded = props.dogList && props.attendanceList && props.passList && props.activeAttendanceList && props.breedList && props.passTypeList;
+  const contentLoaded = Boolean(props.dogList && props.attendanceList && props.passList && props.activeAttendanceList && props.breedList && props.passTypeList);
   const user = props.user;
+  console.log("CONTENT LOADED", props.dogList);
 
   useEffect(() => {
     props.getUser();
@@ -31,9 +34,16 @@ const DogsPage = (props) => {
     const interval = setInterval(() => {
       props.getAttendances();
       props.getActiveAttendances();
+      props.getPasses();
+      props.getDogs();
     }, 60000);
     return () => clearInterval(interval);
-  }, [user]);
+  }, [user, isOpen, props.passUpdate, props.attendanceUpdate]);
+
+  const handleFormOpen = (event) => {
+    setAnchor(event.currentTarget);
+    setIsOpen(true);
+  };
 
   if (!user.loading) {
     if (user?.me?.roll === "admin" || user?.me?.roll === "staff") {
@@ -44,6 +54,11 @@ const DogsPage = (props) => {
               <Route path="/dogs">
                 <Navbar />
                 <GridContainer>
+                  <Link to="/dog/create">
+                    <Button color="primary" link="/dogs/create" variant="contained" onClick={handleFormOpen}>
+                      + Nuevo Cliente
+                    </Button>
+                  </Link>
                   <Route path="/dogs/show/:id">
                     <Sidebar />
                   </Route>
@@ -67,6 +82,8 @@ const mapStateToProps = (state) => {
     passList: state.pass.list,
     passTypeList: state.passType.list,
     breedList: state.breed.list,
+    passUpdate: state.pass.update,
+    attendanceUpdate: state.attendance.update,
   };
 };
 

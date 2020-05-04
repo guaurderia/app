@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { DogItemContentGrid, ItemStyle, PassElement, DogName, AttendanceButton, PassContainer, TimeContainer, OwnerName, DogBreedDisplay } from "./style";
-import Grid from "@material-ui/core/Grid";
 import { connect } from "react-redux";
 import { getData, postData, setData } from "../../redux/actions";
 import _ from "lodash";
@@ -18,30 +17,37 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
   const [error, setError] = useState();
 
   useEffect(() => {
-    const [foundActiveAttendance] = activeAttendance.filter((att) => att.dog._id === dog._id);
-    if (foundActiveAttendance) {
-      const dogActiveAttendance = _.omit(foundActiveAttendance, "dog");
-      const startTime = dogActiveAttendance.startTime;
-      const endTime = dogActiveAttendance.endTime;
+    if (activeAttendance.length) {
+      const [foundActiveAttendance] = activeAttendance.filter((att) => {
+        att.dog._id === dog._id;
+      });
+      if (foundActiveAttendance) {
+        const dogActiveAttendance = _.omit(foundActiveAttendance, "dog");
+        const startTime = dogActiveAttendance.startTime;
+        const endTime = dogActiveAttendance.endTime;
 
-      setAttendance(dogActiveAttendance);
+        setAttendance(dogActiveAttendance);
 
-      if (endTime) {
-        setButton("confirm");
-        setTimer({ time: activeTime(startTime, endTime), active: false });
+        if (endTime) {
+          setButton("confirm");
+          setTimer({ time: activeTime(startTime, endTime), active: false });
+        } else {
+          setButton("end");
+          setTimer({ time: activeTime(startTime), active: true });
+        }
       } else {
-        setButton("end");
-        setTimer({ time: activeTime(startTime), active: true });
+        setAttendance(null);
       }
-    } else {
-      setAttendance(null);
     }
   }, []);
 
   useEffect(() => {
     setActivePasses(() => {
-      const dogPasses = passList.filter((pass) => pass.dog._id.toString() === dog._id);
+      const dogPasses = passList.filter((pass) => {
+        return pass.dog?._id.toString() === dog._id;
+      });
       const active = getPass(dogPasses, true);
+      console.log(active, dogPasses);
       if (attendance) {
         const validPasses = isValidPass(attendance, active);
         const selectedIsValid = validPasses?.some((pass) => {
@@ -179,9 +185,9 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    postAttendanceCreate: (obj) => dispatch(postData("/attendance/create", "attendance", obj, "list")),
-    postAttendanceUpdate: (obj) => dispatch(postData(`/attendance/update/?dog=${obj.dog}&confirmed=false`, "attendance", obj, "list")),
-    postPassUpdate: (obj) => dispatch(postData(`/pass/update/?_id=${obj.id}`, "pass", obj, "list")),
+    postAttendanceCreate: (obj) => dispatch(postData("/attendance/create", "attendance", obj, "new")),
+    postAttendanceUpdate: (obj) => dispatch(postData(`/attendance/update/?dog=${obj.dog}&confirmed=false`, "attendance", obj, "update")),
+    postPassUpdate: (obj) => dispatch(postData(`/pass/update/?_id=${obj.id}`, "pass", obj, "update")),
     getAttendance: () => dispatch(getData(`/attendance/show/all`, "attendance", "list")),
     setPassList: (obj) => dispatch(setData("pass", obj, "list")),
   };

@@ -3,16 +3,16 @@ const Schema = mongoose.Schema;
 
 const passSchema = new Schema(
   {
-    dog: { type: Schema.Types.ObjectId, ref: "dog", required: true },
+    dog: { type: Schema.Types.ObjectId, ref: "dog" },
     passType: { type: Schema.Types.ObjectId, ref: "passType", required: true },
     purchased: { type: Date, required: true },
     starts: Date,
     expires: Date,
     count: Number,
-    creator: { type: Schema.Types.ObjectId, ref: "user", required: true }
+    creator: { type: Schema.Types.ObjectId, ref: "user", required: true },
   },
   {
-    timestamps: true
+    timestamps: true,
   }
 );
 
