@@ -37,9 +37,6 @@ export const getPass = (passes, active) => {
           expires,
         };
       }
-      if (type === "one") {
-        return basic;
-      }
     });
     return passesList;
   }

@@ -112,15 +112,6 @@ export const dogPassDisplay = (passes, active, language) => {
             ],
           };
         }
-        if (pass.type === "one") {
-          return {
-            title: pass.name,
-            content: [
-              { value: pass.hours, label: translate("hours", language) },
-              { value: pass.type, label: translate("type", language) },
-            ],
-          };
-        }
       });
       return { title, content: parsedPassesList };
     }

@@ -113,7 +113,7 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
   function checkOut(pass) {
     if (pass) {
       const { id } = pass;
-      if (pass.type === "day" || pass.type === "one") {
+      if (pass.type === "day") {
         const updatedPass = { id, count: pass.remainingCount - 1 };
         postPassUpdate(updatedPass);
       }
@@ -124,7 +124,7 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
     let selected = "";
     if (activePasses?.length) {
       return activePasses.map((pass, i) => {
-        if (pass.type === "day" || pass.type === "one") {
+        if (pass.type === "day") {
           selected = pass.id === selectedPass?.id ? "selected" : "";
           return (
             <PassElement key={i} onClick={handlePassSelection(pass)} className={selected}>
