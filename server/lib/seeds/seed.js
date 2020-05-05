@@ -126,7 +126,7 @@ const createSeeds = async (Model, data) => {
   }
 };
 
-const createPass = async (username, passType, creator) => {
+const createPass = async (dogChip, passType, creator) => {
   const purchaseDate = randomDate(passStart, passEnd, 8, 20);
   const expiresDate = new Date(purchaseDate);
   const remaining = () => {
@@ -135,7 +135,7 @@ const createPass = async (username, passType, creator) => {
     else return { count: Math.floor(Math.random() * passType.duration) };
   };
   return {
-    purchasedBy: username,
+    dogChip,
     passType: passType._id,
     purchased: purchaseDate,
     starts: purchaseDate,
@@ -170,8 +170,8 @@ const seedAll = () =>
       const randomOwner = owners[_.random(owners.length - 1)];
       const randomBreed = breeds[_.random(breeds.length - 1)];
       await Dog.findOneAndUpdate({ _id: dog._id }, { username: randomOwner.username, creator: randomStaff, breed: randomBreed });
-      createPass(randomOwner.username, randomPassType, randomStaff).then((pass) => (passSeed = [...passSeed, pass]));
-      createPass(randomOwner.username, randomPassType, randomStaff).then((pass) => (passSeed = [...passSeed, pass]));
+      createPass(dog.chip, randomPassType, randomStaff).then((pass) => (passSeed = [...passSeed, pass]));
+      createPass(dog.chip, randomPassType, randomStaff).then((pass) => (passSeed = [...passSeed, pass]));
     }
     for (let s of staff) {
       const randomDog = dogs[_.random(dogs.length - 1)];

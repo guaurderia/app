@@ -46,7 +46,8 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
   useEffect(() => {
     setActivePasses(() => {
       const dogPasses = passList.filter((pass) => {
-        return pass.dog?._id.toString() === dog._id;
+        console.log("ACTIVE PASSES", pass, dog);
+        return pass.dog?.chip === dog.chip;
       });
       const active = getPass(dogPasses, true);
       if (attendance) {

@@ -50,7 +50,7 @@ const crudGenerator = (
   );
 
   router.get("/show/all", async (req, res) => {
-    const objs = await Model.find().populate("dog");
+    const objs = await Model.find().populate(populateFields);
     return res.json(objs);
   });
 
