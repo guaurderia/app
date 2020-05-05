@@ -3,6 +3,7 @@ const _ = require("lodash");
 require("../models/Breed.model");
 const { asyncController } = require("../middleware/asyncController");
 const { isLoggedIn } = require("../middleware/auth/isLogged");
+const User = require("../models/User.model");
 
 const crudGenerator = (
   Model,
@@ -32,9 +33,9 @@ const crudGenerator = (
         return res.status(409).json(`${uniqueIndex} ${Object.values(unique)} already exists in ${Model.modelName} db`);
       } else {
         try {
-          const newDocument = await Model.create(data);
-          console.log("NEW DOCUMENT", newDocument);
-          return res.json(newDocument);
+          await Model.create(data);
+          const list = await Model.find().populate(populateFields);
+          return res.json(list);
         } catch (err) {
           if (err.name == "ValidationError") {
             const keys = Object.keys(err.errors);
@@ -49,7 +50,7 @@ const crudGenerator = (
   );
 
   router.get("/show/all", async (req, res) => {
-    const objs = await Model.find().populate(populateFields);
+    const objs = await Model.find().populate("dog");
     return res.json(objs);
   });
 
@@ -61,6 +62,7 @@ const crudGenerator = (
       res.json(data);
     } else {
       data = await Model.find(query).populate(populateFields);
+      console.log("DATA RETURN SHOW", data, query);
       res.json(data);
     }
   });
@@ -69,9 +71,8 @@ const crudGenerator = (
     const query = req.query;
     const data = dataCompiler(req, req.body);
     await Model.findOneAndUpdate(query, data);
-    const updated = await Model.find(query).populate(populateFields);
-    console.log("UPDATE", updated, "DATA", data);
-    res.json(updated);
+    const list = await Model.find().populate(populateFields);
+    res.json(list);
   });
 
   router.get(
@@ -80,6 +81,7 @@ const crudGenerator = (
       const { id } = req.params;
       const obj = await Model.findByIdAndRemove(id);
       const name = Object.values(dataPicker(displayName, obj));
+      console.log(name);
       return res.json(`${name} has been deleted from ${Model.modelName} db`);
     })
   );

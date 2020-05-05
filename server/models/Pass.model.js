@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const passSchema = new Schema(
   {
-    dog: { type: Schema.Types.ObjectId, ref: "dog" },
+    purchasedBy: { type: String, required: true },
     passType: { type: Schema.Types.ObjectId, ref: "passType", required: true },
     purchased: { type: Date, required: true },
     starts: Date,
@@ -13,8 +13,23 @@ const passSchema = new Schema(
   },
   {
     timestamps: true,
+    toJSON: { virtuals: true },
   }
 );
+
+passSchema.virtual("dog", {
+  ref: "dog",
+  localField: "purchasedBy",
+  foreignField: "username",
+  justOne: false,
+});
+
+passSchema.virtual("owner", {
+  ref: "user",
+  localField: "purchasedBy",
+  foreignField: "username",
+  justOne: false,
+});
 
 const Pass = mongoose.model("pass", passSchema);
 module.exports = Pass;

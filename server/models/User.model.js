@@ -11,11 +11,20 @@ const userSchema = new Schema(
     dni: { type: String, required: true },
     roll: { type: String, required: true },
     creator: { type: Schema.Types.ObjectId, ref: "user" },
+    dogChip: { type: String },
   },
   {
     timestamps: true,
+    toJSON: { virtuals: true },
   }
 );
+
+userSchema.virtual("dog", {
+  ref: "dog",
+  localField: "dogChip",
+  foreignField: "chip",
+  justOne: false,
+});
 
 const User = mongoose.model("user", userSchema);
 module.exports = User;

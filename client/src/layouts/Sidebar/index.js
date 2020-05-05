@@ -5,19 +5,19 @@ import { Card } from "../../components/Card";
 import _ from "lodash";
 import { Link, useParams } from "react-router-dom";
 import { dogGeneralDisplay, dogSexDisplay, dogMedicalDisplay, dogOwnerDisplay, dogAttendanceDisplay, dogPassDisplay } from "../../services/Format/Dog";
-import Button from "../../components/Button";
 
-const Sidebar = ({ dogList, attendanceList, activeAttendance, passList, language }) => {
+const Sidebar = ({ dogList, attendanceList, activeAttendance, passList, language, attendanceUpdate }) => {
   const { id } = useParams();
   const [dog, setDog] = useState();
   const [attendance, setAttendance] = useState();
   const [pass, setPass] = useState();
 
   useEffect(() => {
-    setDog(_.head(dogList.filter((d) => d._id.toString() === id)));
-    setAttendance(attendanceList.filter((att) => att.dog._id.toString() === id));
-    setPass(passList.filter((pass) => pass.dog._id.toString() === id));
-  }, [dogList, attendanceList, id, activeAttendance, passList]);
+    console.log("LOAD SIDEBAR EFFECTS", dogList, attendanceList, passList);
+    setDog(_.head(dogList.filter((d) => d.id === id)));
+    setAttendance(attendanceList.filter((att) => att.dog.id === id));
+    setPass(passList.filter((pass) => pass.dog.id === id));
+  }, [dogList, attendanceList, id, activeAttendance, passList, attendanceUpdate]);
 
   if (dog && attendance && pass) {
     return (
@@ -43,6 +43,7 @@ const mapStateToProps = (state) => {
     activeAttendance: state.attendance.active,
     passList: state.pass.list,
     language: state.language.set,
+    attendanceUpdate: state.attendance.update,
   };
 };
 

@@ -30,7 +30,8 @@ router.post("/signup", isLoggedIn("admin"), signupFormValidation(), async (req, 
 });
 
 router.get("/show/me", isLoggedIn(), async (req, res) => {
-  const data = await User.findById(req.user._id);
+  const data = await User.findById(req.user._id).populate("dog");
+  console.log(data);
   res.json(data);
 });
 

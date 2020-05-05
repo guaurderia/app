@@ -17,10 +17,12 @@ const DogsPage = (props) => {
   const [anchor, setAnchor] = useState(null);
   const contentLoaded = Boolean(props.dogList && props.attendanceList && props.passList && props.activeAttendanceList && props.breedList && props.passTypeList);
   const user = props.user;
-  console.log("CONTENT LOADED", props.dogList);
+
+  console.log("LOAD DOG PAGE");
 
   useEffect(() => {
     props.getUser();
+    props.getUserList();
     props.getDogs();
     props.getPasses();
     props.getPassTypes();
@@ -38,7 +40,7 @@ const DogsPage = (props) => {
       props.getDogs();
     }, 60000);
     return () => clearInterval(interval);
-  }, [user, isOpen, props.passUpdate, props.attendanceUpdate]);
+  }, [user, isOpen, props.passList, props.attendanceList, props.attendanceUpdate]);
 
   const handleFormOpen = (event) => {
     setAnchor(event.currentTarget);
@@ -90,6 +92,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     getUser: () => dispatch(getData("/auth/show/me", "user", "me")),
+    getUserList: () => dispatch(getData("/user/show/all", "user", "list")),
     getDogs: () => dispatch(getData("/dog/show/all", "dog", "list")),
     getBreeds: () => dispatch(getBreed()),
     getAttendances: () => dispatch(getData("/attendance/show/all", "attendance", "list")),

@@ -2,6 +2,7 @@ import { DateTime, Duration } from "luxon";
 import { formatDate, activeTime, formatTime } from "../../Format/Time";
 import _ from "lodash";
 import { api } from "../../../redux/actions";
+import { postData } from "../../../redux/actions";
 
 export const getPass = (passes, active) => {
   if (passes?.length) {
@@ -61,7 +62,7 @@ export const createDayPass = async (dog, attendance) => {
 
   const {
     data: [passType],
-  } = await api.get(`/passType/show/?type=one&hours=${passHours}`);
+  } = await api.get(`/passType/show/?type=day&duration=1&hours=${passHours}`);
   const pass = {
     dog: dog._id,
     passType: passType._id,

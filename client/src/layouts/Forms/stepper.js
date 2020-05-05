@@ -6,6 +6,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { StepperButtonContainer, SpinnerContainer } from "./style";
 import { useFormDisplaySetter } from "./context";
 import { DateTime } from "luxon";
+import _ from "lodash";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
@@ -131,9 +132,11 @@ const FormStepper = (props) => {
     const dog = form.dog;
     const owner = { ...form.owner, roll: "owner", password: "1234" };
     const pass = { ...form.pass, purchased: DateTime.local(), passType: form.pass.passType._id };
-    const [newDog, newOwner, newPass] = await Promise.all([props.createDog(dog), props.createOwner(owner), props.createPass(pass)]);
-    const updatedDog = { ...newDog, owner: newOwner._id };
-    const updatedPass = { ...newPass, dog: newDog._id };
+    const [newDogList, newUserList, newPassList] = Promise.all([props.createDog(dog), props.createOwner(owner), props.createPass(pass)]);
+    const newDog = newDogList.filter((dog) => dog.chip === form.dog.chip);
+    const newOwner = newUserList.filter((user) => user.username === form.owner.username);
+    const updatedDog = { owner: newOwner._id };
+    const updatedPass = { dog: newDog._id };
     props.updateDog(updatedDog);
     props.updatePass(updatedPass);
   };
@@ -206,8 +209,8 @@ const mapDispatchToProps = (dispatch) => {
     createDog: (dog) => dispatch(postData("/dog/create", "dog", dog, "new")),
     createOwner: (owner) => dispatch(postData("/user/create", "user", owner, "new")),
     createPass: (pass) => dispatch(postData("/pass/create", "pass", pass, "new")),
-    updateDog: (dog) => dispatch(postData(`/dog/update/?_id=${dog._id}`, "dog", dog, "update")),
-    updatePass: (pass) => dispatch(postData(`/pass/update/?_id=${pass._id}`, "dog", pass, "update")),
+    updateDog: (dog) => dispatch(postData(`/dog/update/?_id=${dog._id}`, "dog", dog, "list")),
+    updatePass: (pass) => dispatch(postData(`/pass/update/?_id=${pass._id}`, "dog", pass, "list")),
     resetDog: () => dispatch(setData("dog", "", "new")),
     resetOwner: () => dispatch(setData("user", "", "new")),
     resetPass: () => dispatch(setData("pass", "", "new")),

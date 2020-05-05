@@ -8,7 +8,7 @@ import { formatTime, activeTime } from "../../services/Format/Time";
 import { getPass, isValidPass, createDayPass } from "../../services/Logic/Pass";
 import ErrorMessage from "../Error";
 
-const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, postPassUpdate, activeAttendance, passList, setPassList }) => {
+const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, postPassUpdate, activeAttendance, passList, setActiveAttendanceList }) => {
   const [attendance, setAttendance] = useState();
   const [button, setButton] = useState("start");
   const [timer, setTimer] = useState({ active: false });
@@ -16,10 +16,12 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
   const [selectedPass, setSelectedPass] = useState();
   const [error, setError] = useState();
 
+  console.log("LOAD DOG ITEM");
+
   useEffect(() => {
     if (activeAttendance.length) {
       const [foundActiveAttendance] = activeAttendance.filter((att) => {
-        att.dog._id === dog._id;
+        return att.dog._id === dog._id;
       });
       if (foundActiveAttendance) {
         const dogActiveAttendance = _.omit(foundActiveAttendance, "dog");
@@ -47,7 +49,6 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
         return pass.dog?._id.toString() === dog._id;
       });
       const active = getPass(dogPasses, true);
-      console.log(active, dogPasses);
       if (attendance) {
         const validPasses = isValidPass(attendance, active);
         const selectedIsValid = validPasses?.some((pass) => {
@@ -107,7 +108,7 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
     });
 
   const handlePassCreation = () => {
-    createDayPass(dog, attendance).then((res) => setPassList(res.data));
+    createDayPass(dog, attendance);
   };
 
   function checkOut(pass) {
@@ -180,6 +181,7 @@ const mapStateToProps = (state) => {
   return {
     activeAttendance: state.attendance.active,
     passList: state.pass.list,
+    passUpdate: state.pass.update,
   };
 };
 

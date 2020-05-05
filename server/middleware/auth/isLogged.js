@@ -1,8 +1,6 @@
 const isLoggedIn = (roll) => (req, res, next) => {
-  console.log("LOGGED IN MIDDLE", roll, req.user);
   if (!req.user) return res.status(401).json("You need to login to access this page");
   else {
-    console.log("IS LOGGED IN", req.user);
     const userRoll = req.user.roll;
     if (roll === "admin") {
       if (userRoll === "admin") return next();
