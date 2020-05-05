@@ -62,7 +62,6 @@ const crudGenerator = (
       res.json(data);
     } else {
       data = await Model.find(query).populate(populateFields);
-      console.log("DATA RETURN SHOW", data, query);
       res.json(data);
     }
   });

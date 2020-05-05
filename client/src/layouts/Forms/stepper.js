@@ -54,13 +54,10 @@ const FormStepper = (props) => {
   const [activeStep, setActiveStep] = React.useState(0);
   const [skipped, setSkipped] = React.useState(new Set());
   const [formCompiler, setFormCompiler] = React.useState({});
+  const [clientCreated, setClientCreated] = React.useState(false);
   const setIsOpen = useFormDisplaySetter();
   const steps = getSteps();
   const form = watch();
-  const newClientCreated = props.newDog && props.newOwner && props.newPass;
-
-  console.log("FORM COMPILER", formCompiler);
-  console.log("TYPES OF", typeof skipped);
 
   const isStepOptional = (step) => {
     return step === 2;
@@ -123,22 +120,21 @@ const FormStepper = (props) => {
   const handleReset = () => {
     setActiveStep(0);
     setFormCompiler({});
-    props.resetDog();
-    props.resetOwner();
-    props.resetPass();
   };
 
   const handleSubmit = async (form) => {
-    const dog = form.dog;
-    const owner = { ...form.owner, roll: "owner", password: "1234" };
-    const pass = { ...form.pass, purchased: DateTime.local(), passType: form.pass.passType._id };
+    const dog = { ...form.dog, username: form.owner.username };
+    const owner = { ...form.owner, roll: "owner", password: "1234", dogChip: dog.chip };
+    const pass = { ...form.pass, purchased: DateTime.local(), passType: form.pass.passType._id, dogChip: dog.chip };
     const [newDogList, newUserList, newPassList] = Promise.all([props.createDog(dog), props.createOwner(owner), props.createPass(pass)]);
     const newDog = newDogList.filter((dog) => dog.chip === form.dog.chip);
     const newOwner = newUserList.filter((user) => user.username === form.owner.username);
     const updatedDog = { owner: newOwner._id };
     const updatedPass = { dog: newDog._id };
-    props.updateDog(updatedDog);
-    props.updatePass(updatedPass);
+    await props.updateDog(updatedDog);
+    await props.updatePass(updatedPass);
+    setClientCreated(true);
+    console.log("CLIENTE CREATED", clientCreated);
   };
 
   return (
@@ -160,7 +156,7 @@ const FormStepper = (props) => {
       <div>
         {activeStep === steps.length ? (
           <div>
-            {newClientCreated ? (
+            {clientCreated ? (
               <>
                 <Typography className={classes.instructions}>Registro completado</Typography>
                 <Button onClick={handleReset} className={classes.button}>
@@ -206,14 +202,11 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    createDog: (dog) => dispatch(postData("/dog/create", "dog", dog, "new")),
-    createOwner: (owner) => dispatch(postData("/user/create", "user", owner, "new")),
-    createPass: (pass) => dispatch(postData("/pass/create", "pass", pass, "new")),
+    createDog: (dog) => dispatch(postData("/dog/create", "dog", dog, "list")),
+    createOwner: (owner) => dispatch(postData("/user/create", "user", owner, "list")),
+    createPass: (pass) => dispatch(postData("/pass/create", "pass", pass, "list")),
     updateDog: (dog) => dispatch(postData(`/dog/update/?_id=${dog._id}`, "dog", dog, "list")),
     updatePass: (pass) => dispatch(postData(`/pass/update/?_id=${pass._id}`, "dog", pass, "list")),
-    resetDog: () => dispatch(setData("dog", "", "new")),
-    resetOwner: () => dispatch(setData("user", "", "new")),
-    resetPass: () => dispatch(setData("pass", "", "new")),
   };
 };
 

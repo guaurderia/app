@@ -8,7 +8,7 @@ import { formatTime, activeTime } from "../../services/Format/Time";
 import { getPass, isValidPass, createDayPass } from "../../services/Logic/Pass";
 import ErrorMessage from "../Error";
 
-const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, postPassUpdate, activeAttendance, passList, setActiveAttendanceList }) => {
+const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, postPassUpdate, activeAttendance, passList, setPassList }) => {
   const [attendance, setAttendance] = useState();
   const [button, setButton] = useState("start");
   const [timer, setTimer] = useState({ active: false });
@@ -46,7 +46,6 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
   useEffect(() => {
     setActivePasses(() => {
       const dogPasses = passList.filter((pass) => {
-        console.log("ACTIVE PASSES", pass, dog);
         return pass.dog?.chip === dog.chip;
       });
       const active = getPass(dogPasses, true);
@@ -109,7 +108,7 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
     });
 
   const handlePassCreation = () => {
-    createDayPass(dog, attendance);
+    createDayPass(dog, attendance).then((res) => setPassList(res.data));
   };
 
   function checkOut(pass) {
@@ -149,6 +148,10 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
     return <></>;
   };
 
+  const ShowOwnerName = () => {
+    return dog.owner.map((owner) => <OwnerName key={owner.username}>{`${owner.firstName} ${owner.lastName}`}</OwnerName>);
+  };
+
   const selected = () => (urlParams === dog._id ? "active" : "");
   const active = () => (timer.active ? "active-attendance" : "");
   const ended = () => (button === "confirm" ? "ended-attendance" : "");
@@ -157,7 +160,7 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
       <DogItemContentGrid container>
         <DogName className="dog-name">
           {dog.name}
-          <OwnerName>{dog.owner && `${dog.owner.firstName} ${dog.owner.lastName}`}</OwnerName>
+          <ShowOwnerName />
         </DogName>
         <DogBreedDisplay>{dog.breed?.name}</DogBreedDisplay>
         <AttendanceButton>
@@ -182,17 +185,16 @@ const mapStateToProps = (state) => {
   return {
     activeAttendance: state.attendance.active,
     passList: state.pass.list,
-    passUpdate: state.pass.update,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    postAttendanceCreate: (obj) => dispatch(postData("/attendance/create", "attendance", obj, "new")),
-    postAttendanceUpdate: (obj) => dispatch(postData(`/attendance/update/?dog=${obj.dog}&confirmed=false`, "attendance", obj, "update")),
-    postPassUpdate: (obj) => dispatch(postData(`/pass/update/?_id=${obj.id}`, "pass", obj, "update")),
+    postAttendanceCreate: (obj) => dispatch(postData("/attendance/create", "attendance", obj, "list")),
+    postAttendanceUpdate: (obj) => dispatch(postData(`/attendance/update/?dog=${obj.dog}&confirmed=false`, "attendance", obj, "list")),
+    postPassUpdate: (obj) => dispatch(postData(`/pass/update/?_id=${obj.id}`, "pass", obj, "list")),
     getAttendance: () => dispatch(getData(`/attendance/show/all`, "attendance", "list")),
-    setPassList: (obj) => dispatch(setData("pass", obj, "list")),
+    setPassList: (newList) => dispatch(setData("pass", newList, "list")),
   };
 };
 

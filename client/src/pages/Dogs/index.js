@@ -40,7 +40,7 @@ const DogsPage = (props) => {
       props.getDogs();
     }, 60000);
     return () => clearInterval(interval);
-  }, [user, isOpen, props.passList, props.attendanceList, props.attendanceUpdate]);
+  }, [user, isOpen, props.passList, props.attendanceList, props.dogList]);
 
   const handleFormOpen = (event) => {
     setAnchor(event.currentTarget);
@@ -84,8 +84,6 @@ const mapStateToProps = (state) => {
     passList: state.pass.list,
     passTypeList: state.passType.list,
     breedList: state.breed.list,
-    passUpdate: state.pass.update,
-    attendanceUpdate: state.attendance.update,
   };
 };
 
