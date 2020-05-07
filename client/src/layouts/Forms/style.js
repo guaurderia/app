@@ -1,15 +1,18 @@
-import React from "react";
 import styled from "styled-components";
 import { createMuiTheme } from "@material-ui/core/styles";
-import { makeStyles } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
 
 const Form = styled.form`
   margin: 30px 80px;
   & > * {
     width: 100%;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
   }
+`;
+
+export const ErrorContainer = styled.div`
+  color: red;
+  font-size: 12px;
+  text-transform: uppercase;
 `;
 
 export const FormTheme = createMuiTheme({
@@ -30,40 +33,28 @@ export const FormTheme = createMuiTheme({
   },
 });
 
-export const LabelStyle = styled.label`
-  color: red;
-`;
-
-export const DogsContainer = styled.div`
-  margin: 0;
-`;
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-  },
-  paper: {
-    padding: theme.spacing(2),
-    textAlign: "center",
-    color: theme.palette.text.secondary,
-  },
-}));
-
-export const RadioContainer = ({ children }) => {
-  const classes = useStyles();
-
-  return (
-    <div className={classes.root}>
-      <Grid container spacing={2}>
-        <Grid item xs={4}>
-          {children[0]}
-        </Grid>
-        <Grid item xs={2}>
-          {children[1]}
-        </Grid>
-      </Grid>
-    </div>
-  );
+export const inputStyle = {
+  variant: "outlined",
+  margin: "dense",
+  size: "small",
+  fullWidth: true,
 };
+
+export const selectedStyle = {
+  variant: "contained",
+  color: "primary",
+};
+
+export const StepperButtonContainer = styled.div`
+  display: flex;
+  justify-content: space-around;
+  margin: 15px 0;
+`;
+
+export const SpinnerContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-content: center;
+`;
 
 export default Form;

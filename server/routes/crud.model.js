@@ -3,6 +3,7 @@ const _ = require("lodash");
 require("../models/Breed.model");
 const { asyncController } = require("../middleware/asyncController");
 const { isLoggedIn } = require("../middleware/auth/isLogged");
+const User = require("../models/User.model");
 
 const crudGenerator = (
   Model,
@@ -61,7 +62,6 @@ const crudGenerator = (
       res.json(data);
     } else {
       data = await Model.find(query).populate(populateFields);
-      console.log("DATA RETURN SHOW", data, query);
       res.json(data);
     }
   });

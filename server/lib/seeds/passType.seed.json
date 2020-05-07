@@ -33,7 +33,7 @@
   },
   {
     "name": "jornada completa suelto",
-    "type": "one",
+    "type": "day",
     "duration": 1,
     "hours": 12,
     "price": 20,
@@ -41,7 +41,7 @@
   },
   {
     "name": "jornada media suelto",
-    "type": "one",
+    "type": "day",
     "duration": 1,
     "hours": 6,
     "price": 15,

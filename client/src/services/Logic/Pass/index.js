@@ -2,14 +2,18 @@ import { DateTime, Duration } from "luxon";
 import { formatDate, activeTime, formatTime } from "../../Format/Time";
 import _ from "lodash";
 import { api } from "../../../redux/actions";
+import { postData } from "../../../redux/actions";
 
 export const getPass = (passes, active) => {
   if (passes?.length) {
     const filteredPasses = passes.filter((pass) => {
+      const starts = DateTime.fromISO(pass.starts);
+      const expires = DateTime.fromISO(pass.expires);
+      const now = DateTime.local();
       if (active) {
-        return pass.count > 0 || DateTime.fromISO(pass.expires) > DateTime.local();
+        return pass.count > 0 || (expires > now && starts < now);
       } else {
-        return pass.count === 0 || DateTime.fromISO(pass.expires) < DateTime.local();
+        return pass.count === 0 || expires < now;
       }
     });
     const passesList = filteredPasses.map((pass) => {
@@ -37,9 +41,6 @@ export const getPass = (passes, active) => {
           expires,
         };
       }
-      if (type === "one") {
-        return basic;
-      }
     });
     return passesList;
   }
@@ -64,9 +65,9 @@ export const createDayPass = async (dog, attendance) => {
 
   const {
     data: [passType],
-  } = await api.get(`/passType/show/?type=one&hours=${passHours}`);
+  } = await api.get(`/passType/show/?type=day&duration=1&hours=${passHours}`);
   const pass = {
-    dog: dog._id,
+    dogChip: dog.chip,
     passType: passType._id,
     purchased: DateTime.local(),
     count: 1,

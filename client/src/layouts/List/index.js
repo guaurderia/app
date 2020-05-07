@@ -18,7 +18,7 @@ const DogList = ({ list }) => {
     }
   };
 
-  return <DogListContainer className="list-group list-group-flush">{createList()}</DogListContainer>;
+  return <DogListContainer>{createList()}</DogListContainer>;
 };
 const mapStateToProps = (state) => {
   return {

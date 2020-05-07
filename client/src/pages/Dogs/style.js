@@ -4,7 +4,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 
 export const DogsContainer = styled.div`
-  margin: 0;
+  margin-top: 70px;
 `;
 
 const useStyles = makeStyles((theme) => ({
@@ -26,9 +26,10 @@ export const GridContainer = ({ children }) => {
       <Grid container spacing={2}>
         <Grid item xs={3}>
           {children[0]}
+          {children[1]}
         </Grid>
         <Grid item xs={9}>
-          {children[1]}
+          {children[2]}
         </Grid>
       </Grid>
     </div>

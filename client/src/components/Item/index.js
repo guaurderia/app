@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { DogItemContentGrid, ItemStyle, PassElement, DogName, AttendanceButton, PassContainer, TimeContainer, OwnerName, DogBreedDisplay } from "./style";
-import Grid from "@material-ui/core/Grid";
 import { connect } from "react-redux";
 import { getData, postData, setData } from "../../redux/actions";
 import _ from "lodash";
@@ -17,30 +16,38 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
   const [selectedPass, setSelectedPass] = useState();
   const [error, setError] = useState();
 
+  console.log("LOAD DOG ITEM");
+
   useEffect(() => {
-    const [foundActiveAttendance] = activeAttendance.filter((att) => att.dog._id === dog._id);
-    if (foundActiveAttendance) {
-      const dogActiveAttendance = _.omit(foundActiveAttendance, "dog");
-      const startTime = dogActiveAttendance.startTime;
-      const endTime = dogActiveAttendance.endTime;
+    if (activeAttendance.length) {
+      const [foundActiveAttendance] = activeAttendance.filter((att) => {
+        return att.dog._id === dog._id;
+      });
+      if (foundActiveAttendance) {
+        const dogActiveAttendance = _.omit(foundActiveAttendance, "dog");
+        const startTime = dogActiveAttendance.startTime;
+        const endTime = dogActiveAttendance.endTime;
 
-      setAttendance(dogActiveAttendance);
+        setAttendance(dogActiveAttendance);
 
-      if (endTime) {
-        setButton("confirm");
-        setTimer({ time: activeTime(startTime, endTime), active: false });
+        if (endTime) {
+          setButton("confirm");
+          setTimer({ time: activeTime(startTime, endTime), active: false });
+        } else {
+          setButton("end");
+          setTimer({ time: activeTime(startTime), active: true });
+        }
       } else {
-        setButton("end");
-        setTimer({ time: activeTime(startTime), active: true });
+        setAttendance(null);
       }
-    } else {
-      setAttendance(null);
     }
   }, []);
 
   useEffect(() => {
     setActivePasses(() => {
-      const dogPasses = passList.filter((pass) => pass.dog._id.toString() === dog._id);
+      const dogPasses = passList.filter((pass) => {
+        return pass.dog?.chip === dog.chip;
+      });
       const active = getPass(dogPasses, true);
       if (attendance) {
         const validPasses = isValidPass(attendance, active);
@@ -107,7 +114,7 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
   function checkOut(pass) {
     if (pass) {
       const { id } = pass;
-      if (pass.type === "day" || pass.type === "one") {
+      if (pass.type === "day") {
         const updatedPass = { id, count: pass.remainingCount - 1 };
         postPassUpdate(updatedPass);
       }
@@ -118,7 +125,7 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
     let selected = "";
     if (activePasses?.length) {
       return activePasses.map((pass, i) => {
-        if (pass.type === "day" || pass.type === "one") {
+        if (pass.type === "day") {
           selected = pass.id === selectedPass?.id ? "selected" : "";
           return (
             <PassElement key={i} onClick={handlePassSelection(pass)} className={selected}>
@@ -141,6 +148,10 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
     return <></>;
   };
 
+  const ShowOwnerName = () => {
+    return dog.owner.map((owner) => <OwnerName key={owner.username}>{`${owner.firstName} ${owner.lastName}`}</OwnerName>);
+  };
+
   const selected = () => (urlParams === dog._id ? "active" : "");
   const active = () => (timer.active ? "active-attendance" : "");
   const ended = () => (button === "confirm" ? "ended-attendance" : "");
@@ -149,7 +160,7 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
       <DogItemContentGrid container>
         <DogName className="dog-name">
           {dog.name}
-          <OwnerName>{dog.owner && `${dog.owner.firstName} ${dog.owner.lastName}`}</OwnerName>
+          <ShowOwnerName />
         </DogName>
         <DogBreedDisplay>{dog.breed?.name}</DogBreedDisplay>
         <AttendanceButton>
@@ -183,7 +194,7 @@ const mapDispatchToProps = (dispatch) => {
     postAttendanceUpdate: (obj) => dispatch(postData(`/attendance/update/?dog=${obj.dog}&confirmed=false`, "attendance", obj, "list")),
     postPassUpdate: (obj) => dispatch(postData(`/pass/update/?_id=${obj.id}`, "pass", obj, "list")),
     getAttendance: () => dispatch(getData(`/attendance/show/all`, "attendance", "list")),
-    setPassList: (obj) => dispatch(setData("pass", obj, "list")),
+    setPassList: (newList) => dispatch(setData("pass", newList, "list")),
   };
 };
 

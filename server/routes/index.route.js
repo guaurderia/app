@@ -9,7 +9,7 @@ const auth = require("./auth/auth.routes");
 const { crudGenerator } = require("../routes/crud.model");
 const { isLoggedIn } = require("../middleware/auth/isLogged");
 
-router.use("/user", isLoggedIn("staff"), crudGenerator(User, "username", "firstName"));
+router.use("/user", isLoggedIn("staff"), crudGenerator(User, "username", "firstName", { createProtectFields: [], populateFields: ["dog"], extraFieldsCreate: (req) => ({}) }));
 
 router.use(
   "/dog",
@@ -21,17 +21,19 @@ router.use(
   })
 );
 
-router.use("/passtype", isLoggedIn("admin"), crudGenerator(PassType, "name", "name"));
+router.use("/passtype", isLoggedIn("staff"), crudGenerator(PassType, "name", "name"));
 
 router.use(
   "/pass",
   isLoggedIn("staff"),
   crudGenerator(Pass, "_id", "_id", {
     createProtectFields: [],
-    populateFields: ["dog", "passType", "creator"],
+    populateFields: ["dog", "owner", "passType", "creator"],
     extraFieldsCreate: (req) => ({ creator: req.user._id }),
   })
 );
+
+router.use("/passtype", isLoggedIn("staff"), crudGenerator(PassType, "_id", "_id"));
 
 router.use(
   "/attendance",

@@ -33,5 +33,7 @@
   { "value": "distemper", "label": { "es": "moquillo", "en": "distemper" } },
   { "value": "shy", "label": { "es": { "male": "tímido", "female": "tímida" }, "en": "shy" } },
   { "value": "hiperactive", "label": { "es": { "male": "hiperactivo", "female": "hiperactiva" }, "en": "hiperactive" } },
-  { "value": "agressive", "label": { "es": { "male": "agresivo", "female": "agresiva" }, "en": "agresive" } }
+  { "value": "agressive", "label": { "es": { "male": "agresivo", "female": "agresiva" }, "en": "agresive" } },
+  { "value": "sociable", "label": { "es": { "male": "sociable", "female": "sociable" }, "en": "sociable" } },
+  { "value": "calm", "label": { "es": { "male": "tranquilo", "female": "tranquila" }, "en": "calm" } }
 ]
