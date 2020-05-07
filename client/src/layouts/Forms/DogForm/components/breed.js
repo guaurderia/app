@@ -28,7 +28,6 @@ const BreedInput = ({ breedList }) => {
           </Select>
         }
         name="breed"
-        rules={{ required: true }}
         defaultValue={breed || ""}
         {...inputStyle}
       />

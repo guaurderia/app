@@ -30,7 +30,6 @@ const CharacterInput = ({ language }) => {
           </Select>
         }
         name="character"
-        rules={{ required: true }}
         defaultValue={character || ""}
         {...inputStyle}
       />

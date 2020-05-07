@@ -3,11 +3,16 @@ import FormLabel from "@material-ui/core/FormLabel";
 import TextField from "@material-ui/core/TextField";
 import { Controller, useFormContext, ErrorMessage } from "react-hook-form";
 import { inputStyle, ErrorContainer } from "../../style";
+import _ from "lodash";
 
 const OwnerUsername = ({ userList }) => {
   const { watch, errors } = useFormContext();
   const username = watch("username");
-  const existingUsernames = userList.map((user) => user.username);
+  const isAlreadyRegistered = (username) => {
+    const [registeredUser] = userList.filter((user) => user.username === username);
+    return !registeredUser || `Este email ya está registado a ${registeredUser.firstName} ${registeredUser.lastName}`;
+  };
+  const isError = !_.isEmpty(errors?.username);
 
   return (
     <>
@@ -15,7 +20,7 @@ const OwnerUsername = ({ userList }) => {
       <ErrorContainer>
         <ErrorMessage {...{ errors }} name="username" />
       </ErrorContainer>
-      <Controller as={TextField} type="email" name="username" defaultValue={username || ""} {...inputStyle} rules={{ required: "El email del dueño es obligatorio", validate: { exists: (value) => existingUsernames.indexOf(value) === -1 || "Este email ya está registrado" } }} />
+      <Controller as={TextField} type="email" name="username" defaultValue={username || ""} {...inputStyle} rules={{ required: true, validate: { exists: (username) => isAlreadyRegistered(username) } }} error={isError} />
     </>
   );
 };

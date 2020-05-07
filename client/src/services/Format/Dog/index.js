@@ -14,12 +14,15 @@ export const cardDataFilter = (element) => {
 };
 
 export const dogGeneralDisplay = (dog, language) => {
-  const character = dog.character.map((trait) => translate(trait, language, dog.sex));
+  const [character] = dog.character;
+  console.log("CHARACTER", character);
+  const localCharacter = character ? character.split(",").map((trait) => translate(trait, language, dog.sex)) : null;
+
   return {
     title: "general",
     content: [
       { value: dog.name, label: translate("name", language) },
-      { value: character.join(", "), label: translate("character", language) },
+      { value: localCharacter?.join(", "), label: translate("character", language) },
       { value: dog.chip, label: translate("chip", language) },
     ],
   };
@@ -41,7 +44,7 @@ export const dogSexDisplay = (dog, language) => {
 };
 
 export const dogMedicalDisplay = (dog, language) => {
-  const vaccineList = dog.vaccines.list?.map((vac) => translate(vac, language));
+  const vaccineList = dog.vaccines?.list?.map((vac) => translate(vac, language));
   if (vaccineList) {
     return { title: "medical", content: [{ value: vaccineList.join(", "), label: translate("vaccines", language) }] };
   } else {

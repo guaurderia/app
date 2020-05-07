@@ -1,4 +1,4 @@
-import React, { useEffect, forwardRef } from "react";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { useFormContext } from "react-hook-form";
 import { ThemeProvider } from "@material-ui/core/styles";
@@ -16,15 +16,13 @@ import CharacterInput from "./components/character";
 import VaccineInput from "./components/vaccines";
 
 const DogForm = ({ breedList, language, formContent, dogList }) => {
-  const methods = useFormContext();
-  const { reset, watch, errors } = methods;
-  const sex = watch("sex");
-  const fixed = watch("fixed");
+  const { reset, getValues, errors } = useFormContext();
+  const { sex, fixed } = getValues();
 
-  console.log("DOG FORM", watch(), errors);
+  console.log("DOG FORM", errors);
 
   useEffect(() => {
-    reset({ ...formContent.dog }, { ...formContent.errors });
+    reset({ ...formContent.dog });
   }, []);
 
   return (

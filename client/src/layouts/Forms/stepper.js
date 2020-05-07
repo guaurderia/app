@@ -51,7 +51,7 @@ function getStepContent(step, formContent) {
 
 const FormStepper = (props) => {
   const classes = useStyles();
-  const { watch, errors } = useFormContext();
+  const { watch, errors, triggerValidation } = useFormContext();
   const [activeStep, setActiveStep] = React.useState(0);
   const [formCompiler, setFormCompiler] = React.useState({});
   const [clientCreated, setClientCreated] = React.useState(false);
@@ -59,25 +59,23 @@ const FormStepper = (props) => {
   const steps = getSteps();
   const form = watch();
 
-  const handleNext = () => {
-    let canContinue = true;
+  console.log("ERRORS", errors);
 
-    switch (activeStep) {
-      case 0:
-        setFormCompiler({ ...formCompiler, dog: form, errors });
-        canContinue = true;
-        break;
-      case 1:
-        setFormCompiler({ ...formCompiler, owner: form });
-        canContinue = true;
-        break;
-      case 2:
-        setFormCompiler({ ...formCompiler, pass: form });
-        canContinue = handleSubmit({ ...formCompiler, pass: form });
-        break;
-    }
-    console.log(canContinue);
-    if (canContinue) {
+  const handleNext = async () => {
+    await triggerValidation();
+    if (_.isEmpty(errors)) {
+      switch (activeStep) {
+        case 0:
+          setFormCompiler({ ...formCompiler, dog: form });
+          break;
+        case 1:
+          setFormCompiler({ ...formCompiler, owner: form });
+          break;
+        case 2:
+          setFormCompiler({ ...formCompiler, pass: form });
+          handleSubmit({ ...formCompiler, pass: form });
+          break;
+      }
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
     }
   };

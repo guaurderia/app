@@ -3,11 +3,16 @@ import FormLabel from "@material-ui/core/FormLabel";
 import TextField from "@material-ui/core/TextField";
 import { Controller, useFormContext, ErrorMessage } from "react-hook-form";
 import { inputStyle, ErrorContainer } from "../../style";
+import _ from "lodash";
 
 const ChipInput = ({ dogList }) => {
   const { watch, errors } = useFormContext();
   const chip = watch("chip");
-  const existingChips = dogList.map((dog) => dog.chip);
+  const isAlreadyRegistered = (chip) => {
+    const [registeredChip] = dogList.filter((dog) => dog.chip === chip);
+    return !registeredChip || `Este chip ya está registado a ${registeredChip.name}`;
+  };
+  const isError = !_.isEmpty(errors?.chip);
 
   return (
     <>
@@ -15,7 +20,7 @@ const ChipInput = ({ dogList }) => {
       <ErrorContainer>
         <ErrorMessage {...{ errors }} name="chip" />
       </ErrorContainer>
-      <Controller as={TextField} name="chip" defaultValue={chip || ""} {...inputStyle} rules={{ required: "Indica el número de chip", validate: { exists: (value) => existingChips.indexOf(value) === -1 || "Chip ya existe" } }} />
+      <Controller as={TextField} name="chip" defaultValue={chip || ""} {...inputStyle} rules={{ required: true, validate: { exists: (value) => isAlreadyRegistered(value) } }} error={isError} />
     </>
   );
 };

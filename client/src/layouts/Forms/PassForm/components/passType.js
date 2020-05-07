@@ -8,8 +8,9 @@ import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 
 const PassTypeInput = ({ passTypeList }) => {
-  const { watch } = useFormContext();
+  const { watch, errors } = useFormContext();
   const passType = watch("passType");
+  const isError = !_.isEmpty(errors?.passType);
 
   return (
     <>
@@ -30,6 +31,7 @@ const PassTypeInput = ({ passTypeList }) => {
         rules={{ required: true }}
         defaultValue={passType || ""}
         {...inputStyle}
+        error={isError}
       />
     </>
   );
