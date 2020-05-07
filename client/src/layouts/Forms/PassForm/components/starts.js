@@ -7,18 +7,17 @@ import FormLabel from "@material-ui/core/FormLabel";
 import { formatDate } from "../../../../services/Format/Time";
 
 const StartsInput = () => {
-  const { watch, setValue, reset } = useFormContext();
-  const form = watch();
-  const starts = watch("starts") || DateTime.local();
-  const expires = watch("expires") || starts.plus({ months: 1 });
+  const { getValues, reset } = useFormContext();
+  const { starts } = getValues();
+  const expires = starts?.plus({ months: 1 }) || DateTime.local().plus({ months: 1 });
 
   useEffect(() => {
-    reset({ ...form, expires, starts });
-  }, []);
+    reset({ ...getValues(), expires });
+  }, [starts]);
 
   const handleDates = (date) => {
     const expires = date.plus({ months: 1 });
-    reset({ ...form, starts: date, expires });
+    reset({ ...getValues(), starts: date, expires });
   };
 
   return (

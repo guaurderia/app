@@ -22,7 +22,7 @@ const PassForm = ({ formContent }) => {
       <ThemeProvider theme={FormTheme}>
         <PassTypeInput />
         {type === "month" && <StartsInput />}
-        {type === "month" && <ExpiresDisplay expires={form.expires} />}
+        {type === "month" && <ExpiresDisplay />}
         {type === "day" && <CountDisplay />}
       </ThemeProvider>
     </Form>
