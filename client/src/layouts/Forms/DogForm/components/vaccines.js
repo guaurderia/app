@@ -48,13 +48,13 @@ const VaccineInput = ({ language }) => {
                 multiple
                 value={vaccines.list || []}
                 onChange={(e, child) => {
-                  const vaccine = child.props.value;
-                  const checked = vaccines.list?.indexOf(vaccine) > -1;
+                  const selected = child.props.value;
+                  const checked = vaccines.list?.indexOf(selected) > -1;
                   if (checked) {
-                    const newList = _.pull(vaccines.list, vaccine);
+                    const newList = _.pull(vaccines.list, selected);
                     setValue("vaccines", { ...vaccines, list: newList });
                   } else {
-                    setValue("vaccines", { ...vaccines, list: vaccines.list?.length ? [...vaccines.list, vaccine] : [vaccine] });
+                    setValue("vaccines", { ...vaccines, list: vaccines.list?.length ? [...vaccines.list, selected] : [selected] });
                   }
                 }}
                 renderValue={(selected) => {

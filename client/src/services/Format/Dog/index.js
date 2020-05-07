@@ -14,9 +14,9 @@ export const cardDataFilter = (element) => {
 };
 
 export const dogGeneralDisplay = (dog, language) => {
-  const [character] = dog.character;
+  const character = dog.character;
   console.log("CHARACTER", character);
-  const localCharacter = character ? character.split(",").map((trait) => translate(trait, language, dog.sex)) : null;
+  const localCharacter = character[0] ? character.map((trait) => translate(trait, language, dog.sex)) : null;
 
   return {
     title: "general",
