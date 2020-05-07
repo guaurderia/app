@@ -53,6 +53,7 @@ export const StepperButtonContainer = styled.div`
 
 export const SpinnerContainer = styled.div`
   display: flex;
+  justify-content: center;
   align-content: center;
 `;
 
