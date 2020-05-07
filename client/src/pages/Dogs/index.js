@@ -9,7 +9,7 @@ import _ from "lodash";
 import Sidebar from "../../layouts/Sidebar";
 import FormDisplayContext from "../../layouts/Forms/context";
 import Button from "@material-ui/core/Button";
-import { Link } from "@material-ui/core";
+import { Link, Backdrop } from "@material-ui/core";
 
 const DogsPage = (props) => {
   const [selected, setSelected] = useState({});
@@ -17,8 +17,6 @@ const DogsPage = (props) => {
   const [anchor, setAnchor] = useState(null);
   const contentLoaded = Boolean(props.dogList && props.attendanceList && props.passList && props.activeAttendanceList && props.breedList && props.passTypeList);
   const user = props.user;
-
-  console.log("LOAD DOG PAGE");
 
   useEffect(() => {
     props.getUser();

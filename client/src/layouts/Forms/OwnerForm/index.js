@@ -7,14 +7,16 @@ import OwnerLastName from "./components/lastName";
 import OwnerUsername from "./components/username";
 import OwnerMainPhone from "./components/mainPhone";
 import OwnerDni from "./components/dni";
+import { connect } from "react-redux";
 
-const OwnerForm = ({ formContent }) => {
+const OwnerForm = ({ formContent, userList }) => {
   const methods = useFormContext();
-  const { watch, reset } = methods;
-  const form = watch();
+  const { reset, errors } = methods;
+
+  console.log("OWNER FORM", errors);
 
   useEffect(() => {
-    reset(formContent.owner || {});
+    reset({ ...formContent.owner }, { errors: true });
   }, []);
 
   return (
@@ -22,7 +24,7 @@ const OwnerForm = ({ formContent }) => {
       <ThemeProvider theme={FormTheme}>
         <OwnerFirstName />
         <OwnerLastName />
-        <OwnerUsername />
+        <OwnerUsername {...{ userList }} />
         <OwnerMainPhone />
         <OwnerDni />
       </ThemeProvider>
@@ -30,4 +32,10 @@ const OwnerForm = ({ formContent }) => {
   );
 };
 
-export default OwnerForm;
+const mapStateToProps = (state) => {
+  return {
+    userList: state.user.list,
+  };
+};
+
+export default connect(mapStateToProps)(OwnerForm);

@@ -1,4 +1,4 @@
-import React, { useState, createRef, useEffect } from "react";
+import React from "react";
 import Popover from "@material-ui/core/Popover";
 import { withRouter } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
@@ -6,25 +6,29 @@ import FormStepper from "./stepper";
 import { useForm, FormContext } from "react-hook-form";
 import { useFormDisplay, useFormAnchor, useFormDisplaySetter } from "./context";
 
-const usePopoverStyles = makeStyles({
-  paper: {
+const useStyles = makeStyles((theme) => ({
+  backdropStyle: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: "#fff",
+  },
+  formStyle: {
     display: "flex",
     "& > *": {
       width: 500,
     },
   },
-});
+}));
 
 const FormLayout = withRouter(({ history }) => {
-  const methods = useForm();
-  const formClasses = usePopoverStyles();
+  const methods = useForm({ mode: "onBlur" });
+  const { backdropStyle, formStyle } = useStyles();
   const isOpen = useFormDisplay();
   const setIsOpen = useFormDisplaySetter();
   const anchorEl = useFormAnchor();
-  const { watch } = methods;
+  const { watch, errors } = methods;
   const form = watch();
 
-  console.log("FORM", form);
+  console.log(backdropStyle, formStyle);
 
   const handleClose = () => {
     setIsOpen(false);
@@ -43,7 +47,7 @@ const FormLayout = withRouter(({ history }) => {
     },
     onClose: handleClose,
     transitionDuration: 100,
-    classes: formClasses,
+    className: formStyle,
   };
 
   return (

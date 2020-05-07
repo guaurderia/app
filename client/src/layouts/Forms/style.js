@@ -9,6 +9,12 @@ const Form = styled.form`
   }
 `;
 
+export const ErrorContainer = styled.div`
+  color: red;
+  font-size: 12px;
+  text-transform: uppercase;
+`;
+
 export const FormTheme = createMuiTheme({
   overrides: {
     MuiFormLabel: {

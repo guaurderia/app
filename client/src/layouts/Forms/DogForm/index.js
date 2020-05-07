@@ -15,14 +15,16 @@ import HeatInput from "./components/heat";
 import CharacterInput from "./components/character";
 import VaccineInput from "./components/vaccines";
 
-const DogForm = ({ breedList, language, formContent }) => {
+const DogForm = ({ breedList, language, formContent, dogList }) => {
   const methods = useFormContext();
-  const { reset, watch } = methods;
+  const { reset, watch, errors } = methods;
   const sex = watch("sex");
   const fixed = watch("fixed");
 
+  console.log("DOG FORM", watch(), errors);
+
   useEffect(() => {
-    reset(formContent.dog || {});
+    reset({ ...formContent.dog }, { ...formContent.errors });
   }, []);
 
   return (
@@ -31,7 +33,7 @@ const DogForm = ({ breedList, language, formContent }) => {
         <SexInput />
         <DogNameInput />
         <BreedInput {...{ breedList }} />
-        <ChipInput />
+        <ChipInput {...{ dogList }} />
         <FixedInput />
         {!fixed && sex === "female" && <HeatInput />}
         {sex && <CharacterInput {...{ language }} />}
@@ -45,6 +47,7 @@ const mapStateToProps = (state) => {
   return {
     language: state.language.set,
     breedList: state.breed.list,
+    dogList: state.dog.list,
   };
 };
 
