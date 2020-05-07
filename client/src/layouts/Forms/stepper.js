@@ -1,4 +1,4 @@
-import React from "react";
+import React, { createRef, forwardRef } from "react";
 import { connect } from "react-redux";
 import { postData, setData } from "../../redux/actions";
 import { useFormContext } from "react-hook-form";
@@ -49,11 +49,6 @@ function getStepContent(step, formContent) {
   }
 }
 
-function hasError(error, input) {
-  if (input in error) return "error";
-  return "";
-}
-
 const FormStepper = (props) => {
   const classes = useStyles();
   const { watch, errors } = useFormContext();
@@ -63,8 +58,6 @@ const FormStepper = (props) => {
   const setIsOpen = useFormDisplaySetter();
   const steps = getSteps();
   const form = watch();
-
-  console.log("FORMCOMPITER IN STEPPER", formCompiler);
 
   const handleNext = () => {
     let canContinue = true;
