@@ -104,14 +104,10 @@ const FormStepper = (props) => {
       const dog = { ...form.dog, username: form.owner.username };
       const owner = { ...form.owner, roll: "owner", password: "1234", dogChip: dog.chip };
       const pass = { ...form.pass, purchased: DateTime.local(), passType: form.pass.passType._id, dogChip: dog.chip };
-      const [newDogList, newUserList, newPassList] = Promise.all([props.createDog(dog), props.createOwner(owner), props.createPass(pass)]);
-      const newDog = newDogList.filter((dog) => dog.chip === form.dog.chip);
-      const newOwner = newUserList.filter((user) => user.username === form.owner.username);
-      const updatedDog = { owner: newOwner._id };
-      const updatedPass = { dog: newDog._id };
-      await props.updateDog(updatedDog);
-      await props.updatePass(updatedPass);
-      setClientCreated(true);
+      Promise.all([props.createDog(dog), props.createOwner(owner), props.createPass(pass)]).then((res) => {
+        setClientCreated(true);
+        setIsOpen(false);
+      });
       return true;
     } else return false;
   };
@@ -132,14 +128,7 @@ const FormStepper = (props) => {
       <div>
         {activeStep === steps.length ? (
           <div>
-            {clientCreated ? (
-              <>
-                <Typography className={classes.instructions}>Registro completado</Typography>
-                <Button onClick={handleReset} className={classes.button}>
-                  Cerrar
-                </Button>
-              </>
-            ) : (
+            {!clientCreated && (
               <SpinnerContainer>
                 <CircularProgress />
               </SpinnerContainer>
