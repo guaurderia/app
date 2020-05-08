@@ -209,7 +209,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     postAttendanceCreate: (obj) => dispatch(postData("/attendance/create", "attendance", obj, "active")),
-    postAttendanceUpdate: (obj) => dispatch(postData(`/attendance/update/?dog=${obj.dog}&confirmed=false`, "attendance", obj, "active")),
+    postAttendanceUpdate: (obj) => dispatch(postData(`/attendance/update/?dog=${obj.dog}&confirmed=false`, "attendance", obj, "list")),
     postPassUpdate: (obj) => dispatch(postData(`/pass/update/?_id=${obj.id}`, "pass", obj, "list")),
     setPassList: (newList) => dispatch(setData("pass", newList, "list")),
     deleteAttendance: (id) => dispatch(getData(`/attendance/delete/${id}`, "attendance", "list")),
