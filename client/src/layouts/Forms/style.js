@@ -9,10 +9,12 @@ const Form = styled.form`
   }
 `;
 
-export const ErrorContainer = styled.div`
+export const Error = styled.p`
   color: red;
-  font-size: 12px;
-  text-transform: uppercase;
+  ::before {
+    display: inline;
+    content: "⚠ ";
+  }
 `;
 
 export const FormTheme = createMuiTheme({

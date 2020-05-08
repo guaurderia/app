@@ -7,6 +7,7 @@ import { DateTime } from "luxon";
 import { formatTime, activeTime } from "../../services/Format/Time";
 import { getPass, isValidPass, createDayPass } from "../../services/Logic/Pass";
 import ErrorMessage from "../Error";
+import Popover from "@material-ui/core/Popover";
 
 const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, postPassUpdate, activeAttendance, passList, setPassList }) => {
   const [attendance, setAttendance] = useState();
@@ -15,8 +16,17 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
   const [activePasses, setActivePasses] = useState();
   const [selectedPass, setSelectedPass] = useState();
   const [error, setError] = useState();
+  const [anchorEl, setAnchorEl] = useState(null);
 
-  console.log("LOAD DOG ITEM");
+  const handlePopoverOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
+
+  const openPopover = Boolean(anchorEl);
 
   useEffect(() => {
     if (activeAttendance.length) {
@@ -170,8 +180,23 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
         <PassContainer>
           <ShowPasses />
         </PassContainer>
-        <TimeContainer item xs={2} style={{ display: "flex", justifyContent: "space-around" }}>
+        <TimeContainer item xs={2} style={{ display: "flex", justifyContent: "space-around" }} onClick={handlePopoverOpen}>
           {attendance?.startTime && <ShowTime time={attendance.startTime} />}
+          <Popover
+            open={openPopover}
+            anchorEl={anchorEl}
+            onClose={handlePopoverClose}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "center",
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "center",
+            }}
+          >
+            <button>The content of the Popover.</button>
+          </Popover>
         </TimeContainer>
         <TimeContainer item xs={2}>
           {attendance?.endTime && <ShowTime time={attendance?.endTime} />}
