@@ -8,8 +8,10 @@ import { formatTime, activeTime } from "../../services/Format/Time";
 import { getPass, isValidPass, createDayPass } from "../../services/Logic/Pass";
 import ErrorMessage from "../Error";
 import TimeEditor from "./components/TimeEditor";
+import { CircularProgress } from "@material-ui/core";
 
-const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, postPassUpdate, activeAttendance, passList, setPassList }) => {
+const DogItem = (props) => {
+  const { dog, urlParams, postAttendanceCreate, postAttendanceUpdate, postPassUpdate, activeAttendance, passList, setPassList, deleteAttendance, attendanceList, attendanceLoading, getActiveAttendances } = props;
   const [attendance, setAttendance] = useState();
   const [button, setButton] = useState("start");
   const [timer, setTimer] = useState({ active: false });
@@ -29,6 +31,7 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
         const endTime = dogActiveAttendance.endTime;
 
         setAttendance({ ...dogActiveAttendance, dog: dog._id });
+        console.log("ATT IN EFFECT", attendance);
 
         if (endTime) {
           setButton("confirm");
@@ -41,7 +44,7 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
         setAttendance(null);
       }
     }
-  }, []);
+  }, [activeAttendance]);
 
   useEffect(() => {
     setActivePasses(() => {
@@ -63,7 +66,7 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
     });
   }, [attendance, passList]);
 
-  const handleClick = () => {
+  const handleClick = async () => {
     switch (button) {
       case "start":
         const start = { dog: dog._id, startTime: DateTime.local().toJSON(), confirmed: false };
@@ -116,6 +119,14 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
     if (time === "end") setOpenEditor({ end: true });
   };
 
+  const handleDeleteAttendance = async () => {
+    console.log("ATT IN DELETE", attendance);
+    deleteAttendance(attendance._id);
+    setTimer({ active: false });
+    setButton("start");
+    setAttendance();
+  };
+
   function checkOut(pass) {
     if (pass) {
       const { id } = pass;
@@ -157,11 +168,10 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
     return dog.owner.map((owner) => <OwnerName key={owner.username}>{`${owner.firstName} ${owner.lastName}`}</OwnerName>);
   };
 
-  const selected = () => (urlParams === dog._id ? "active" : "");
   const active = () => (timer.active ? "active-attendance" : "");
   const ended = () => (button === "confirm" ? "ended-attendance" : "");
   return (
-    <ItemStyle className={`list-group-item ${selected()} ${active()} ${ended()}`} key={dog._id} to={`/dogs/show/${dog._id}`}>
+    <ItemStyle className={`list-group-item ${active()} ${ended()}`} key={dog._id} to={`/dogs/show/${dog._id}`}>
       <DogItemContentGrid container>
         <DogName className="dog-name">
           {dog.name}
@@ -170,6 +180,7 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
         <DogBreedDisplay>{dog.breed?.name}</DogBreedDisplay>
         <AttendanceButton>
           <button onClick={handleClick}>{button}</button>
+          {attendance && <button onClick={handleDeleteAttendance}>Cancelar</button>}
           {error && <ErrorMessage msg={error} />}
         </AttendanceButton>
         <PassContainer>
@@ -189,17 +200,19 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
 const mapStateToProps = (state) => {
   return {
     activeAttendance: state.attendance.active,
+    attendanceList: state.attendance.list,
     passList: state.pass.list,
+    attendanceLoading: state.attendance.loading,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    postAttendanceCreate: (obj) => dispatch(postData("/attendance/create", "attendance", obj, "list")),
-    postAttendanceUpdate: (obj) => dispatch(postData(`/attendance/update/?dog=${obj.dog}&confirmed=false`, "attendance", obj, "list")),
+    postAttendanceCreate: (obj) => dispatch(postData("/attendance/create", "attendance", obj, "active")),
+    postAttendanceUpdate: (obj) => dispatch(postData(`/attendance/update/?dog=${obj.dog}&confirmed=false`, "attendance", obj, "active")),
     postPassUpdate: (obj) => dispatch(postData(`/pass/update/?_id=${obj.id}`, "pass", obj, "list")),
-    getAttendance: () => dispatch(getData(`/attendance/show/all`, "attendance", "list")),
     setPassList: (newList) => dispatch(setData("pass", newList, "list")),
+    deleteAttendance: (id) => dispatch(getData(`/attendance/delete/${id}`, "attendance", "list")),
   };
 };
 
