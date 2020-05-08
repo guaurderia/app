@@ -7,7 +7,7 @@ import { DateTime } from "luxon";
 import { formatTime, activeTime } from "../../services/Format/Time";
 import { getPass, isValidPass, createDayPass } from "../../services/Logic/Pass";
 import ErrorMessage from "../Error";
-import Popover from "@material-ui/core/Popover";
+import TimeEditor from "./components/TimeEditor";
 
 const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, postPassUpdate, activeAttendance, passList, setPassList }) => {
   const [attendance, setAttendance] = useState();
@@ -16,17 +16,7 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
   const [activePasses, setActivePasses] = useState();
   const [selectedPass, setSelectedPass] = useState();
   const [error, setError] = useState();
-  const [anchorEl, setAnchorEl] = useState(null);
-
-  const handlePopoverOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handlePopoverClose = () => {
-    setAnchorEl(null);
-  };
-
-  const openPopover = Boolean(anchorEl);
+  const [openEditor, setOpenEditor] = useState({ start: false, end: false });
 
   useEffect(() => {
     if (activeAttendance.length) {
@@ -38,7 +28,7 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
         const startTime = dogActiveAttendance.startTime;
         const endTime = dogActiveAttendance.endTime;
 
-        setAttendance(dogActiveAttendance);
+        setAttendance({ ...dogActiveAttendance, dog: dog._id });
 
         if (endTime) {
           setButton("confirm");
@@ -121,6 +111,11 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
     createDayPass(dog, attendance).then((res) => setPassList(res.data));
   };
 
+  const handleTimeEditor = (time) => {
+    if (time === "start") setOpenEditor({ start: true });
+    if (time === "end") setOpenEditor({ end: true });
+  };
+
   function checkOut(pass) {
     if (pass) {
       const { id } = pass;
@@ -180,26 +175,11 @@ const DogItem = ({ dog, urlParams, postAttendanceCreate, postAttendanceUpdate, p
         <PassContainer>
           <ShowPasses />
         </PassContainer>
-        <TimeContainer item xs={2} style={{ display: "flex", justifyContent: "space-around" }} onClick={handlePopoverOpen}>
-          {attendance?.startTime && <ShowTime time={attendance.startTime} />}
-          <Popover
-            open={openPopover}
-            anchorEl={anchorEl}
-            onClose={handlePopoverClose}
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "center",
-            }}
-            transformOrigin={{
-              vertical: "top",
-              horizontal: "center",
-            }}
-          >
-            <button>The content of the Popover.</button>
-          </Popover>
+        <TimeContainer item xs={2} style={{ display: "flex", justifyContent: "space-around" }} onClick={() => handleTimeEditor("start")}>
+          {attendance?.startTime && openEditor.start ? <TimeEditor time={attendance.startTime} value="startTime" {...{ attendance, setAttendance, setOpenEditor }} /> : attendance?.startTime && <ShowTime time={attendance.startTime} />}
         </TimeContainer>
-        <TimeContainer item xs={2}>
-          {attendance?.endTime && <ShowTime time={attendance?.endTime} />}
+        <TimeContainer item xs={2} onClick={() => handleTimeEditor("end")}>
+          {attendance?.endTime && openEditor.end ? <TimeEditor time={attendance.endTime} value="endTime" {...{ attendance, setAttendance, setOpenEditor }} /> : attendance?.endTime && <ShowTime time={attendance.endTime} />}
         </TimeContainer>
       </DogItemContentGrid>
     </ItemStyle>
