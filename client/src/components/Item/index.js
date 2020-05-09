@@ -8,7 +8,11 @@ import { formatTime, activeTime } from "../../services/Format/Time";
 import { getPass, isValidPass, createDayPass } from "../../services/Logic/Pass";
 import ErrorMessage from "../Error";
 import TimeEditor from "./components/TimeEditor";
-import { CircularProgress } from "@material-ui/core";
+import ButtonGroup from "@material-ui/core/ButtonGroup";
+import Button from "@material-ui/core/Button";
+import AlarmOffIcon from "@material-ui/icons/AlarmOff";
+import ClearIcon from "@material-ui/icons/Clear";
+import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 
 const DogItem = (props) => {
   const { dog, urlParams, postAttendanceCreate, postAttendanceUpdate, postPassUpdate, activeAttendance, passList, setPassList, deleteAttendance, attendanceList, attendanceLoading, getActiveAttendances } = props;
@@ -96,6 +100,12 @@ const DogItem = (props) => {
           setError("Tienes que selectionar un bono");
         }
         break;
+      case "cancel?":
+        deleteAttendance(attendance._id);
+        setTimer({ active: false });
+        setButton("start");
+        setAttendance();
+        break;
     }
   };
 
@@ -119,12 +129,9 @@ const DogItem = (props) => {
     if (time === "end") setOpenEditor({ end: true });
   };
 
-  const handleDeleteAttendance = async () => {
-    console.log("ATT IN DELETE", attendance);
-    deleteAttendance(attendance._id);
-    setTimer({ active: false });
-    setButton("start");
-    setAttendance();
+  const handleConfirmDelete = () => {
+    if (attendance?.endTime) setButton("confirm");
+    if (attendance?.startTime) setButton("end");
   };
 
   function checkOut(pass) {
@@ -178,11 +185,17 @@ const DogItem = (props) => {
           <ShowOwnerName />
         </DogName>
         <DogBreedDisplay>{dog.breed?.name}</DogBreedDisplay>
-        <AttendanceButton>
-          <button onClick={handleClick}>{button}</button>
-          {attendance && <button onClick={handleDeleteAttendance}>Cancelar</button>}
-          {error && <ErrorMessage msg={error} />}
-        </AttendanceButton>
+        <ClickAwayListener onClickAway={handleConfirmDelete}>
+          <ButtonGroup>
+            <Button onClick={handleClick}>{button}</Button>
+            {attendance && (
+              <Button onClick={() => setButton("cancel?")} variant="outlined">
+                <ClearIcon />
+              </Button>
+            )}
+            {error && <ErrorMessage msg={error} />}
+          </ButtonGroup>
+        </ClickAwayListener>
         <PassContainer>
           <ShowPasses />
         </PassContainer>
