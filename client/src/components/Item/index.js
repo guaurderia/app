@@ -4,15 +4,16 @@ import { connect } from "react-redux";
 import { getData, postData, setData } from "../../redux/actions";
 import _ from "lodash";
 import { DateTime } from "luxon";
-import { formatTime, activeTime } from "../../services/Format/Time";
+import { formatTime, activeTime, formatPassExpires } from "../../services/Format/Time";
 import { getPass, isValidPass, createDayPass } from "../../services/Logic/Pass";
 import ErrorMessage from "../Error";
 import TimeEditor from "./components/TimeEditor";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import Button from "@material-ui/core/Button";
-import AlarmOffIcon from "@material-ui/icons/AlarmOff";
 import ClearIcon from "@material-ui/icons/Clear";
-import ClickAwayListener from "@material-ui/core/ClickAwayListener";
+import AutorenewIcon from "@material-ui/icons/Autorenew";
+import Brightness5Icon from "@material-ui/icons/Brightness5";
+import Brightness6Icon from "@material-ui/icons/Brightness6";
 
 const DogItem = (props) => {
   const { dog, urlParams, postAttendanceCreate, postAttendanceUpdate, postPassUpdate, activeAttendance, passList, setPassList, deleteAttendance, attendanceList, attendanceLoading, getActiveAttendances } = props;
@@ -55,18 +56,7 @@ const DogItem = (props) => {
       const dogPasses = passList.filter((pass) => {
         return pass.dog?.chip === dog.chip;
       });
-      const active = getPass(dogPasses, true);
-      if (attendance) {
-        const validPasses = isValidPass(attendance, active);
-        const selectedIsValid = validPasses?.some((pass) => {
-          return selectedPass?.id === pass.id;
-        });
-        if (!selectedIsValid) setSelectedPass();
-        return validPasses;
-      } else {
-        setSelectedPass();
-        return active;
-      }
+      return getPass(dogPasses, true);
     });
   }, [attendance, passList]);
 
@@ -100,7 +90,7 @@ const DogItem = (props) => {
           setError("Tienes que selectionar un bono");
         }
         break;
-      case "cancel?":
+      case "cancel":
         deleteAttendance(attendance._id);
         setTimer({ active: false });
         setButton("start");
@@ -129,9 +119,11 @@ const DogItem = (props) => {
     if (time === "end") setOpenEditor({ end: true });
   };
 
-  const handleConfirmDelete = () => {
-    if (attendance?.endTime) setButton("confirm");
-    if (attendance?.startTime) setButton("end");
+  const handleCancelToggle = () => {
+    if (button === "cancel") {
+      if (attendance.endTime) setButton("confirm");
+      else setButton("end");
+    } else setButton("cancel");
   };
 
   function checkOut(pass) {
@@ -145,28 +137,30 @@ const DogItem = (props) => {
   }
 
   const ShowPasses = () => {
-    let selected = "";
     if (activePasses?.length) {
       return activePasses.map((pass, i) => {
+        let selected = pass.id === selectedPass?.id ? "outlined" : "text";
+        let valid = isValidPass(attendance, pass);
+        console.log(pass, valid);
+        let hours = pass.hours > 6 ? <Brightness5Icon /> : <Brightness6Icon />;
         if (pass.type === "day") {
-          selected = pass.id === selectedPass?.id ? "selected" : "";
           return (
-            <PassElement key={i} onClick={handlePassSelection(pass)} className={selected}>
-              {pass.name} {pass.remainingCount}
-            </PassElement>
+            <Button key={i} disabled={!valid} onClick={handlePassSelection(pass)} variant={selected}>
+              {hours} DIA ({pass.remainingCount})
+            </Button>
           );
         }
         if (pass.type === "month") {
-          selected = pass.id === selectedPass?.id ? "selected" : "";
+          let expiresDate = formatPassExpires(pass.expires);
           return (
-            <PassElement key={i} onClick={handlePassSelection(pass)} className={selected}>
-              {pass.name} (expira {pass.expires})
-            </PassElement>
+            <Button key={i} disabled={!valid} onClick={handlePassSelection(pass)} variant={selected}>
+              {hours} MES ({expiresDate})
+            </Button>
           );
         }
       });
     } else if (attendance?.endTime) {
-      return <PassElement onClick={handlePassCreation}>Crea un pase de día</PassElement>;
+      return <Button onClick={handlePassCreation}>+ DIA</Button>;
     }
     return <></>;
   };
@@ -185,17 +179,15 @@ const DogItem = (props) => {
           <ShowOwnerName />
         </DogName>
         <DogBreedDisplay>{dog.breed?.name}</DogBreedDisplay>
-        <ClickAwayListener onClickAway={handleConfirmDelete}>
-          <ButtonGroup>
-            <Button onClick={handleClick}>{button}</Button>
-            {attendance && (
-              <Button onClick={() => setButton("cancel?")} variant="outlined">
-                <ClearIcon />
-              </Button>
-            )}
-            {error && <ErrorMessage msg={error} />}
-          </ButtonGroup>
-        </ClickAwayListener>
+        <ButtonGroup>
+          <Button onClick={handleClick}>{button}</Button>
+          {attendance && (
+            <Button onClick={handleCancelToggle} variant="outlined">
+              <AutorenewIcon />
+            </Button>
+          )}
+          {error && <ErrorMessage msg={error} />}
+        </ButtonGroup>
         <PassContainer>
           <ShowPasses />
         </PassContainer>
