@@ -17,3 +17,8 @@ export const formatDate = (date, language) => {
   if (format.includes("Invalid")) return undefined;
   else return format;
 };
+
+export const formatPassExpires = (date) => {
+  console.log("DATE IN FORMAT", date);
+  return DateTime.fromISO(date).toFormat("dd/LL");
+};

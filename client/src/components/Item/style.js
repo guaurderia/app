@@ -25,7 +25,7 @@ export const PassContainer = styled.div`
   width: 300px;
 `;
 
-export const ItemStyle = styled(Link)`
+export const ItemStyle = styled.div`
   &.active {
     background: #f7f7f7;
     color: black;

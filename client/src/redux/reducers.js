@@ -11,6 +11,7 @@ export const reducer = (state = initialState, action) => {
     case `REQUEST_${name}`:
       return {
         ...state,
+        loading: true,
       };
     case `SUCCESS_${name}`:
       return {

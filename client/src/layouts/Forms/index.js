@@ -11,7 +11,7 @@ const Transition = forwardRef((props, ref) => {
 });
 
 const FormLayout = withRouter(({ history }) => {
-  const methods = useForm({ mode: "onChange" });
+  const methods = useForm({ mode: "onChange", validateCriteriaMode: "all" });
   const isOpen = useFormDisplay();
   const setIsOpen = useFormDisplaySetter();
 

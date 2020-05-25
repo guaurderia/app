@@ -4,6 +4,7 @@ require("../models/Breed.model");
 const { asyncController } = require("../middleware/asyncController");
 const { isLoggedIn } = require("../middleware/auth/isLogged");
 const User = require("../models/User.model");
+const Attendance = require("../models/Attendance.model");
 
 const crudGenerator = (
   Model,
@@ -34,8 +35,13 @@ const crudGenerator = (
       } else {
         try {
           await Model.create(data);
-          const list = await Model.find().populate(populateFields);
-          return res.json(list);
+          if (Model === Attendance) {
+            const active = await Model.find({ confirmed: false }).populate(populateFields);
+            return res.json(active);
+          } else {
+            const list = await Model.find().populate(populateFields);
+            return res.json(list);
+          }
         } catch (err) {
           if (err.name == "ValidationError") {
             const keys = Object.keys(err.errors);
@@ -76,12 +82,11 @@ const crudGenerator = (
 
   router.get(
     "/delete/:id",
-    asyncController(async (req, res, next) => {
+    asyncController(async (req, res) => {
       const { id } = req.params;
-      const obj = await Model.findByIdAndRemove(id);
-      const name = Object.values(dataPicker(displayName, obj));
-      console.log(name);
-      return res.json(`${name} has been deleted from ${Model.modelName} db`);
+      await Model.findByIdAndRemove(id);
+      const list = await Model.find();
+      return res.json(list);
     })
   );
   return router;

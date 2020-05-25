@@ -33,8 +33,8 @@ export const getPass = (passes, active) => {
         };
       }
       if (type === "month") {
-        const starts = formatDate(pass.starts);
-        const expires = formatDate(pass.expires);
+        const starts = pass.starts;
+        const expires = pass.expires;
         return {
           ...basic,
           starts,
@@ -46,15 +46,14 @@ export const getPass = (passes, active) => {
   }
 };
 
-export const isValidPass = (attendance, passes = null) => {
-  const timeISO = activeTime(attendance.startTime, attendance.endTime);
-  const totalMinutes = Duration.fromISO(timeISO).as("minutes");
-
-  if (passes?.length) {
-    return passes.filter((pass) => {
-      const inTime = totalMinutes - pass.hours * 60 > 0 ? false : true;
-      return inTime;
-    });
+export const isValidPass = (attendance, pass = null) => {
+  if (attendance) {
+    const timeISO = activeTime(attendance.startTime, attendance.endTime);
+    const totalMinutes = Duration.fromISO(timeISO).as("minutes");
+    const inTime = totalMinutes - pass.hours * 60 > 0 ? false : true;
+    return inTime;
+  } else {
+    return false;
   }
 };
 

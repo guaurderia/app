@@ -1,6 +1,6 @@
 [
   {
-    "name": "jornada completa mensual",
+    "name": "Completa Mes",
     "type": "month",
     "duration": 1,
     "hours": 12,
@@ -8,7 +8,7 @@
     "overtime-rate": 10
   },
   {
-    "name": "jornada media mensual",
+    "name": "Media Mes",
     "type": "month",
     "duration": 1,
     "hours": 6,
@@ -16,7 +16,7 @@
     "overtime-rate": 10
   },
   {
-    "name": "jornada completa dia",
+    "name": "Completa Dia",
     "type": "day",
     "duration": 10,
     "hours": 12,
@@ -24,7 +24,7 @@
     "overtime-rate": 10
   },
   {
-    "name": "jornada media dia",
+    "name": "Media Dia",
     "type": "day",
     "duration": 10,
     "hours": 6,
@@ -32,7 +32,7 @@
     "overtime-rate": 10
   },
   {
-    "name": "jornada completa suelto",
+    "name": "Completa Suelto",
     "type": "day",
     "duration": 1,
     "hours": 12,
@@ -40,7 +40,7 @@
     "overtime-rate": 10
   },
   {
-    "name": "jornada media suelto",
+    "name": "Media Suelto",
     "type": "day",
     "duration": 1,
     "hours": 6,

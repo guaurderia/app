@@ -28,7 +28,7 @@ router.use(
   isLoggedIn("staff"),
   crudGenerator(Pass, "_id", "_id", {
     createProtectFields: [],
-    populateFields: ["dog", "owner", "passType", "creator"],
+    populateFields: ["dog", "passType", "creator"],
     extraFieldsCreate: (req) => ({ creator: req.user._id }),
   })
 );
