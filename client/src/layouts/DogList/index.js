@@ -4,9 +4,9 @@ import { connect } from "react-redux";
 import { getData } from "../../redux/actions";
 import { DateTime } from "luxon";
 import _ from "lodash";
-import ActiveTime from "../../components/ActiveTime";
-import AttendanceButton from "../../components/AttendanceButton";
-import PassButton from "../../components/PassButton";
+import AttendanceTime from "./components/AttendanceTime";
+import AttendanceButton from "./components/AttendanceButton";
+import PassButton from "./components/PassButton";
 
 const DogList = ({ getDogList, getActivePasses, getActiveAttendances, dogList, activePasses, activeAttendances }) => {
   const dataIsLoaded = activeAttendances && activePasses && dogList;
@@ -31,7 +31,7 @@ const DogList = ({ getDogList, getActivePasses, getActiveAttendances, dogList, a
               })}
             </PassContainer>
             {activeAttendances.map((attendance, key) => {
-              if (attendance.dog.chip === dog.chip) return <ActiveTime startTime={attendance?.startTime} endTime={attendance?.endTime} key={`item-key-${key}`} />;
+              if (attendance.dog.chip === dog.chip) return <AttendanceTime startTime={attendance?.startTime} endTime={attendance?.endTime} key={`item-key-${key}`} />;
             })}
           </DogItemContentGrid>
         ))}

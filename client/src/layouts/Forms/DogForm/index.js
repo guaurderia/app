@@ -6,14 +6,14 @@ import "react-datepicker/dist/react-datepicker.css";
 import _ from "lodash";
 import { postData } from "../../../redux/actions";
 import Form, { FormTheme } from "../style";
-import SexInput from "./components/sex";
-import DogNameInput from "./components/name";
-import BreedInput from "./components/breed";
-import ChipInput from "./components/chip";
-import FixedInput from "./components/fixed";
-import HeatInput from "./components/heat";
-import CharacterInput from "./components/character";
-import VaccineInput from "./components/vaccines";
+import SexInput from "./components/SexInput";
+import DogNameInput from "./components/DogNameInput";
+import BreedInput from "./components/BreedInput";
+import ChipInput from "./components/ChipInput";
+import FixedInput from "./components/FixedInput";
+import HeatInput from "./components/HeatInput";
+import CharacterInput from "./components/CharacterInput";
+import VaccineInput from "./components/VaccineInput";
 
 const DogForm = ({ breedList, language, formContent, dogList }) => {
   const { reset, getValues, errors } = useFormContext();

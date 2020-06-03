@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { postData } from "../../redux/actions";
-import { translate } from "../../services/Language";
+import { postData } from "../../../redux/actions";
+import { translate } from "../../../services/Language";
 import { DateTime } from "luxon";
 
 const AttendanceButton = ({ dog, activeAttendances, selectedPasses, postAttendanceCreate, postAttendanceUpdate }) => {

@@ -1,8 +1,8 @@
 import React from "react";
-import { formatTime } from "../../services/Format/Time";
+import { formatTime } from "../../../services/Format/Time";
 import PropTypes from "prop-types";
 
-const ActiveTime = ({ startTime, endTime }) => {
+const AttendanceTime = ({ startTime, endTime }) => {
   const startTimeFormat = formatTime(startTime);
   const endTimeFormat = formatTime(endTime);
 
@@ -14,9 +14,9 @@ const ActiveTime = ({ startTime, endTime }) => {
   );
 };
 
-ActiveTime.propTypes = {
+AttendanceTime.propTypes = {
   startTime: PropTypes.string,
   endTime: PropTypes.string,
 };
 
-export default ActiveTime;
+export default AttendanceTime;

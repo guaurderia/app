@@ -5,7 +5,7 @@ import { DateTime } from "luxon";
 import { postData } from "../../../redux/actions";
 import { connect } from "react-redux";
 
-const TimeEditor = ({ time, value, attendance, setAttendance, setOpenEditor, postAttendanceUpdate }) => {
+const AttendanceEditor = ({ time, value, attendance, setAttendance, setOpenEditor, postAttendanceUpdate }) => {
   const { register, handleSubmit } = useForm();
   const dateFormat = formatTime(time);
   const onSubmit = (data) => {
@@ -30,4 +30,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(null, mapDispatchToProps)(TimeEditor);
+export default connect(null, mapDispatchToProps)(AttendanceEditor);

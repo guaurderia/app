@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import { postData, getData } from "../../redux/actions";
 import Logo from "../../theme/logo";
 import { LoginForm, LoginFormContainer } from "./style";
-import FormLabel from "../../components/Label/FormLabel";
+import FormLabel from "@material-ui/core/FormLabel";
 
 const LoginPage = withRouter(({ history, login, getUser, user }) => {
   const { register, handleSubmit } = useForm();

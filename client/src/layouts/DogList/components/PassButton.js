@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { getData, postData, setData } from "../../redux/actions";
+import { getData, postData, setData } from "../../../redux/actions";
 import Brightness5Icon from "@material-ui/icons/Brightness5";
 import Brightness6Icon from "@material-ui/icons/Brightness6";
-import { createDayPass } from "../../services/Logic/Pass";
-import { formatPassExpires } from "../../services/Format/Time";
+import { createDayPass } from "../../../services/Logic/Pass";
+import { formatPassExpires } from "../../../services/Format/Time";
 import { DateTime, Duration } from "luxon";
 
 export const activeTime = (start, end = null) => {

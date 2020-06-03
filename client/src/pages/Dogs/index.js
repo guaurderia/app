@@ -3,10 +3,9 @@ import { Route, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import { getData, setData, getBreed } from "../../redux/actions";
 import Navbar from "../../layouts/Navbar";
-import DogList from "../../layouts/List";
+import DogList from "../../layouts/DogList";
 import { GridContainer, DogsContainer } from "./style";
 import _ from "lodash";
-import Sidebar from "../../layouts/Sidebar";
 import FormDisplayContext from "../../layouts/Forms/context";
 import Button from "@material-ui/core/Button";
 import { Link, Backdrop } from "@material-ui/core";
@@ -57,7 +56,7 @@ const DogsPage = (props) => {
                   </Button>
                 </Link>
                 <Route path="/dogs/show/:id">
-                  <Sidebar />
+                  <div />
                 </Route>
                 <DogList />
               </GridContainer>
