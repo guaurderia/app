@@ -13,7 +13,6 @@ const Sidebar = ({ dogList, attendanceList, activeAttendance, passList, language
   const [pass, setPass] = useState();
 
   useEffect(() => {
-    console.log("LOAD SIDEBAR EFFECTS", dogList, attendanceList, passList);
     setDog(_.head(dogList.filter((d) => d.id === id)));
     setAttendance(attendanceList.filter((att) => att.dog.id === id));
     setPass(passList.filter((pass) => pass.dog.id === id));

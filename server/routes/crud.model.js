@@ -5,11 +5,11 @@ const { asyncController } = require("../middleware/asyncController");
 const { isLoggedIn } = require("../middleware/auth/isLogged");
 const User = require("../models/User.model");
 const Attendance = require("../models/Attendance.model");
+const Pass = require("../models/Pass.model");
 
 const crudGenerator = (
   Model,
   uniqueIndex,
-  displayName,
   { createProtectFields, extraFieldsCreate, populateFields } = {
     createProtectFields: [],
     extraFieldsCreate: () => ({}),
@@ -60,16 +60,35 @@ const crudGenerator = (
     return res.json(objs);
   });
 
+  router.get("/show/active", async (req, res) => {
+    if (Model === Attendance) {
+      const active = await Model.find({ confirmed: false }).populate(populateFields);
+      res.json(active);
+    }
+    if (Model === Pass) {
+      const active = await Model.find({ $or: [{ expires: { $gt: new Date() } }, { count: { $gt: 0 } }] }).populate(populateFields);
+      res.json(active);
+    }
+  });
   router.get("/show/?", async (req, res) => {
     const query = req.query;
     let data;
     if (_.has(query, "me")) {
       data = await Model.findById(req.user._id);
       res.json(data);
-    } else {
+    } else if (_.has(query, "expires")) {
       data = await Model.find(query).populate(populateFields);
+      console.log(query, data);
       res.json(data);
     }
+  });
+
+  router.post("/update/active/?", async (req, res) => {
+    const query = req.query;
+    const data = dataCompiler(req, req.body);
+    await Model.findOneAndUpdate(query, data);
+    const active = await Model.find({ confirmed: false }).populate(populateFields);
+    res.json(active);
   });
 
   router.post("/update/?", async (req, res) => {

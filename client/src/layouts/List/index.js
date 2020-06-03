@@ -1,34 +1,60 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
+import { DogItemContentGrid, DogName, PassContainer, DogBreedDisplay } from "./style";
 import { connect } from "react-redux";
 import { getData } from "../../redux/actions";
-import { Link, useParams, useLocation } from "react-router-dom";
-import { DogListContainer } from "./style";
+import { DateTime } from "luxon";
 import _ from "lodash";
-import DogItem from "../../components/Item";
+import ActiveTime from "../../components/ActiveTime";
+import AttendanceButton from "../../components/AttendanceButton";
+import PassButton from "../../components/PassButton";
 
-const DogList = ({ list }) => {
-  const urlParams = _.last(useLocation().pathname.split("/"));
+const DogList = ({ getDogList, getActivePasses, getActiveAttendances, dogList, activePasses, activeAttendances }) => {
+  const dataIsLoaded = activeAttendances && activePasses && dogList;
 
-  const createList = () => {
-    if (list) {
-      const dogList = list.map((dog) => <DogItem key={dog._id} {...{ dog, urlParams }} />);
-      return dogList;
-    } else {
-      return "List could not be loaded";
-    }
-  };
+  useEffect(() => {
+    getDogList();
+    getActiveAttendances();
+    getActivePasses();
+  }, []);
 
-  return <DogListContainer>{createList()}</DogListContainer>;
+  return (
+    <>
+      {dataIsLoaded &&
+        dogList.map((dog, key) => (
+          <DogItemContentGrid container key={`item-key-${key}`}>
+            <DogName className="dog-name">{dog.name}</DogName>
+            <DogBreedDisplay>{dog.breed?.name}</DogBreedDisplay>
+            <AttendanceButton {...{ dog }} />
+            <PassContainer>
+              {activePasses.map((pass, key) => {
+                if (pass.dogChip === dog.chip) return <PassButton {...{ dog, pass }} key={`item-key-${key}`} />;
+              })}
+            </PassContainer>
+            {activeAttendances.map((attendance, key) => {
+              if (attendance.dog.chip === dog.chip) return <ActiveTime startTime={attendance?.startTime} endTime={attendance?.endTime} key={`item-key-${key}`} />;
+            })}
+          </DogItemContentGrid>
+        ))}
+    </>
+  );
 };
+
 const mapStateToProps = (state) => {
   return {
-    list: state.dog.list,
+    activeAttendances: state.attendance.active,
+    activePasses: state.pass.active,
+    dogList: state.dog.list,
   };
 };
+
+const today = DateTime.local().toISO();
+console.log("TODAY", today);
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getActiveAttendance: () => dispatch(getData(`/attendance/show/?confirmed=false`, "attendance", "active")),
+    getDogList: () => dispatch(getData("/dog/show/all", "dog", "list")),
+    getActivePasses: () => dispatch(getData("/pass/show/active", "pass", "active")),
+    getActiveAttendances: () => dispatch(getData("/attendance/show/active", "attendance", "active")),
   };
 };
 

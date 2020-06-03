@@ -7,6 +7,7 @@ export const getData = (url, name, key) => (dispatch) => {
   api
     .get(url)
     .then((res) => {
+      console.log("response", res);
       const data = res.status === 202 ? "" : res.data;
       dispatch({ type: `SUCCESS_${name.toUpperCase()}`, key, data, name });
     })

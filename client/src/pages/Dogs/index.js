@@ -12,10 +12,8 @@ import Button from "@material-ui/core/Button";
 import { Link, Backdrop } from "@material-ui/core";
 
 const DogsPage = (props) => {
-  const [selected, setSelected] = useState({});
   const [isOpen, setIsOpen] = useState(false);
   const [anchor, setAnchor] = useState(null);
-  const contentLoaded = Boolean(props.dogList && props.attendanceList && props.passList && props.activeAttendanceList && props.breedList && props.passTypeList);
   const user = props.user;
 
   useEffect(() => {
@@ -47,28 +45,26 @@ const DogsPage = (props) => {
 
   if (!user.loading) {
     if (user?.me?.roll === "admin" || user?.me?.roll === "staff") {
-      if (contentLoaded) {
-        return (
-          <DogsContainer>
-            <FormDisplayContext.Provider value={{ isOpen, setIsOpen, anchor, setAnchor }}>
-              <Route path="/dogs">
-                <Navbar />
-                <GridContainer>
-                  <Link to="/dog/create">
-                    <Button color="primary" link="/dogs/create" variant="contained" onClick={handleFormOpen}>
-                      + Nuevo Cliente
-                    </Button>
-                  </Link>
-                  <Route path="/dogs/show/:id">
-                    <Sidebar />
-                  </Route>
-                  <DogList {...{ selected, setSelected }} />
-                </GridContainer>
-              </Route>
-            </FormDisplayContext.Provider>
-          </DogsContainer>
-        );
-      } else return <div>Loading data...</div>;
+      return (
+        <DogsContainer>
+          <FormDisplayContext.Provider value={{ isOpen, setIsOpen, anchor, setAnchor }}>
+            <Route path="/dogs">
+              <Navbar />
+              <GridContainer>
+                <Link to="/dog/create">
+                  <Button color="primary" link="/dogs/create" variant="contained" onClick={handleFormOpen}>
+                    + Nuevo Cliente
+                  </Button>
+                </Link>
+                <Route path="/dogs/show/:id">
+                  <Sidebar />
+                </Route>
+                <DogList />
+              </GridContainer>
+            </Route>
+          </FormDisplayContext.Provider>
+        </DogsContainer>
+      );
     } else return <Redirect to="/" />;
   } else return <div>Checking credentials...</div>;
 };
@@ -92,7 +88,7 @@ const mapDispatchToProps = (dispatch) => {
     getDogs: () => dispatch(getData("/dog/show/all", "dog", "list")),
     getBreeds: () => dispatch(getBreed()),
     getAttendances: () => dispatch(getData("/attendance/show/all", "attendance", "list")),
-    getActiveAttendances: () => dispatch(getData(`/attendance/show/?confirmed=false`, "attendance", "active")),
+    getActiveAttendances: () => dispatch(getData(`/attendance/show/active`, "attendance", "active")),
     getPasses: () => dispatch(getData("/pass/show/all", "pass", "list")),
     getPassTypes: () => dispatch(getData("/passtype/show/all", "passType", "list")),
     setLanguage: (language) => dispatch(setData("language", language, "set")),

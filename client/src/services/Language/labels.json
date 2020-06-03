@@ -35,5 +35,8 @@
   { "value": "hiperactive", "label": { "es": { "male": "hiperactivo", "female": "hiperactiva" }, "en": "hiperactive" } },
   { "value": "agressive", "label": { "es": { "male": "agresivo", "female": "agresiva" }, "en": "agresive" } },
   { "value": "sociable", "label": { "es": { "male": "sociable", "female": "sociable" }, "en": "sociable" } },
-  { "value": "calm", "label": { "es": { "male": "tranquilo", "female": "tranquila" }, "en": "calm" } }
+  { "value": "calm", "label": { "es": { "male": "tranquilo", "female": "tranquila" }, "en": "calm" } },
+  { "value": "start", "label": { "es": "entrada", "en": "start" } },
+  { "value": "end", "label": { "es": "salida", "en": "end" } },
+  { "value": "confirm", "label": { "es": "confirmar", "en": "confirm" } }
 ]

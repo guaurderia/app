@@ -48,4 +48,5 @@ export const rootReducer = combineReducers({
   passType: crudReducer(reducer, "passType"),
   language: crudReducer(reducer, "language"),
   breed: crudReducer(reducer, "breed"),
+  error: crudReducer(reducer, "error"),
 });
