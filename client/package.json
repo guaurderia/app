@@ -37,7 +37,7 @@
     "axios": "^0.19.2",
     "bootstrap": "^3.4.1",
     "hookrouter": "^1.2.3",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "luxon": "^1.23.0",
     "material-table": "^1.57.2",
     "parcel": "^1.12.4",
