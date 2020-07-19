@@ -3,9 +3,9 @@ import { connect } from "react-redux";
 import { getData, postData, setData } from "../../../redux/actions";
 import Brightness5Icon from "@material-ui/icons/Brightness5";
 import Brightness6Icon from "@material-ui/icons/Brightness6";
-import { createDayPass } from "../../../services/Logic/Pass";
 import { formatPassExpires } from "../../../services/Format/Time";
 import { DateTime, Duration } from "luxon";
+import CreatePassButton from "./CreatePassButton";
 
 export const activeTime = (start, end = null) => {
   const startTime = DateTime.fromISO(start);
@@ -24,10 +24,17 @@ export const isValidPass = (attendance, pass = null) => {
   }
 };
 
-const PassButton = ({ dog, pass, activePasses, activeAttendances, setSelectedPass }) => {
+const ActivePassButton = ({
+  dog,
+  pass,
+  activePasses,
+  activeAttendances,
+  setSelectedPass,
+}) => {
   const [attendance, setAttendance] = useState();
   const [isValid, setIsValid] = useState(true);
   const [selected, setSelected] = useState(false);
+  const passType = pass?.passType.type;
 
   useEffect(() => {
     setAttendance(activeAttendances?.find((att) => att.dog.chip === dog.chip));
@@ -37,26 +44,25 @@ const PassButton = ({ dog, pass, activePasses, activeAttendances, setSelectedPas
   const handleClick = () => {
     if (!selected) setSelected(pass);
   };
-  const handlePassCreation = () => {
-    createDayPass(dog, attendance);
-  };
-
-  if (pass.type === "day") {
+  console.log(pass);
+  if (passType === "day") {
     return (
       <button disabled={!isValid} onClick={handleClick}>
-        {pass.hours > 6 ? <Brightness5Icon /> : <Brightness6Icon />} DIA ({pass.remainingCount})
+        {pass.hours > 6 ? <Brightness5Icon /> : <Brightness6Icon />} DIA (
+        {pass.count})
       </button>
     );
   }
-  if (pass.type === "month") {
+  if (passType === "month") {
     let expiresDate = formatPassExpires(pass.expires);
     return (
-      <button disabled={!valid} onClick={handleClick}>
-        {pass.hours > 6 ? <Brightness5Icon /> : <Brightness6Icon />} MES ({expiresDate})
+      <button disabled={!isValid} onClick={handleClick}>
+        {pass.hours > 6 ? <Brightness5Icon /> : <Brightness6Icon />} MES (
+        {expiresDate})
       </button>
     );
   }
-  return <button onClick={handlePassCreation}>+ DIA</button>;
+  return <CreatePassButton />;
 };
 
 const mapStateToProps = (state) => {
@@ -72,4 +78,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(PassButton);
+export default connect(mapStateToProps, mapDispatchToProps)(ActivePassButton);
