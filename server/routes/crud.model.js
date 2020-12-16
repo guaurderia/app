@@ -7,47 +7,43 @@ const User = require("../models/User.model");
 const Attendance = require("../models/Attendance.model");
 
 const crudGenerator = (
-  Model,
-  uniqueIndex,
-  displayName,
-  { createProtectFields, extraFieldsCreate, populateFields } = {
-    createProtectFields: [],
+  { Model, uniqueIndex, extraFieldsCreate, populateFields } = {
     extraFieldsCreate: () => ({}),
     populateFields: [],
+    ...rest,
   }
 ) => {
   const router = express.Router();
-
-  const allFields = Object.keys(Model.schema.paths);
-  const createFields = _.without(allFields, ...["__v", "createdAt", "updatedAt", ...createProtectFields]);
-  const dataCompiler = (req, obj) => ({ ..._.pick(obj, createFields), ...extraFieldsCreate(req) });
-  const dataPicker = (pick, obj) => _.pick(obj, pick);
+  const filterData = (req) => {
+    const fieldsToCreate = Object.keys(Model.schema.paths).filter(
+      (path) => !["__v", "createdAt", "updatedAt"].includes(path)
+    );
+    return _.pick(req.body, fieldsToCreate);
+  }
 
   router.post(
     "/create",
     asyncController(async (req, res) => {
-      const data = dataCompiler(req, req.body);
-      const unique = dataPicker(uniqueIndex, req.body);
-      const exists = await Model.findOne({ unique });
+      const data = filterData(req)
+      const exists = await Model.findOne({ uniqueIndex });
 
       if (exists) {
-        return res.status(409).json(`${uniqueIndex} ${Object.values(unique)} already exists in ${Model.modelName} db`);
+        return res
+          .status(409)
+          .json(
+            `${uniqueIndex} ${unique} already exists in ${Model.modelName} db`
+          );
       } else {
         try {
-          await Model.create(data);
-          if (Model === Attendance) {
-            const active = await Model.find({ confirmed: false }).populate(populateFields);
-            return res.json(active);
-          } else {
-            const list = await Model.find().populate(populateFields);
-            return res.json(list);
-          }
+          const created = await Model.create(data);
+          return res.json(created);
         } catch (err) {
           if (err.name == "ValidationError") {
             const keys = Object.keys(err.errors);
-            return res.status(422).json(keys.map((key) => err.errors[key].message));
+            return res
+              .status(422)
+              .json(keys.map((key) => err.errors[key].message));
           } else {
-            console.error(err);
             return res.status(500).json(err);
           }
         }
@@ -74,7 +70,7 @@ const crudGenerator = (
 
   router.post("/update/?", async (req, res) => {
     const query = req.query;
-    const data = dataCompiler(req, req.body);
+    const data = filterData(req)
     await Model.findOneAndUpdate(query, data);
     const list = await Model.find().populate(populateFields);
     res.json(list);

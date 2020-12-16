@@ -1,4 +1,7 @@
-const { withDbConnection, dropIfExists } = require("../../config/withDbConnection");
+const {
+  withDbConnection,
+  dropIfExists,
+} = require("../../config/withDbConnection");
 const Breeds = require("../../models/Breed.model");
 const axios = require("axios");
 
@@ -8,7 +11,7 @@ const getBreeds = async () => {
   try {
     const response = await axios.get("https://api.thedogapi.com/v1/breeds");
     data = response.data;
-    data = data.map(breed => ({
+    data = data.map((breed) => ({
       name: breed.name,
       temperament: breed.temperament && breed.temperament.split(", "),
       "bred-for": breed["bred_for"] && breed["bred_for"].split(", "),
@@ -16,11 +19,11 @@ const getBreeds = async () => {
       "weight-kg": breed.weight.metric.split(/\D+/),
       "life-expentancy": breed["life_span"].split(/\D+/).slice(0, 2),
       wikipedia: breed["wikipedia_url"],
-      origin: breed.origin
+      origin: breed.origin,
     }));
-    console.log(data);
+    console.log("dog breed data", data);
   } catch (error) {
-    console.log(error);
+    console.log("error retrieving dogBreed data", error);
   }
   // create the temples in the data base
   try {
@@ -30,7 +33,7 @@ const getBreeds = async () => {
       console.log(`${newBreed.length} breeds created`);
     });
   } catch (error) {
-    console.log(error);
+    console.log("Error connecting to MongoDB in getBreeds", error);
   }
 };
 

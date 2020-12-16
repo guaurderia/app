@@ -7,39 +7,51 @@ const PassType = require("../models/PassType.model");
 const Attendance = require("../models/Attendance.model");
 const auth = require("./auth/auth.routes");
 const { crudGenerator } = require("../routes/crud.model");
-const { isLoggedIn } = require("../middleware/auth/isLogged");
+const { isRequired } = require("../middleware/auth/isLogged");
 
-router.use("/user", isLoggedIn("staff"), crudGenerator(User, "username", "firstName", { createProtectFields: [], populateFields: ["dog"], extraFieldsCreate: (req) => ({}) }));
+router.use(
+  "/user",
+  isRequired("staff"),
+  crudGenerator({
+    Model: User,
+    uniqueIndex: "username",
+    populateFields: ["dog"],
+    extraFieldsCreate: (req) => ({}),
+  })
+);
 
 router.use(
   "/dog",
-  isLoggedIn("staff"),
-  crudGenerator(Dog, "chip", "name", {
-    createProtectFields: [],
+  isRequired("staff"),
+  crudGenerator({
+    Model: Dog,
+    uniqueIndex: "chip",
     populateFields: ["owner", "creator"],
     extraFieldsCreate: (req) => ({ creator: req.user._id }),
   })
 );
 
-router.use("/passtype", isLoggedIn("staff"), crudGenerator(PassType, "name", "name"));
+router.use("/passtype", isRequired("staff"));
 
 router.use(
   "/pass",
-  isLoggedIn("staff"),
-  crudGenerator(Pass, "_id", "_id", {
-    createProtectFields: [],
+  isRequired("staff"),
+  crudGenerator({
+    Model: Pass,
+    uniqueIndex: "_id",
     populateFields: ["dog", "passType", "creator"],
     extraFieldsCreate: (req) => ({ creator: req.user._id }),
   })
 );
 
-router.use("/passtype", isLoggedIn("staff"), crudGenerator(PassType, "_id", "_id"));
+router.use("/passtype", isRequired("staff"));
 
 router.use(
   "/attendance",
-  isLoggedIn("staff"),
-  crudGenerator(Attendance, "_id", "_id", {
-    createProtectFields: [],
+  isRequired("staff"),
+  crudGenerator({
+    Model: Attendance,
+    uniqueIndex: "dog",
     populateFields: ["dog", "creator"],
     extraFieldsCreate: (req) => ({ creator: req.user._id }),
   })
